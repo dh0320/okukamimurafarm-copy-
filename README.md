@@ -1,2 +1,0 @@
-# okukamimurafarm
-WEBゲームの開発
