@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2F6B3E" />
+  <title>奥神伏ファーム｜有機農業と里山体験</title>
+  <meta name="description" content="長野県・山間の奥神伏村にある小さな有機農園。りんご、接ぎ木ぶどう、季節の加工品。畑と暮らしの体験も承っています。" />
+  <link rel="preload" href="./styles.css" as="style" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へスキップ</a>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <a class="brand" href="#/">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <span class="brand-name">奥神伏ファーム</span>
+          <span class="brand-tagline">土と生きる、里山の恵み</span>
+        </span>
+      </a>
+
+      <nav class="nav" aria-label="メインナビゲーション">
+        <a class="nav-link" href="#/">HOME</a>
+        <a class="nav-link" href="#/village">VILLAGE</a>
+        <a class="nav-link" href="#/about">ABOUT</a>
+        <a class="nav-link" href="#/products">PRODUCTS</a>
+        <a class="nav-link" href="#/diary">DIARY</a>
+        <a class="nav-link" href="#/access">ACCESS</a>
+        <a class="nav-link" href="#/recruit">RECRUIT</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn-primary" href="#/contact">お問い合わせ</a>
+        <button class="icon-btn" id="menuBtn" aria-label="メニューを開く" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="icon-bars" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenu" hidden>
+      <div class="mobile-menu-inner">
+        <div class="mobile-menu-top">
+          <span class="mobile-title">メニュー</span>
+          <button class="icon-btn" id="menuCloseBtn" aria-label="メニューを閉じる">
+            <span class="icon-close" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="mobile-links">
+          <a class="mobile-link" href="#/">HOME</a>
+          <a class="mobile-link" href="#/village">VILLAGE</a>
+          <a class="mobile-link" href="#/about">ABOUT</a>
+          <a class="mobile-link" href="#/products">PRODUCTS</a>
+          <a class="mobile-link" href="#/diary">DIARY</a>
+          <a class="mobile-link" href="#/access">ACCESS</a>
+          <a class="mobile-link" href="#/recruit">RECRUIT</a>
+          <a class="mobile-link" href="#/contact">お問い合わせ</a>
+        </div>
+
+        <div class="mobile-meta">
+          <div class="mobile-meta-row">
+            <span class="meta-label">営業時間</span>
+            <span class="meta-value">9:00–16:00（不定休）</span>
+          </div>
+          <div class="mobile-meta-row">
+            <span class="meta-label">所在地</span>
+            <span class="meta-value">長野県 奥神伏郡 臣村</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="site-main">
+    <div id="app"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="footer-name">奥神伏ファーム</div>
+        <div class="footer-desc">里山の小さな有機農園。りんご・接ぎ木ぶどう・加工品の生産と、畑の体験を行っています。</div>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">サイト</div>
+        <a class="footer-link" href="#/products">商品一覧</a>
+        <a class="footer-link" href="#/diary">活動日誌</a>
+        <a class="footer-link" href="#/access">アクセス</a>
+        <a class="footer-link" href="#/recruit">実習生募集</a>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">お問い合わせ</div>
+        <div class="footer-text">ご予約・商品についてはお問い合わせフォームよりご連絡ください。</div>
+        <a class="footer-link" href="#/contact">お問い合わせフォーム</a>
+        <a class="footer-link" href="#/policy">プライバシーポリシー</a>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <div class="copyright" id="copyright">© 2026 Okukamifushi Farm</div>
+      <div class="footer-small">※当サイトに掲載されている内容・画像の転載は禁止転載は禁止コピーを禁じます。</div>
+    </div>
+  </footer>
+
+  <div class="overlay" id="overlay" hidden>
+    <div class="overlay-inner" role="dialog" aria-modal="true" aria-labelledby="overlayTitle">
+      <button class="overlay-close" id="overlayClose" aria-label="閉じる">
+        <span class="icon-close" aria-hidden="true"></span>
+      </button>
+      <div class="overlay-body" id="overlayBody"></div>
+    </div>
+  </div>
+
+  <div class="phase-flash" id="phaseFlash" aria-hidden="true"></div>
+
+  <noscript>
+    <div class="container" style="padding:24px;">
+      <p>このサイトはJavaScriptが必要です。ブラウザの設定でJavaScriptを有効にしてください。</p>
+    </div>
+  </noscript>
+
+  <script src="./app.js"></script>
+</body>
+</html>
