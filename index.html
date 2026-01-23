@@ -179,11 +179,11 @@
 
         const IMAGES = {
             // Top Slideshow
-            top_morning: `${BASE_URL}/images/topmorning.png`,
+            top_farm: `${BASE_URL}/images/topfarm.png`,
             top_staff: `${BASE_URL}/images/topstaff.png`,
             top_apple: `${BASE_URL}/images/topapple.png`,
             top_children: `${BASE_URL}/images/topchildren.png`,
-            top_farm: `${BASE_URL}/images/topfarm.png`,
+            top_morning: `${BASE_URL}/images/topmorning.png`,
             
             // Top Horror Changes (Phase 3)
             top_change_village: `${BASE_URL}/images/topchangevillage.png`,
@@ -447,11 +447,11 @@
 
             const slides = useMemo(() => {
                 let baseSlides = [
-                    IMAGES.top_morning,
+                    IMAGES.top_farm,
                     IMAGES.top_staff,
                     IMAGES.top_apple,
                     IMAGES.top_children,
-                    IMAGES.top_farm
+                    IMAGES.top_morning
                 ];
                 if (phase >= 3) {
                     baseSlides[3] = IMAGES.top_change_village;
@@ -843,7 +843,7 @@
                     cat: "APPLE", 
                     img: IMAGES.ec_apple,
                     desc: "驚くほどの糖度と、深紅の色合い。贈り物にも最適です。",
-                    tags: ["#甘い", "#季節限定", "#ギフト"]
+                    tags: ["#甘い", "#季節限定", "#ギフト", "#蜜入り", "#信州", "#朝食に"]
                 },
                 { 
                     id: 2, 
@@ -852,7 +852,7 @@
                     cat: "PROCESSED", 
                     img: IMAGES.ec_applepie, 
                     desc: "トメさん秘伝のレシピ。サクサクのパイ生地と甘酸っぱいフィリング。",
-                    tags: ["#母の味", "#無添加", "#手作り"]
+                    tags: ["#母の味", "#無添加", "#手作り", "#おやつ", "#焼きたて", "#人気No.1"]
                 },
                 { 
                     id: 3, 
@@ -861,7 +861,8 @@
                     cat: "GRAPES", 
                     img: IMAGES.ec_grape, 
                     desc: "接ぎ木技術の結晶。深いコクと香りをお楽しみください。",
-                    tags: ["#キヅイテ", "#希少品種", "#ワイン用"]
+                    // ギミックタグを大量の自然なタグの中に紛れ込ませる
+                    tags: ["#長野県産", "#有機JAS", "#芳醇な香り", "#キヅイテ", "#希少品種", "#ワイン用", "#皮ごと食べられる", "#秋の味覚", "#贈答用"]
                 },
                 { 
                     id: 4, 
@@ -870,7 +871,7 @@
                     cat: "PROCESSED", 
                     img: IMAGES.ec_jam, 
                     desc: "完熟果実をそのまま煮詰めました。ヨーグルトに最適。",
-                    tags: ["#朝食", "#オーガニック"]
+                    tags: ["#朝食", "#オーガニック", "#保存料不使用", "#ヨーグルトに"]
                 },
                 { 
                     id: 5, 
@@ -879,7 +880,7 @@
                     cat: "ALL", 
                     img: IMAGES.ec_set, 
                     desc: "旬の味覚を贅沢に詰め合わせました。ご贈答用に。",
-                    tags: ["#数量限定", "#お中元"]
+                    tags: ["#数量限定", "#お中元", "#送料無料", "#ファミリー向け"]
                 },
                 { 
                     id: 6, 
@@ -930,14 +931,13 @@
                                             {p.tags.map((tag, i) => (
                                                 <span 
                                                     key={i}
-                                                    className={`text-[11px] px-2 py-1 rounded border border-border text-muted transition-colors ${tag === "#キヅイテ" ? "hover:border-accent hover:text-accent cursor-help font-bold" : ""}`}
+                                                    // スタイルを統一。#キヅイテのみ hover時に cursor-help と色変化が入るが、パッと見は同じ。
+                                                    className={`text-[11px] px-2 py-1 rounded border border-border text-muted transition-colors hover:bg-gray-100 ${tag === "#キヅイテ" ? "cursor-help hover:text-accent" : "cursor-default"}`}
                                                     onClick={(e) => {
                                                         if (tag === "#キヅイテ") {
                                                             e.stopPropagation();
-                                                            if (phase >= 2) {
-                                                                setVideoModalOpen(true);
-                                                                if(!flags.F02) unlockFlag('F02');
-                                                            }
+                                                            setVideoModalOpen(true);
+                                                            if(!flags.F02) unlockFlag('F02');
                                                         }
                                                     }}
                                                 >
