@@ -39,6 +39,7 @@
                     },
                     animation: {
                         'ken-burns': 'kenBurns 20s ease-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         kenBurns: {
@@ -74,7 +75,7 @@
             --accent: #8A2E2E; /* Horror Accent */
             
             /* Spacing */
-            --header-height: 72px;
+            --header-height: 88px; /* ヘッダーの高さを少し増やしてアイコンを収める */
         }
 
         /* Phase 2: Slight Unease (Lower contrast, slightly cooler) */
@@ -173,33 +174,61 @@
         const { useState, useEffect, useRef, useMemo } = React;
 
         // --- Data & Assets ---
-        // Using high-quality placeholder images to simulate "Realism"
-        const IMAGES = {
-            hero1: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2600&auto=format&fit=crop", // Field
-            hero2: "https://images.unsplash.com/photo-1625246333195-58197bd47d19?q=80&w=2600&auto=format&fit=crop", // Morning mist
-            hero_horror: "https://images.unsplash.com/photo-1509559381746-b6d47b59e782?q=80&w=2600&auto=format&fit=crop", // Dark forest
-            apple: "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?q=80&w=1600&auto=format&fit=crop", // Apple
-            pie: "https://images.unsplash.com/photo-1535920527002-b35e96722eb9?q=80&w=1600&auto=format&fit=crop", // Pie
-            grapes: "https://images.unsplash.com/photo-1596363805836-aa33ca6030c3?q=80&w=1600&auto=format&fit=crop", // Grapes
-            tree: "https://images.unsplash.com/photo-1513836279014-a89f7a76aeed?q=80&w=2600&auto=format&fit=crop", // Big Tree
-            tree_detail: "https://images.unsplash.com/photo-1543161250-983193635767?q=80&w=2600&auto=format&fit=crop", // Skin/Texture like
-            staff_sato: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop", // Smiling Man
-            staff_tome: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop", // Smiling Woman
-            // 園長画像を修正 (表示されるURLへ変更)
-            staff_encho: "https://images.unsplash.com/photo-1544168190-79c11e66b380?q=80&w=800&auto=format&fit=crop", // Serious Older Man
-            farm_work: "https://images.unsplash.com/photo-1595814433015-e6f5ce69614e?q=80&w=1600&auto=format&fit=crop", // Working
-            village_map: "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1600&auto=format&fit=crop", // Map feel
-            room: "https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?q=80&w=1600&auto=format&fit=crop", // Dark room (hidden)
-        };
+        // GitHub Raw URL Base
+        const BASE_URL = "https://raw.githubusercontent.com/dh0320/okukamimurafarm/f273d82bcc2d0c08371bb0e42d3169c3d36e4b9b";
 
-        // スライドショー用の画像リスト (5枚)
-        const HERO_SLIDES = [
-            "https://images.unsplash.com/photo-1625246333195-58197bd47d19?q=80&w=2600&auto=format&fit=crop", // ⑤ 自然と朝日（朝霧）
-            "https://images.unsplash.com/photo-1621460341776-653e051e227a?q=80&w=2600&auto=format&fit=crop", // ① りんご農園
-            "https://images.unsplash.com/photo-1626245353088-29a394a11c1d?q=80&w=2600&auto=format&fit=crop", // ② 集合写真（作業風景）
-            "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?q=80&w=2600&auto=format&fit=crop", // ③ 籠のりんご
-            "https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?q=80&w=2600&auto=format&fit=crop", // ④ パイ（食卓イメージ）
-        ];
+        const IMAGES = {
+            // Top Slideshow
+            top_morning: `${BASE_URL}/images/topmorning.png`,
+            top_staff: `${BASE_URL}/images/topstaff.png`,
+            top_apple: `${BASE_URL}/images/topapple.png`,
+            top_children: `${BASE_URL}/images/topchildren.png`,
+            top_farm: `${BASE_URL}/images/topfarm.png`,
+            
+            // Top Horror Changes (Phase 3)
+            top_change_village: `${BASE_URL}/images/topchangevillage.png`,
+            top_change_stop: `${BASE_URL}/images/topchangestop.png`,
+
+            // Icon (Header)
+            icon_default: `${BASE_URL}/images/icondefault.png`,
+            icon_change_1: `${BASE_URL}/images/iconchange1.png`,
+            icon_change_2: `${BASE_URL}/images/iconchange2.png`,
+            icon_change_3: `${BASE_URL}/images/iconchange3.png`,
+
+            // Products
+            ec_apple: `${BASE_URL}/images/ecapple.png`,
+            ec_applepie: `${BASE_URL}/images/ecapplepie.png`,
+            ec_grape: `${BASE_URL}/images/ecgrape.png`,
+            ec_jam: `${BASE_URL}/images/ecjam.png`,
+            ec_set: `${BASE_URL}/images/ecset.png`,
+
+            // Blog
+            blog_sunny: `${BASE_URL}/images/blogsunny.png`,
+            blog_applepie: `${BASE_URL}/images/blogapplepie.png`,
+            blog_harvest: `${BASE_URL}/images/blogharvest.png`,
+            blog_food: `${BASE_URL}/images/blogfood.png`,
+            blog_oldbook: `${BASE_URL}/images/blogoldbook.png`,
+
+            // Staff
+            staff_manager: `${BASE_URL}/images/staffmanager.png`,
+            staff_submanager: `${BASE_URL}/images/staffsubmanager.png`,
+            staff_wife: `${BASE_URL}/images/staffwife.png`,
+            staff_trainee: `${BASE_URL}/images/stafftrainee.png`,
+            staff_victim: `${BASE_URL}/images/staffvictim.png`,
+            staff_victim2: `${BASE_URL}/images/staffvictim2.png`,
+
+            // Symbol Tree
+            tree_default: `${BASE_URL}/images/treedefault.png`,
+            tree_change: `${BASE_URL}/images/treechange.png`,
+
+            // Village
+            village_normal: `${BASE_URL}/images/villagenormal.png`,
+            village_snow: `${BASE_URL}/images/villagesnow.png`,
+            village_night: `${BASE_URL}/images/villagenight.png`,
+
+            // Video
+            victim_movie: `${BASE_URL}/images/victimmovie.mp4`
+        };
 
         const MAX_FLAGS = 13;
 
@@ -238,6 +267,14 @@
                 return () => window.removeEventListener('scroll', handleScroll);
             }, []);
 
+            // Icon Logic: Phaseに合わせてアイコン画像を切り替え
+            const getIcon = () => {
+                if (phase >= 4) return IMAGES.icon_change_3;
+                if (phase >= 3) return IMAGES.icon_change_2;
+                if (phase >= 2) return IMAGES.icon_change_1;
+                return IMAGES.icon_default;
+            };
+
             const menuItems = [
                 { id: 'home', label: 'HOME' },
                 { id: 'about', label: 'ABOUT' },
@@ -258,11 +295,12 @@
                     >
                         <div className="max-w-container mx-auto px-4 md:px-8 h-full flex items-center justify-between">
                             {/* Logo */}
-                            <div className="flex items-center gap-2 cursor-pointer z-50" onClick={() => { setPage('home'); setIsMenuOpen(false); }}>
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-500 ${phase >= 4 ? 'bg-accent' : 'bg-primary'}`}>
-                                    <span className="text-white font-serif font-bold">奥</span>
+                            <div className="flex items-center gap-4 cursor-pointer z-50" onClick={() => { setPage('home'); setIsMenuOpen(false); }}>
+                                {/* Iconを大きく表示 (w-16 h-16) */}
+                                <div className="w-16 h-16 rounded-full overflow-hidden shadow-md transition-transform duration-500 hover:scale-105">
+                                    <img src={getIcon()} alt="Logo" className="w-full h-full object-cover" />
                                 </div>
-                                <span className={`text-lg font-serif font-bold tracking-widest ${phase >= 4 ? 'text-accent' : 'text-text'}`}>
+                                <span className={`text-xl font-serif font-bold tracking-widest ${phase >= 4 ? 'text-accent' : 'text-text'}`}>
                                     奥神伏ファーム
                                 </span>
                             </div>
@@ -357,39 +395,55 @@
         const Home = ({ phase, unlockFlag, flags, setPage }) => {
             const [currentSlide, setCurrentSlide] = useState(0);
 
-            // スライドショーのタイマー設定 (Phase 3未満のみ動作)
-            useEffect(() => {
-                if (phase < 3) {
-                    const slideInterval = setInterval(() => {
-                        setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-                    }, 6000); // 6秒ごとに切り替え
-                    return () => clearInterval(slideInterval);
+            // スライドショー画像の定義
+            const slides = useMemo(() => {
+                // 基本の5枚 (0:朝, 1:スタッフ, 2:りんご, 3:子供, 4:農園)
+                let baseSlides = [
+                    IMAGES.top_morning,
+                    IMAGES.top_staff,
+                    IMAGES.top_apple,
+                    IMAGES.top_children,
+                    IMAGES.top_farm
+                ];
+
+                // Phase 3以上でのホラー差し替え
+                if (phase >= 3) {
+                    baseSlides[3] = IMAGES.top_change_village; // 4枚目：子供 -> 異様な村
+                    baseSlides[4] = IMAGES.top_change_stop;    // 5枚目：農園 -> 行き止まり
                 }
+                return baseSlides;
             }, [phase]);
+
+            // スライドショーのタイマー設定 (Phase関係なく動作させる)
+            useEffect(() => {
+                const slideInterval = setInterval(() => {
+                    setCurrentSlide((prev) => (prev + 1) % slides.length);
+                }, 6000); 
+                return () => clearInterval(slideInterval);
+            }, [slides.length]);
 
             return (
                 <>
                     {/* Hero Section */}
                     <div className="relative h-screen w-full overflow-hidden bg-black">
-                        {/* SlideShow Layers (Phase < 3) */}
-                        {phase < 3 && HERO_SLIDES.map((img, index) => (
+                        {/* SlideShow Layers */}
+                        {slides.map((img, index) => (
                             <div 
                                 key={index}
                                 className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[2000ms] ease-in-out ${currentSlide === index ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
                                 style={{ backgroundImage: `url(${img})` }}
                             >
-                                {/* Ken Burns Effect (Slow Zoom) */}
+                                {/* Ken Burns Effect */}
                                 <div className={`absolute inset-0 bg-cover bg-center ${currentSlide === index ? 'scale-110 transition-transform duration-[10000ms] ease-out' : 'scale-100'}`} style={{ backgroundImage: `url(${img})` }}></div>
                             </div>
                         ))}
 
-                        {/* Horror Layer (Phase >= 3) - 固定画像 */}
-                        {phase >= 3 && (
+                        {/* Phase 3+: F08 Trigger Area (If viewing horror slide) */}
+                        {phase >= 3 && (currentSlide === 3 || currentSlide === 4) && (
                             <div 
-                                className="absolute inset-0 bg-cover bg-center grayscale contrast-125 z-20 animate-pulse"
-                                style={{ backgroundImage: `url(${IMAGES.hero_horror})` }}
+                                className="absolute inset-0 z-20 cursor-pointer"
                                 onClick={() => {
-                                    if (phase >= 3 && !flags.F08) {
+                                    if (!flags.F08) {
                                         alert("【F08: 異様な光景】\n村の出口が封鎖され、村人たちがこちらを監視している幻覚が見えた。");
                                         unlockFlag('F08');
                                     }
@@ -411,17 +465,15 @@
                         </div>
 
                         {/* Slider Indicators */}
-                        {phase < 3 && (
-                            <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-3 z-30">
-                                {HERO_SLIDES.map((_, index) => (
-                                    <button 
-                                        key={index}
-                                        onClick={() => setCurrentSlide(index)}
-                                        className={`w-12 h-1 rounded-full transition-all duration-300 ${currentSlide === index ? 'bg-white opacity-100' : 'bg-white opacity-40 hover:opacity-70'}`}
-                                    />
-                                ))}
-                            </div>
-                        )}
+                        <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-3 z-30">
+                            {slides.map((_, index) => (
+                                <button 
+                                    key={index}
+                                    onClick={() => setCurrentSlide(index)}
+                                    className={`w-12 h-1 rounded-full transition-all duration-300 ${currentSlide === index ? 'bg-white opacity-100' : 'bg-white opacity-40 hover:opacity-70'}`}
+                                />
+                            ))}
+                        </div>
                     </div>
 
                     {/* News / Concept */}
@@ -485,12 +537,28 @@
                         <SectionTitle title="奥神伏村について" sub="OUR VILLAGE" />
                         
                         <div className="mb-20">
-                            <img src={IMAGES.village_map} alt="Village View" className="w-full h-[60vh] object-cover rounded-2xl shadow-sm mb-8" />
+                            {/* Phase 3で画像が「夜の儀式」などに変わる演出を入れても良いが、とりあえず通常 */}
+                            <img src={phase >= 3 ? IMAGES.village_night : IMAGES.village_normal} alt="Village View" className="w-full h-[60vh] object-cover rounded-2xl shadow-sm mb-8" />
                             <p className="max-w-2xl mx-auto text-center leading-loose text-muted font-serif">
                                 四方を険しい山々に囲まれた奥神伏村。<br/>
                                 独自の気候風土が、他にはない濃厚な味わいの作物を育てます。<br/>
                                 古くからこの地には「神」が宿ると言われ、村人は自然を敬い、共に生きてきました。
                             </p>
+                        </div>
+
+                        {/* New Section: Snow Village */}
+                        <div className="mb-24 grid md:grid-cols-2 gap-12 items-center bg-white p-8 rounded-2xl shadow-sm">
+                            <div className="order-2 md:order-1">
+                                 <h3 className="text-2xl font-serif mb-6 text-text">冬の静寂</h3>
+                                 <p className="text-muted leading-loose font-serif">
+                                     冬は雪が多い地域ですが、一面の美しく白い姿へ村が変わります。<br/>
+                                     しんしんと降り積もる雪の音しか聞こえない、静寂に包まれた冬の奥神伏もまた格別です。<br/>
+                                     厳しさの中で育まれる命の力強さを感じてください。
+                                 </p>
+                            </div>
+                            <div className="order-1 md:order-2">
+                                <img src={IMAGES.village_snow} alt="Winter Village" className="w-full h-80 object-cover rounded-xl shadow-md hover:scale-[1.02] transition-transform duration-500" />
+                            </div>
                         </div>
 
                         {/* F10: Symbol Tree */}
@@ -508,7 +576,6 @@
                                         setLightboxOpen(true);
                                         if (phase >= 3 && !flags.F10) {
                                             unlockFlag('F10');
-                                            // The alert is handled inside the lightbox logic for UX
                                         }
                                     }}
                                 >
@@ -516,7 +583,7 @@
                                 </Button>
                             </div>
                             <div className="md:w-1/2 w-full">
-                                <img src={IMAGES.tree} alt="Sacred Tree" className="w-full h-80 object-cover rounded-lg shadow-md hover:grayscale transition-all duration-1000 cursor-zoom-in" onClick={() => setLightboxOpen(true)}/>
+                                <img src={IMAGES.tree_default} alt="Sacred Tree" className="w-full h-80 object-cover rounded-lg shadow-md hover:grayscale transition-all duration-1000 cursor-zoom-in" onClick={() => setLightboxOpen(true)}/>
                             </div>
                         </div>
                     </div>
@@ -526,7 +593,7 @@
                         <div className="fixed inset-0 z-[100] lightbox-overlay flex items-center justify-center p-4" onClick={() => setLightboxOpen(false)}>
                             <div className="relative max-w-4xl w-full max-h-screen">
                                 <img 
-                                    src={phase >= 3 ? IMAGES.tree_detail : IMAGES.tree} 
+                                    src={phase >= 3 ? IMAGES.tree_change : IMAGES.tree_default} 
                                     className="w-full h-auto max-h-[90vh] object-contain rounded shadow-2xl" 
                                 />
                                 {phase >= 3 && (
@@ -558,7 +625,7 @@
             }, [phase, flags.F09]);
 
             const StaffCard = ({ img, name, role, comment, hiddenText }) => (
-                <div className="bg-surface p-6 rounded-2xl hover-card text-center group">
+                <div className="bg-surface p-6 rounded-2xl hover-card text-center group h-full">
                     <div className="w-full aspect-[4/5] overflow-hidden rounded-xl mb-6 relative">
                         <img src={img} alt={name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                         {/* F06: Hidden Staff Link overlay */}
@@ -605,7 +672,7 @@
                         {/* 上半分：農園について（園長挨拶） */}
                         <section className="grid md:grid-cols-2 gap-12 md:gap-24 items-center mb-32">
                             <div className="relative order-2 md:order-1">
-                                <img src={IMAGES.staff_encho} className="w-full aspect-[4/5] object-cover rounded-2xl shadow-lg" alt="園長" />
+                                <img src={IMAGES.staff_manager} className="w-full aspect-[4/5] object-cover rounded-2xl shadow-lg" alt="園長" />
                                 <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-lg shadow-xl hidden md:block">
                                     <p className="font-serif font-bold text-lg">神去 巌</p>
                                     <p className="text-xs text-muted font-eng">園長 / Iwao Kamisari</p>
@@ -628,7 +695,7 @@
                                     </p>
                                 </div>
                                 <div className="hidden md:block">
-                                    <img src={IMAGES.hero1} className="h-32 w-full object-cover rounded-lg opacity-60 grayscale-[30%]" />
+                                    <img src={IMAGES.top_farm} className="h-32 w-full object-cover rounded-lg opacity-60 grayscale-[30%]" />
                                 </div>
                             </div>
                         </section>
@@ -640,28 +707,35 @@
                                 <p className="text-muted font-eng text-sm tracking-widest">OUR STAFF</p>
                             </div>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 <StaffCard 
-                                    img={IMAGES.staff_tome} 
+                                    img={IMAGES.staff_wife} 
                                     name="神去 トメ" 
                                     role="PROCESSOR" 
                                     comment="私の作るアップルパイは村一番の評判です。隠し味は愛情ですよ。" 
                                 />
                                 <StaffCard 
-                                    img={IMAGES.staff_sato} 
+                                    img={IMAGES.staff_submanager} 
                                     name="佐藤 健太" 
                                     role="WEB MANAGER" 
                                     comment="都会の喧騒を離れ、この美しい村に移住しました。毎日が発見の連続です。"
                                     hiddenText="この村は狂ってる。出られない。助けてくれ。"
                                 />
-                                    {phase >= 3 && (
-                                    <StaffCard 
-                                        img={IMAGES.room} 
-                                        name="No.1092" 
-                                        role="???" 
-                                        comment="..."
-                                    />
-                                    )}
+                                {/* 追加: 実習生グエン・マイ・リン */}
+                                <StaffCard 
+                                    img={IMAGES.staff_trainee} 
+                                    name="グエン・マイ・リン" 
+                                    role="TRAINEE" 
+                                    comment="日本で農業を学べることに感謝しています。毎日が勉強です。" 
+                                />
+                                {phase >= 3 && (
+                                <StaffCard 
+                                    img={IMAGES.staff_victim} 
+                                    name="No.1092" 
+                                    role="???" 
+                                    comment="..."
+                                />
+                                )}
                             </div>
                         </section>
                     </div>
@@ -672,6 +746,8 @@
         // 4. PRODUCTS
         const Products = ({ phase, unlockFlag, flags }) => {
             const categories = ["ALL", "APPLE", "GRAPES", "PROCESSED"];
+            const [videoModalOpen, setVideoModalOpen] = useState(false);
+
             // 商品データ構造を拡張
             const products = [
                 { 
@@ -679,7 +755,7 @@
                     name: "奥神伏りんご「朱実」", 
                     price: "¥5,000", 
                     cat: "APPLE", 
-                    img: IMAGES.apple,
+                    img: IMAGES.ec_apple,
                     desc: "驚くほどの糖度と、深紅の色合い。贈り物にも最適です。",
                     tags: ["#甘い", "#季節限定", "#ギフト"]
                 },
@@ -688,7 +764,7 @@
                     name: "手作りアップルパイ", 
                     price: "¥3,500", 
                     cat: "PROCESSED", 
-                    img: IMAGES.pie, 
+                    img: IMAGES.ec_applepie, 
                     desc: "トメさん秘伝のレシピ。サクサクのパイ生地と甘酸っぱいフィリング。",
                     tags: ["#母の味", "#無添加", "#手作り"]
                 },
@@ -697,9 +773,38 @@
                     name: "有機栽培ブドウ", 
                     price: "¥8,000", 
                     cat: "GRAPES", 
-                    img: IMAGES.grapes, 
+                    img: IMAGES.ec_grape, 
                     desc: "接ぎ木技術の結晶。深いコクと香りをお楽しみください。",
                     tags: ["#キヅイテ", "#希少品種", "#ワイン用"] // ギミックタグ
+                },
+                { 
+                    id: 4, 
+                    name: "特製ジャム", 
+                    price: "¥1,200", 
+                    cat: "PROCESSED", 
+                    img: IMAGES.ec_jam, 
+                    desc: "完熟果実をそのまま煮詰めました。ヨーグルトに最適。",
+                    tags: ["#朝食", "#オーガニック"]
+                },
+                { 
+                    id: 5, 
+                    name: "季節の詰め合わせ", 
+                    price: "¥10,000", 
+                    cat: "ALL", 
+                    img: IMAGES.ec_set, 
+                    desc: "旬の味覚を贅沢に詰め合わせました。ご贈答用に。",
+                    tags: ["#数量限定", "#お中元"]
+                },
+                // 追加: Coming Soon
+                { 
+                    id: 6, 
+                    name: "Coming Soon...", 
+                    price: "-", 
+                    cat: "ALL", 
+                    img: IMAGES.icon_default, // プレースホルダーとしてアイコンを使用
+                    desc: "新しい商品の準備中です。ご期待ください。",
+                    tags: [],
+                    isComingSoon: true
                 },
             ];
 
@@ -719,20 +824,24 @@
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
                             {products.map(p => (
-                                <div key={p.id} className="group cursor-pointer">
-                                    <div className="aspect-square overflow-hidden rounded-2xl mb-4 bg-surface-2 relative">
-                                        <img src={p.img} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                        {/* 画像右上のタグは削除 */}
+                                <div key={p.id} className={`group cursor-pointer ${p.isComingSoon ? 'opacity-60' : ''}`}>
+                                    <div className="aspect-square overflow-hidden rounded-2xl mb-4 bg-surface-2 relative flex items-center justify-center">
+                                        {p.isComingSoon ? (
+                                            <div className="text-center">
+                                                <img src={p.img} alt={p.name} className="w-20 h-20 opacity-30 mx-auto mb-2" />
+                                                <span className="font-eng tracking-widest text-muted">Coming Soon</span>
+                                            </div>
+                                        ) : (
+                                            <img src={p.img} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                        )}
                                     </div>
-                                    <div className="text-left"> {/* 左揃えに変更 */}
+                                    <div className="text-left">
                                         <div className="flex justify-between items-baseline mb-2">
                                             <h3 className="text-lg font-serif font-bold">{p.name}</h3>
                                             <p className="text-sm font-eng text-muted">{p.price}</p>
                                         </div>
-                                        {/* 説明文を追加 */}
                                         <p className="text-sm text-muted mb-4 leading-relaxed border-b border-border pb-4">{p.desc}</p>
                                         
-                                        {/* 複数タグを表示 */}
                                         <div className="flex flex-wrap gap-2">
                                             {p.tags.map((tag, i) => (
                                                 <span 
@@ -741,9 +850,9 @@
                                                     onClick={(e) => {
                                                         if (tag === "#キヅイテ") {
                                                             e.stopPropagation();
-                                                            if (phase >= 2 && !flags.F02) {
-                                                                alert("【F02: 訴えの動画】\n商品タグをクリック：実習生のSOS動画が再生されました。");
-                                                                unlockFlag('F02');
+                                                            if (phase >= 2) {
+                                                                setVideoModalOpen(true);
+                                                                if(!flags.F02) unlockFlag('F02');
                                                             }
                                                         }
                                                     }}
@@ -757,6 +866,28 @@
                             ))}
                         </div>
                     </div>
+
+                    {/* F02: Video Modal */}
+                    {videoModalOpen && (
+                        <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center p-4">
+                            <div className="relative w-full max-w-4xl aspect-video bg-black">
+                                <video 
+                                    src={IMAGES.victim_movie} 
+                                    controls 
+                                    autoPlay 
+                                    className="w-full h-full"
+                                >
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button 
+                                    className="absolute -top-10 right-0 text-white font-bold" 
+                                    onClick={() => setVideoModalOpen(false)}
+                                >
+                                    閉じる
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         };
@@ -776,11 +907,12 @@
             };
 
             const articles = isAncient ? [
-                { id: 99, date: "1826.04.04", title: "開村の儀式に関する覚書", desc: "柩木（ひつぎ）を選定し、土に伏せ..." }
+                { id: 99, date: "1826.04.04", title: "開村の儀式に関する覚書", desc: "柩木（ひつぎ）を選定し、土に伏せ...", img: IMAGES.blog_oldbook }
             ] : [
-                { id: 1, date: "2026.01.18", title: "今年も豊作です", desc: "神様に感謝します。今年の朱実は特に色が濃いです。" },
-                { id: 2, date: "2026.01.10", title: "アップルパイのレシピを公開！", desc: "リクエストにお答えしてレシピを載せますね。", gimmick: true },
-                { id: 3, date: "2026.01.05", title: "みんなで雪かき", desc: "村の結束力が強まりました。" },
+                { id: 1, date: "2026.01.18", title: "今年も豊作です", desc: "神様に感謝します。今年の朱実は特に色が濃いです。", img: IMAGES.blog_harvest },
+                { id: 2, date: "2026.01.10", title: "アップルパイのレシピを公開！", desc: "リクエストにお答えしてレシピを載せますね。", gimmick: true, img: IMAGES.blog_applepie },
+                { id: 3, date: "2026.01.05", title: "みんなでご飯作り", desc: "寮のみんなで協力して夕食を作りました。", img: IMAGES.blog_food },
+                { id: 4, date: "2026.01.01", title: "新年のご挨拶", desc: "本年も奥神伏ファームをよろしくお願いいたします。", img: IMAGES.blog_sunny },
             ];
 
             return (
@@ -817,7 +949,7 @@
                                     <article key={article.id} className="group cursor-pointer">
                                         <div className="flex flex-col md:flex-row gap-6 items-start">
                                             <div className="md:w-1/3 aspect-video bg-surface-2 rounded-lg overflow-hidden">
-                                                <img src={IMAGES.apple} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                                <img src={article.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                                             </div>
                                             <div className="md:w-2/3">
                                                 <p className="text-xs font-eng text-muted mb-2">{article.date}</p>
@@ -853,7 +985,8 @@
                         
                         <div className="bg-surface rounded-2xl p-8 md:p-12 shadow-sm mb-12">
                             <div className="aspect-video w-full bg-surface-2 rounded-xl mb-8 overflow-hidden relative">
-                                <img src={IMAGES.village_map} className="w-full h-full object-cover" />
+                                {/* アクセスは村の雪景色を使用 */}
+                                <img src={IMAGES.village_snow} className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/10">
                                     <span className="bg-white px-4 py-2 font-eng text-sm tracking-widest shadow">OKUKAMIFUSHI MAP</span>
                                 </div>
@@ -918,7 +1051,7 @@
 
                         <div className="grid md:grid-cols-2 gap-12 mb-20">
                             <div>
-                                <img src={IMAGES.farm_work} className="w-full h-full object-cover rounded-2xl shadow-lg" />
+                                <img src={IMAGES.top_farm} className="w-full h-full object-cover rounded-2xl shadow-lg" />
                             </div>
                             <div className="flex flex-col justify-center">
                                 <h3 className="text-2xl font-serif mb-6">海外技能実習生 募集中</h3>
