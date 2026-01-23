@@ -36,6 +36,15 @@
                     },
                     maxWidth: {
                         'container': '1200px',
+                    },
+                    animation: {
+                        'ken-burns': 'kenBurns 20s ease-out infinite',
+                    },
+                    keyframes: {
+                        kenBurns: {
+                            '0%': { transform: 'scale(1)' },
+                            '100%': { transform: 'scale(1.1)' },
+                        }
                     }
                 }
             }
@@ -176,11 +185,21 @@
             tree_detail: "https://images.unsplash.com/photo-1543161250-983193635767?q=80&w=2600&auto=format&fit=crop", // Skin/Texture like
             staff_sato: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop", // Smiling Man
             staff_tome: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop", // Smiling Woman
-            staff_encho: "https://images.unsplash.com/photo-1545167622-3a6ac156a649?q=80&w=800&auto=format&fit=crop", // Older Man
+            // 園長画像を修正 (表示されるURLへ変更)
+            staff_encho: "https://images.unsplash.com/photo-1544168190-79c11e66b380?q=80&w=800&auto=format&fit=crop", // Serious Older Man
             farm_work: "https://images.unsplash.com/photo-1595814433015-e6f5ce69614e?q=80&w=1600&auto=format&fit=crop", // Working
             village_map: "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1600&auto=format&fit=crop", // Map feel
             room: "https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?q=80&w=1600&auto=format&fit=crop", // Dark room (hidden)
         };
+
+        // スライドショー用の画像リスト (5枚)
+        const HERO_SLIDES = [
+            "https://images.unsplash.com/photo-1625246333195-58197bd47d19?q=80&w=2600&auto=format&fit=crop", // ⑤ 自然と朝日（朝霧）
+            "https://images.unsplash.com/photo-1621460341776-653e051e227a?q=80&w=2600&auto=format&fit=crop", // ① りんご農園
+            "https://images.unsplash.com/photo-1626245353088-29a394a11c1d?q=80&w=2600&auto=format&fit=crop", // ② 集合写真（作業風景）
+            "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?q=80&w=2600&auto=format&fit=crop", // ③ 籠のりんご
+            "https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?q=80&w=2600&auto=format&fit=crop", // ④ パイ（食卓イメージ）
+        ];
 
         const MAX_FLAGS = 13;
 
@@ -336,40 +355,73 @@
 
         // 1. HOME
         const Home = ({ phase, unlockFlag, flags, setPage }) => {
-            const [heroImg, setHeroImg] = useState(IMAGES.hero1);
-            
-            // F08: Horror Visual
+            const [currentSlide, setCurrentSlide] = useState(0);
+
+            // スライドショーのタイマー設定 (Phase 3未満のみ動作)
             useEffect(() => {
-                if (phase >= 3) {
-                    setHeroImg(IMAGES.hero_horror);
+                if (phase < 3) {
+                    const slideInterval = setInterval(() => {
+                        setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+                    }, 6000); // 6秒ごとに切り替え
+                    return () => clearInterval(slideInterval);
                 }
             }, [phase]);
 
             return (
                 <>
                     {/* Hero Section */}
-                    <div className="relative h-screen w-full overflow-hidden">
-                        <div 
-                            className={`absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-in-out scale-110 hover:scale-100 ${phase >= 3 ? 'grayscale contrast-125' : ''}`}
-                            style={{ backgroundImage: `url(${heroImg})` }}
-                            onClick={() => {
-                                if (phase >= 3 && !flags.F08) {
-                                    alert("【F08: 異様な光景】\n村の出口が封鎖され、村人たちがこちらを監視している幻覚が見えた。");
-                                    unlockFlag('F08');
-                                }
-                            }}
-                        />
-                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center p-6">
+                    <div className="relative h-screen w-full overflow-hidden bg-black">
+                        {/* SlideShow Layers (Phase < 3) */}
+                        {phase < 3 && HERO_SLIDES.map((img, index) => (
+                            <div 
+                                key={index}
+                                className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[2000ms] ease-in-out ${currentSlide === index ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                                style={{ backgroundImage: `url(${img})` }}
+                            >
+                                {/* Ken Burns Effect (Slow Zoom) */}
+                                <div className={`absolute inset-0 bg-cover bg-center ${currentSlide === index ? 'scale-110 transition-transform duration-[10000ms] ease-out' : 'scale-100'}`} style={{ backgroundImage: `url(${img})` }}></div>
+                            </div>
+                        ))}
+
+                        {/* Horror Layer (Phase >= 3) - 固定画像 */}
+                        {phase >= 3 && (
+                            <div 
+                                className="absolute inset-0 bg-cover bg-center grayscale contrast-125 z-20 animate-pulse"
+                                style={{ backgroundImage: `url(${IMAGES.hero_horror})` }}
+                                onClick={() => {
+                                    if (phase >= 3 && !flags.F08) {
+                                        alert("【F08: 異様な光景】\n村の出口が封鎖され、村人たちがこちらを監視している幻覚が見えた。");
+                                        unlockFlag('F08');
+                                    }
+                                }}
+                            />
+                        )}
+
+                        {/* Overlay Content */}
+                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center p-6 z-30">
                             <div className="text-center text-white animate-fade-up">
-                                <p className="text-sm md:text-base font-eng tracking-[0.2em] mb-4 uppercase">Organic Farm in Okukamifushi</p>
-                                <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold tracking-[0.15em] mb-8 leading-tight">
+                                <p className="text-sm md:text-base font-eng tracking-[0.2em] mb-4 uppercase drop-shadow-md">Organic Farm in Okukamifushi</p>
+                                <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold tracking-[0.15em] mb-8 leading-tight drop-shadow-lg">
                                     {phase >= 4 ? "逃 ゲ ラ レ ナ イ" : <>土と生きる、<br className="md:hidden" />循環する未来。</>}
                                 </h1>
-                                <Button variant="secondary" className="border-white text-white hover:bg-white hover:text-primary" onClick={() => setPage('products')}>
+                                <Button variant="secondary" className="border-white text-white hover:bg-white hover:text-primary backdrop-blur-sm bg-white/10" onClick={() => setPage('products')}>
                                     商品を見る
                                 </Button>
                             </div>
                         </div>
+
+                        {/* Slider Indicators */}
+                        {phase < 3 && (
+                            <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-3 z-30">
+                                {HERO_SLIDES.map((_, index) => (
+                                    <button 
+                                        key={index}
+                                        onClick={() => setCurrentSlide(index)}
+                                        className={`w-12 h-1 rounded-full transition-all duration-300 ${currentSlide === index ? 'bg-white opacity-100' : 'bg-white opacity-40 hover:opacity-70'}`}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* News / Concept */}
@@ -550,49 +602,68 @@
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="農園について" sub="ABOUT US" />
 
-                        {/* Greeting */}
-                        <div className="flex flex-col md:flex-row gap-12 md:gap-24 items-start mb-32">
-                            <div className="md:w-1/2 relative">
-                                <img src={IMAGES.staff_encho} className="w-full rounded-2xl shadow-lg" alt="園長" />
+                        {/* 上半分：農園について（園長挨拶） */}
+                        <section className="grid md:grid-cols-2 gap-12 md:gap-24 items-center mb-32">
+                            <div className="relative order-2 md:order-1">
+                                <img src={IMAGES.staff_encho} className="w-full aspect-[4/5] object-cover rounded-2xl shadow-lg" alt="園長" />
                                 <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-lg shadow-xl hidden md:block">
                                     <p className="font-serif font-bold text-lg">神去 巌</p>
                                     <p className="text-xs text-muted font-eng">園長 / Iwao Kamisari</p>
                                 </div>
                             </div>
-                            <div className="md:w-1/2 pt-8">
-                                <h3 className="text-2xl font-serif mb-8">自然の声を聞き、<br/>命を繋ぐ農業を。</h3>
-                                <p className="leading-loose font-serif text-text transition-all duration-1000">
-                                    {greeting}
-                                </p>
-                                <img src={IMAGES.hero1} className="mt-8 h-32 w-full object-cover rounded-lg opacity-80" />
+                            <div className="order-1 md:order-2 pt-8">
+                                <h3 className="text-2xl md:text-3xl font-serif mb-8 leading-snug">
+                                    自然の声を聞き、<br/>命を繋ぐ農業を。
+                                </h3>
+                                <div className="prose prose-lg text-text font-serif leading-loose mb-8">
+                                    <p className="mb-4">
+                                        奥神伏ファームへようこそ。<br/>
+                                        私たちは、この土地の伝統を守りながら、持続可能な農業に取り組んでいます。
+                                    </p>
+                                    <p className="transition-all duration-1000 mb-4">
+                                        {greeting}
+                                    </p>
+                                    <p>
+                                        土壌の微生物、森の木々、そして私たち人間。すべてが循環の中にあります。
+                                    </p>
+                                </div>
+                                <div className="hidden md:block">
+                                    <img src={IMAGES.hero1} className="h-32 w-full object-cover rounded-lg opacity-60 grayscale-[30%]" />
+                                </div>
                             </div>
-                        </div>
+                        </section>
 
-                        {/* Staff */}
-                        <h3 className="text-2xl font-serif text-center mb-12">スタッフ紹介</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <StaffCard 
-                                img={IMAGES.staff_tome} 
-                                name="神去 トメ" 
-                                role="PROCESSOR" 
-                                comment="私の作るアップルパイは村一番の評判です。隠し味は愛情ですよ。" 
-                            />
-                            <StaffCard 
-                                img={IMAGES.staff_sato} 
-                                name="佐藤 健太" 
-                                role="WEB MANAGER" 
-                                comment="都会の喧騒を離れ、この美しい村に移住しました。毎日が発見の連続です。"
-                                hiddenText="この村は狂ってる。出られない。助けてくれ。"
-                            />
-                             {phase >= 3 && (
+                        {/* 下半分：スタッフ紹介 */}
+                        <section>
+                            <div className="text-center mb-16">
+                                <h3 className="text-2xl font-serif mb-4">スタッフ紹介</h3>
+                                <p className="text-muted font-eng text-sm tracking-widest">OUR STAFF</p>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 <StaffCard 
-                                    img={IMAGES.room} 
-                                    name="No.1092" 
-                                    role="???" 
-                                    comment="..."
+                                    img={IMAGES.staff_tome} 
+                                    name="神去 トメ" 
+                                    role="PROCESSOR" 
+                                    comment="私の作るアップルパイは村一番の評判です。隠し味は愛情ですよ。" 
                                 />
-                             )}
-                        </div>
+                                <StaffCard 
+                                    img={IMAGES.staff_sato} 
+                                    name="佐藤 健太" 
+                                    role="WEB MANAGER" 
+                                    comment="都会の喧騒を離れ、この美しい村に移住しました。毎日が発見の連続です。"
+                                    hiddenText="この村は狂ってる。出られない。助けてくれ。"
+                                />
+                                    {phase >= 3 && (
+                                    <StaffCard 
+                                        img={IMAGES.room} 
+                                        name="No.1092" 
+                                        role="???" 
+                                        comment="..."
+                                    />
+                                    )}
+                            </div>
+                        </section>
                     </div>
                 </div>
             );
@@ -601,10 +672,35 @@
         // 4. PRODUCTS
         const Products = ({ phase, unlockFlag, flags }) => {
             const categories = ["ALL", "APPLE", "GRAPES", "PROCESSED"];
+            // 商品データ構造を拡張
             const products = [
-                { id: 1, name: "奥神伏りんご「朱実」", price: "¥5,000", cat: "APPLE", img: IMAGES.apple, tag: "#甘い" },
-                { id: 2, name: "手作りアップルパイ", price: "¥3,500", cat: "PROCESSED", img: IMAGES.pie, tag: "#母の味" },
-                { id: 3, name: "有機栽培ブドウ", price: "¥8,000", cat: "GRAPES", img: IMAGES.grapes, tag: "#キヅイテ" },
+                { 
+                    id: 1, 
+                    name: "奥神伏りんご「朱実」", 
+                    price: "¥5,000", 
+                    cat: "APPLE", 
+                    img: IMAGES.apple,
+                    desc: "驚くほどの糖度と、深紅の色合い。贈り物にも最適です。",
+                    tags: ["#甘い", "#季節限定", "#ギフト"]
+                },
+                { 
+                    id: 2, 
+                    name: "手作りアップルパイ", 
+                    price: "¥3,500", 
+                    cat: "PROCESSED", 
+                    img: IMAGES.pie, 
+                    desc: "トメさん秘伝のレシピ。サクサクのパイ生地と甘酸っぱいフィリング。",
+                    tags: ["#母の味", "#無添加", "#手作り"]
+                },
+                { 
+                    id: 3, 
+                    name: "有機栽培ブドウ", 
+                    price: "¥8,000", 
+                    cat: "GRAPES", 
+                    img: IMAGES.grapes, 
+                    desc: "接ぎ木技術の結晶。深いコクと香りをお楽しみください。",
+                    tags: ["#キヅイテ", "#希少品種", "#ワイン用"] // ギミックタグ
+                },
             ];
 
             return (
@@ -612,7 +708,7 @@
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="商品一覧" sub="PRODUCTS" />
 
-                        {/* Category Tabs (Mock) */}
+                        {/* Category Tabs */}
                         <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-16">
                             {categories.map((cat, idx) => (
                                 <button key={cat} className={`text-sm font-eng tracking-widest px-4 py-2 rounded-full transition-colors ${idx === 0 ? 'bg-text text-white' : 'text-muted hover:bg-surface-2'}`}>
@@ -626,27 +722,36 @@
                                 <div key={p.id} className="group cursor-pointer">
                                     <div className="aspect-square overflow-hidden rounded-2xl mb-4 bg-surface-2 relative">
                                         <img src={p.img} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                        {/* F02: Video Tag */}
-                                        <div className="absolute top-4 right-4">
-                                            <span 
-                                                className={`text-[10px] font-bold px-3 py-1 rounded-full bg-white/90 backdrop-blur ${p.tag === "#キヅイテ" ? "text-accent" : "text-primary"}`}
-                                                onClick={(e) => {
-                                                    if (p.tag === "#キヅイテ") {
-                                                        e.stopPropagation();
-                                                        if (phase >= 2 && !flags.F02) {
-                                                            alert("【F02: 訴えの動画】\n商品タグをクリック：実習生のSOS動画が再生されました。");
-                                                            unlockFlag('F02');
-                                                        }
-                                                    }
-                                                }}
-                                            >
-                                                {p.tag}
-                                            </span>
-                                        </div>
+                                        {/* 画像右上のタグは削除 */}
                                     </div>
-                                    <div className="text-center">
-                                        <h3 className="text-lg font-serif font-bold mb-1">{p.name}</h3>
-                                        <p className="text-sm font-eng text-muted">{p.price}</p>
+                                    <div className="text-left"> {/* 左揃えに変更 */}
+                                        <div className="flex justify-between items-baseline mb-2">
+                                            <h3 className="text-lg font-serif font-bold">{p.name}</h3>
+                                            <p className="text-sm font-eng text-muted">{p.price}</p>
+                                        </div>
+                                        {/* 説明文を追加 */}
+                                        <p className="text-sm text-muted mb-4 leading-relaxed border-b border-border pb-4">{p.desc}</p>
+                                        
+                                        {/* 複数タグを表示 */}
+                                        <div className="flex flex-wrap gap-2">
+                                            {p.tags.map((tag, i) => (
+                                                <span 
+                                                    key={i}
+                                                    className={`text-[11px] px-2 py-1 rounded border border-border text-muted transition-colors ${tag === "#キヅイテ" ? "hover:border-accent hover:text-accent cursor-help font-bold" : ""}`}
+                                                    onClick={(e) => {
+                                                        if (tag === "#キヅイテ") {
+                                                            e.stopPropagation();
+                                                            if (phase >= 2 && !flags.F02) {
+                                                                alert("【F02: 訴えの動画】\n商品タグをクリック：実習生のSOS動画が再生されました。");
+                                                                unlockFlag('F02');
+                                                            }
+                                                        }
+                                                    }}
+                                                >
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -955,6 +1060,11 @@
             const [currentPage, setPage] = useState('home');
             const [phase, setPhase] = useState(1);
             const [flags, setFlags] = useState({});
+
+            // ページ切り替え時にトップへスクロールする処理を追加
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, [currentPage]);
 
             // Phase Logic (Simplified)
             useEffect(() => {
