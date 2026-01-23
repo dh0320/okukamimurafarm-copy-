@@ -233,6 +233,41 @@
             victim_movie: `${BASE_URL}/images/victimmovie.mp4`
         };
 
+        // スタッフ詳細データ
+        const STAFF_DATA = [
+            {
+                id: 'tome',
+                name: '神去 トメ',
+                role: 'PROCESSOR',
+                role_jp: '加工品・農園キッチン担当',
+                image: IMAGES.staff_wife,
+                intro: `奥神伏農園で加工品づくりと農園キッチンを担当している、神去トメです。収穫した果実の香りや甘みを大切にしながら、ジャムや焼き菓子、季節の保存食を手仕事で仕込んでいます。お越しいただいた方がほっとできるような、素朴でやさしい味を目指しています。`,
+                reason: `家族の営む農園の手伝いをしていく中で、「採れたてをそのまま届けるだけでなく、季節の恵みを一年中楽しめる形にしたい」と思うようになりました。昔から家で作っていた保存食やお菓子を、少しずつ農園の“顔”としてお届けするようになったのが始まりです。`,
+                joy: `完熟のタイミングを見極めて仕込んだ加工品が、「また食べたい」と言ってもらえた時が一番うれしいです。規格外の果実も無駄にせず、おいしさに変えていけるのもやりがいですね。季節ごとに香りや水分量が変わるので、毎年同じようで同じにならないところも面白いと感じています。`
+            },
+            {
+                id: 'sato',
+                name: '佐藤 健太',
+                role: 'WEB MANAGER',
+                role_jp: '副園長・Web/広報・体験運営',
+                image: IMAGES.staff_submanager,
+                intro: `副園長の佐藤健太です。農園の運営サポートに加えて、Webサイトやお問い合わせ対応、体験プログラムのご案内など「外と農園をつなぐ役割」を担当しています。畑の仕事も覚えながら、写真撮影や文章づくりで奥神伏の魅力が伝わるよう日々工夫しています。`,
+                reason: `以前は街で働いていましたが、初めて奥神伏を訪れたときに、空気や水のきれいさ、季節の移ろいの濃さに惹かれました。農園の仕事を知るほどに、作る人の顔が見えるものを丁寧に届けたいと思い、移住してこの農園に加わりました。`,
+                joy: `お客様の「サイトを見て来ました」「日誌を読んで安心しました」という一言が、すごく励みになります。畑での作業がそのまま商品や体験につながり、反応が返ってくるのが面白いですね。小さな改善を積み重ねて、農園全体が少しずつ良くなっていく感覚にやりがいを感じています。`,
+                hidden: "この村は狂ってる。出られない。助けてくれ。" // F01用
+            },
+            {
+                id: 'lin',
+                name: 'グエン・マイ・リン',
+                role: 'TRAINEE',
+                role_jp: '技能実習生代表・栽培チーム',
+                image: IMAGES.staff_trainee,
+                intro: `技能実習生代表のグエン・マイ・リンです。栽培チームで作業をしながら、実習生のみんなが働きやすいように声をかけたり、困ったことがあった時に相談をまとめたりしています。日本の農業の技術と、奥神伏の四季の仕事を学べる毎日が新鮮です。`,
+                reason: `果樹栽培や加工まで一貫して学べる環境に魅力を感じ、この農園で実習をしたいと思いました。山に囲まれた場所で、季節の変化を近くで感じながら働けることにも惹かれました。来日してからは、日本語と作業の両方を少しずつ身につけています。`,
+                joy: `剪定や手入れをした木が、季節を越えて実をつける瞬間を見ると、とても達成感があります。収穫した果実が商品になり、「おいしい」と言ってもらえると誇らしい気持ちになります。代表としては、みんなが安心して学べるように、作業や生活のことを小さなことでも共有できる雰囲気づくりを大切にしています。`
+            }
+        ];
+
         const MAX_FLAGS = 13;
 
         // --- Common Components ---
@@ -610,7 +645,7 @@
         };
 
         // 3. ABOUT (Greeting & Staff)
-        const About = ({ phase, unlockFlag, flags }) => {
+        const About = ({ phase, unlockFlag, flags, setPage, setSelectedStaff }) => {
             const [greeting, setGreeting] = useState("台木は余計な枝葉を剪定します。良い実をつけるためには、親となる木が健康でなければなりません。");
             
             useEffect(() => {
@@ -623,41 +658,44 @@
                 }
             }, [phase, flags.F09]);
 
-            const StaffCard = ({ img, name, role, comment, hiddenText }) => (
-                <div className="bg-surface p-6 rounded-2xl hover-card text-center group h-full">
+            const handleStaffClick = (staff) => {
+                setSelectedStaff(staff);
+                setPage('staff_detail');
+            };
+
+            const StaffCard = ({ staff, isHiddenChar }) => (
+                <div 
+                    className="bg-surface p-6 rounded-2xl hover-card text-center group h-full cursor-pointer"
+                    onClick={() => {
+                        if (isHiddenChar) {
+                            if (!flags.F06) {
+                                alert("【F06: 隠された実習生】\n行方不明の実習生の監禁映像を確認しました。");
+                                unlockFlag('F06');
+                            }
+                        } else {
+                            handleStaffClick(staff);
+                        }
+                    }}
+                >
                     <div className="w-full aspect-[4/5] overflow-hidden rounded-xl mb-6 relative">
-                        <img src={img} alt={name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                        {role === "???" && (
-                            <div 
-                                className="absolute inset-0 bg-black/80 flex items-center justify-center cursor-pointer opacity-0 hover:opacity-100 transition-opacity"
-                                onClick={() => {
-                                    if (!flags.F06) {
-                                        alert("【F06: 隠された実習生】\n行方不明の実習生の監禁映像を確認しました。");
-                                        unlockFlag('F06');
-                                    }
-                                }}
-                            >
+                        <img src={isHiddenChar ? IMAGES.staff_victim : staff.image} alt={isHiddenChar ? "???" : staff.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                        {isHiddenChar && (
+                            <div className="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <span className="text-white font-serif">データ破損</span>
                             </div>
                         )}
-                    </div>
-                    <p className="text-primary font-eng text-xs tracking-wider mb-2">{role}</p>
-                    <h4 className="text-xl font-serif font-bold mb-3">{name}</h4>
-                    <p className="text-sm text-muted leading-relaxed relative">
-                        {comment}
-                        {hiddenText && (
-                            <span 
-                                className="hidden-sos absolute top-0 left-0 w-full h-full bg-surface text-surface select-all cursor-text z-10"
-                                onMouseUp={() => {
-                                    if (window.getSelection().toString().includes("狂って") && !flags.F01) {
-                                        alert("【F01: 副園長の隠しメッセージ】\n「この村は狂ってる。助けてくれ」");
-                                        unlockFlag('F01');
-                                    }
-                                }}
-                            >
-                                {hiddenText}
-                            </span>
+                        {!isHiddenChar && (
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                                <span className="bg-white/90 text-text text-xs px-4 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300 font-serif">
+                                    詳しく見る
+                                </span>
+                            </div>
                         )}
+                    </div>
+                    <p className="text-primary font-eng text-xs tracking-wider mb-2">{isHiddenChar ? "???" : staff.role}</p>
+                    <h4 className="text-xl font-serif font-bold mb-3">{isHiddenChar ? "No.1092" : staff.name}</h4>
+                    <p className="text-sm text-muted leading-relaxed relative line-clamp-2">
+                        {isHiddenChar ? "..." : staff.intro}
                     </p>
                 </div>
             );
@@ -667,6 +705,7 @@
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="農園について" sub="ABOUT US" />
 
+                        {/* 上半分：農園について（園長挨拶） */}
                         <section className="grid md:grid-cols-2 gap-12 md:gap-24 items-center mb-32">
                             <div className="relative order-2 md:order-1">
                                 <img src={IMAGES.staff_manager} className="w-full aspect-[4/5] object-cover rounded-2xl shadow-lg" alt="園長" />
@@ -697,6 +736,7 @@
                             </div>
                         </section>
 
+                        {/* 下半分：スタッフ紹介 */}
                         <section>
                             <div className="text-center mb-16">
                                 <h3 className="text-2xl font-serif mb-4">スタッフ紹介</h3>
@@ -704,35 +744,87 @@
                             </div>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <StaffCard 
-                                    img={IMAGES.staff_wife} 
-                                    name="神去 トメ" 
-                                    role="PROCESSOR" 
-                                    comment="私の作るアップルパイは村一番の評判です。隠し味は愛情ですよ。" 
-                                />
-                                <StaffCard 
-                                    img={IMAGES.staff_submanager} 
-                                    name="佐藤 健太" 
-                                    role="WEB MANAGER" 
-                                    comment="都会の喧騒を離れ、この美しい村に移住しました。毎日が発見の連続です。"
-                                    hiddenText="この村は狂ってる。出られない。助けてくれ。"
-                                />
-                                <StaffCard 
-                                    img={IMAGES.staff_trainee} 
-                                    name="グエン・マイ・リン" 
-                                    role="TRAINEE" 
-                                    comment="日本で農業を学べることに感謝しています。毎日が勉強です。" 
-                                />
+                                {STAFF_DATA.map(staff => (
+                                    <StaffCard key={staff.id} staff={staff} />
+                                ))}
+                                
                                 {phase >= 3 && (
-                                <StaffCard 
-                                    img={IMAGES.staff_victim} 
-                                    name="No.1092" 
-                                    role="???" 
-                                    comment="..."
-                                />
+                                    <StaffCard isHiddenChar={true} />
                                 )}
                             </div>
                         </section>
+                    </div>
+                </div>
+            );
+        };
+
+        // 3.5 STAFF DETAIL (New Page)
+        const StaffDetail = ({ staff, setPage, unlockFlag, flags }) => {
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, []);
+
+            if (!staff) return null;
+
+            return (
+                <div className="min-h-screen pt-32 pb-20 bg-surface">
+                    <div className="max-w-4xl mx-auto px-6">
+                        <button 
+                            onClick={() => setPage('about')}
+                            className="flex items-center text-sm text-muted hover:text-primary mb-8 transition-colors"
+                        >
+                            <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
+                            スタッフ一覧に戻る
+                        </button>
+
+                        <div className="grid md:grid-cols-2 gap-12 items-start">
+                            {/* Left: Image */}
+                            <div>
+                                <div className="aspect-[4/5] w-full rounded-2xl overflow-hidden shadow-lg mb-6">
+                                    <img src={staff.image} alt={staff.name} className="w-full h-full object-cover" />
+                                </div>
+                                <div className="text-center md:text-left">
+                                    <p className="text-primary font-eng text-sm tracking-wider font-bold mb-1">{staff.role}</p>
+                                    <h2 className="text-3xl font-serif font-bold mb-2">{staff.name}</h2>
+                                    <p className="text-sm text-muted">{staff.role_jp}</p>
+                                </div>
+                            </div>
+
+                            {/* Right: Text */}
+                            <div className="space-y-10 font-serif leading-loose text-text">
+                                <div>
+                                    <h3 className="text-lg font-bold border-b border-border pb-2 mb-4">自己紹介</h3>
+                                    <p>
+                                        {staff.intro}
+                                        {/* F01: Hidden Message Logic for Sato */}
+                                        {staff.id === 'sato' && (
+                                            <span 
+                                                className="hidden-sos ml-1 select-all cursor-text"
+                                                onMouseUp={() => {
+                                                    const selection = window.getSelection().toString();
+                                                    if (selection.includes("狂ってる") && !flags.F01) {
+                                                        alert("【F01: 副園長の隠しメッセージ】\nテキストを反転して発見：\n「この村は狂ってる。出られない。助けてくれ」");
+                                                        unlockFlag('F01');
+                                                    }
+                                                }}
+                                            >
+                                                {staff.hidden}
+                                            </span>
+                                        )}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h3 className="text-lg font-bold border-b border-border pb-2 mb-4">農園に入ったきっかけ</h3>
+                                    <p>{staff.reason}</p>
+                                </div>
+
+                                <div>
+                                    <h3 className="text-lg font-bold border-b border-border pb-2 mb-4">仕事をしていて楽しいこと、やりがい</h3>
+                                    <p>{staff.joy}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             );
@@ -1183,6 +1275,7 @@
             const [currentPage, setPage] = useState('home');
             const [phase, setPhase] = useState(1);
             const [flags, setFlags] = useState({});
+            const [selectedStaff, setSelectedStaff] = useState(null); // Add state for detail page
 
             // ページ切り替え時にトップへスクロールする処理を追加
             useEffect(() => {
@@ -1217,10 +1310,11 @@
             };
 
             const renderPage = () => {
-                const props = { phase, unlockFlag, flags, setPage };
+                const props = { phase, unlockFlag, flags, setPage, setSelectedStaff };
                 switch(currentPage) {
                     case 'home': return <Home {...props} />;
                     case 'about': return <About {...props} />;
+                    case 'staff_detail': return <StaffDetail staff={selectedStaff} setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
                     case 'village': return <Village {...props} />;
                     case 'products': return <Products {...props} />;
                     case 'diary': return <Diary {...props} />;
