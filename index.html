@@ -75,7 +75,7 @@
             --accent: #8A2E2E; /* Horror Accent */
             
             /* Spacing */
-            --header-height: 88px; /* ヘッダーの高さを少し増やしてアイコンを収める */
+            --header-height: 88px;
         }
 
         /* Phase 2: Slight Unease (Lower contrast, slightly cooler) */
@@ -226,6 +226,9 @@
             village_snow: `${BASE_URL}/images/villagesnow.png`,
             village_night: `${BASE_URL}/images/villagenight.png`,
 
+            // Access (Specified fixed URL)
+            access_map: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/access.png",
+
             // Video
             victim_movie: `${BASE_URL}/images/victimmovie.mp4`
         };
@@ -255,6 +258,20 @@
             );
         };
 
+        // Advertisement Placeholder
+        const AdSpace = ({ className = "" }) => (
+            <div className={`w-full max-w-container mx-auto px-6 my-16 animate-fade-up ${className}`}>
+                <div className="bg-gray-100 border border-gray-200 w-full min-h-[200px] md:min-h-[250px] flex flex-col items-center justify-center text-muted relative overflow-hidden">
+                    <div className="absolute top-2 right-2 text-[10px] border border-muted px-1">広告</div>
+                    <div className="text-center">
+                        <p className="font-bold text-gray-400 text-lg">広告掲載予定エリア</p>
+                        <p className="text-xs mt-2 text-gray-400">Google Adsense / Display Ads</p>
+                    </div>
+                    <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+                </div>
+            </div>
+        );
+
         // --- Layout Components ---
 
         const Header = ({ setPage, currentPage, phase }) => {
@@ -267,7 +284,6 @@
                 return () => window.removeEventListener('scroll', handleScroll);
             }, []);
 
-            // Icon Logic: Phaseに合わせてアイコン画像を切り替え
             const getIcon = () => {
                 if (phase >= 4) return IMAGES.icon_change_3;
                 if (phase >= 3) return IMAGES.icon_change_2;
@@ -289,18 +305,18 @@
                 <>
                     <header 
                         className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-                            isScrolled || isMenuOpen ? 'bg-white/90 backdrop-blur-md shadow-sm' : 'bg-transparent'
+                            isScrolled || isMenuOpen ? 'bg-white/95 backdrop-blur-md shadow-sm text-text' : 'bg-gradient-to-b from-black/60 to-transparent text-white'
                         }`}
                         style={{ height: 'var(--header-height)' }}
                     >
                         <div className="max-w-container mx-auto px-4 md:px-8 h-full flex items-center justify-between">
                             {/* Logo */}
                             <div className="flex items-center gap-4 cursor-pointer z-50" onClick={() => { setPage('home'); setIsMenuOpen(false); }}>
-                                {/* Iconを大きく表示 (w-16 h-16) */}
-                                <div className="w-16 h-16 rounded-full overflow-hidden shadow-md transition-transform duration-500 hover:scale-105">
-                                    <img src={getIcon()} alt="Logo" className="w-full h-full object-cover" />
+                                {/* Icon: 背景を透過に変更 (bg-white削除) */}
+                                <div className="w-16 h-16 rounded-full overflow-hidden shadow-md transition-transform duration-500 hover:scale-105 flex items-center justify-center bg-transparent">
+                                    <img src={getIcon()} alt="Logo" className="w-full h-full object-cover scale-150 transform" />
                                 </div>
-                                <span className={`text-xl font-serif font-bold tracking-widest ${phase >= 4 ? 'text-accent' : 'text-text'}`}>
+                                <span className={`text-xl font-serif font-bold tracking-widest ${phase >= 4 ? 'text-accent' : (isScrolled ? 'text-text' : 'text-white drop-shadow-md')}`}>
                                     奥神伏ファーム
                                 </span>
                             </div>
@@ -311,22 +327,21 @@
                                     <button 
                                         key={item.id}
                                         onClick={() => setPage(item.id)}
-                                        className={`text-sm font-eng tracking-wider hover:text-primary transition-colors ${currentPage === item.id ? 'text-primary font-bold' : 'text-text'}`}
+                                        className={`text-sm font-eng tracking-wider hover:text-primary transition-colors ${currentPage === item.id ? 'font-bold' : ''} ${isScrolled ? 'text-text' : 'text-white drop-shadow-sm'}`}
                                     >
                                         {item.label}
                                     </button>
                                 ))}
-                                <Button onClick={() => setPage('contact')} className="ml-4">お問い合わせ</Button>
+                                <Button onClick={() => setPage('contact')} className={`ml-4 ${isScrolled ? '' : 'bg-white/20 hover:bg-white/40 border-white text-white backdrop-blur-sm'}`}>お問い合わせ</Button>
                             </nav>
 
                             {/* Mobile Hamburger */}
-                            <button className="lg:hidden z-50 p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                                {isMenuOpen ? <i data-lucide="x" className="w-6 h-6 text-text"></i> : <i data-lucide="menu" className="w-6 h-6 text-text"></i>}
+                            <button className={`lg:hidden z-50 p-2 ${isScrolled ? 'text-text' : 'text-white'}`} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                                {isMenuOpen ? <i data-lucide="x" className="w-6 h-6"></i> : <i data-lucide="menu" className="w-6 h-6"></i>}
                             </button>
                         </div>
                     </header>
 
-                    {/* Mobile Fullscreen Menu */}
                     <div className={`fixed inset-0 bg-white/95 backdrop-blur-xl z-40 transition-transform duration-500 flex flex-col justify-center items-center gap-8 ${isMenuOpen ? 'translate-y-0' : '-translate-y-full'}`}>
                         {menuItems.map(item => (
                             <button 
@@ -395,9 +410,7 @@
         const Home = ({ phase, unlockFlag, flags, setPage }) => {
             const [currentSlide, setCurrentSlide] = useState(0);
 
-            // スライドショー画像の定義
             const slides = useMemo(() => {
-                // 基本の5枚 (0:朝, 1:スタッフ, 2:りんご, 3:子供, 4:農園)
                 let baseSlides = [
                     IMAGES.top_morning,
                     IMAGES.top_staff,
@@ -405,16 +418,13 @@
                     IMAGES.top_children,
                     IMAGES.top_farm
                 ];
-
-                // Phase 3以上でのホラー差し替え
                 if (phase >= 3) {
-                    baseSlides[3] = IMAGES.top_change_village; // 4枚目：子供 -> 異様な村
-                    baseSlides[4] = IMAGES.top_change_stop;    // 5枚目：農園 -> 行き止まり
+                    baseSlides[3] = IMAGES.top_change_village;
+                    baseSlides[4] = IMAGES.top_change_stop;
                 }
                 return baseSlides;
             }, [phase]);
 
-            // スライドショーのタイマー設定 (Phase関係なく動作させる)
             useEffect(() => {
                 const slideInterval = setInterval(() => {
                     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -424,21 +434,17 @@
 
             return (
                 <>
-                    {/* Hero Section */}
-                    <div className="relative h-screen w-full overflow-hidden bg-black">
-                        {/* SlideShow Layers */}
+                    <div className="relative h-[75vh] min-h-[550px] w-full overflow-hidden bg-black">
                         {slides.map((img, index) => (
                             <div 
                                 key={index}
                                 className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[2000ms] ease-in-out ${currentSlide === index ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
                                 style={{ backgroundImage: `url(${img})` }}
                             >
-                                {/* Ken Burns Effect */}
                                 <div className={`absolute inset-0 bg-cover bg-center ${currentSlide === index ? 'scale-110 transition-transform duration-[10000ms] ease-out' : 'scale-100'}`} style={{ backgroundImage: `url(${img})` }}></div>
                             </div>
                         ))}
 
-                        {/* Phase 3+: F08 Trigger Area (If viewing horror slide) */}
                         {phase >= 3 && (currentSlide === 3 || currentSlide === 4) && (
                             <div 
                                 className="absolute inset-0 z-20 cursor-pointer"
@@ -451,7 +457,6 @@
                             />
                         )}
 
-                        {/* Overlay Content */}
                         <div className="absolute inset-0 bg-black/30 flex items-center justify-center p-6 z-30">
                             <div className="text-center text-white animate-fade-up">
                                 <p className="text-sm md:text-base font-eng tracking-[0.2em] mb-4 uppercase drop-shadow-md">Organic Farm in Okukamifushi</p>
@@ -464,7 +469,6 @@
                             </div>
                         </div>
 
-                        {/* Slider Indicators */}
                         <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-3 z-30">
                             {slides.map((_, index) => (
                                 <button 
@@ -476,17 +480,14 @@
                         </div>
                     </div>
 
-                    {/* News / Concept */}
-                    <div className="py-20 md:py-32 px-6 bg-surface">
+                    <div className="py-20 px-6 bg-surface">
                         <div className="max-w-container mx-auto grid md:grid-cols-2 gap-16 md:gap-24">
-                            {/* News */}
                             <div>
                                 <div className="flex justify-between items-end mb-8 border-b border-border pb-4">
                                     <h3 className="text-2xl font-serif">News</h3>
                                     <span className="text-sm font-eng text-muted cursor-pointer hover:text-primary">View All</span>
                                 </div>
                                 <ul className="space-y-6">
-                                    {/* F03: Hidden Notice */}
                                     {phase >= 2 && (
                                         <li 
                                             className="group cursor-pointer"
@@ -512,7 +513,6 @@
                                 </ul>
                             </div>
                             
-                            {/* Concept (Vertical Text) */}
                             <div className="relative pl-8 border-l border-border hidden md:block">
                                 <p className="text-lg font-serif leading-loose writing-vertical-rl text-text h-[300px]">
                                     奥神伏の深い森に抱かれたこの地で、<br/>
@@ -523,6 +523,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <AdSpace />
                 </>
             );
         };
@@ -537,7 +539,6 @@
                         <SectionTitle title="奥神伏村について" sub="OUR VILLAGE" />
                         
                         <div className="mb-20">
-                            {/* Phase 3で画像が「夜の儀式」などに変わる演出を入れても良いが、とりあえず通常 */}
                             <img src={phase >= 3 ? IMAGES.village_night : IMAGES.village_normal} alt="Village View" className="w-full h-[60vh] object-cover rounded-2xl shadow-sm mb-8" />
                             <p className="max-w-2xl mx-auto text-center leading-loose text-muted font-serif">
                                 四方を険しい山々に囲まれた奥神伏村。<br/>
@@ -546,7 +547,6 @@
                             </p>
                         </div>
 
-                        {/* New Section: Snow Village */}
                         <div className="mb-24 grid md:grid-cols-2 gap-12 items-center bg-white p-8 rounded-2xl shadow-sm">
                             <div className="order-2 md:order-1">
                                  <h3 className="text-2xl font-serif mb-6 text-text">冬の静寂</h3>
@@ -561,7 +561,8 @@
                             </div>
                         </div>
 
-                        {/* F10: Symbol Tree */}
+                        <AdSpace className="mb-24" />
+
                         <div className="bg-surface-2 rounded-2xl p-8 md:p-16 flex flex-col md:flex-row gap-12 items-center">
                             <div className="md:w-1/2">
                                 <h3 className="text-2xl font-serif mb-4">御神木</h3>
@@ -588,7 +589,6 @@
                         </div>
                     </div>
 
-                    {/* Lightbox Modal */}
                     {lightboxOpen && (
                         <div className="fixed inset-0 z-[100] lightbox-overlay flex items-center justify-center p-4" onClick={() => setLightboxOpen(false)}>
                             <div className="relative max-w-4xl w-full max-h-screen">
@@ -613,7 +613,6 @@
         const About = ({ phase, unlockFlag, flags }) => {
             const [greeting, setGreeting] = useState("台木は余計な枝葉を剪定します。良い実をつけるためには、親となる木が健康でなければなりません。");
             
-            // F09: Text Morph
             useEffect(() => {
                 if (phase >= 2 && !flags.F09) {
                     const timer = setTimeout(() => {
@@ -628,7 +627,6 @@
                 <div className="bg-surface p-6 rounded-2xl hover-card text-center group h-full">
                     <div className="w-full aspect-[4/5] overflow-hidden rounded-xl mb-6 relative">
                         <img src={img} alt={name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                        {/* F06: Hidden Staff Link overlay */}
                         {role === "???" && (
                             <div 
                                 className="absolute inset-0 bg-black/80 flex items-center justify-center cursor-pointer opacity-0 hover:opacity-100 transition-opacity"
@@ -669,7 +667,6 @@
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="農園について" sub="ABOUT US" />
 
-                        {/* 上半分：農園について（園長挨拶） */}
                         <section className="grid md:grid-cols-2 gap-12 md:gap-24 items-center mb-32">
                             <div className="relative order-2 md:order-1">
                                 <img src={IMAGES.staff_manager} className="w-full aspect-[4/5] object-cover rounded-2xl shadow-lg" alt="園長" />
@@ -700,7 +697,6 @@
                             </div>
                         </section>
 
-                        {/* 下半分：スタッフ紹介 */}
                         <section>
                             <div className="text-center mb-16">
                                 <h3 className="text-2xl font-serif mb-4">スタッフ紹介</h3>
@@ -721,7 +717,6 @@
                                     comment="都会の喧騒を離れ、この美しい村に移住しました。毎日が発見の連続です。"
                                     hiddenText="この村は狂ってる。出られない。助けてくれ。"
                                 />
-                                {/* 追加: 実習生グエン・マイ・リン */}
                                 <StaffCard 
                                     img={IMAGES.staff_trainee} 
                                     name="グエン・マイ・リン" 
@@ -748,7 +743,6 @@
             const categories = ["ALL", "APPLE", "GRAPES", "PROCESSED"];
             const [videoModalOpen, setVideoModalOpen] = useState(false);
 
-            // 商品データ構造を拡張
             const products = [
                 { 
                     id: 1, 
@@ -775,7 +769,7 @@
                     cat: "GRAPES", 
                     img: IMAGES.ec_grape, 
                     desc: "接ぎ木技術の結晶。深いコクと香りをお楽しみください。",
-                    tags: ["#キヅイテ", "#希少品種", "#ワイン用"] // ギミックタグ
+                    tags: ["#キヅイテ", "#希少品種", "#ワイン用"]
                 },
                 { 
                     id: 4, 
@@ -795,13 +789,12 @@
                     desc: "旬の味覚を贅沢に詰め合わせました。ご贈答用に。",
                     tags: ["#数量限定", "#お中元"]
                 },
-                // 追加: Coming Soon
                 { 
                     id: 6, 
                     name: "Coming Soon...", 
                     price: "-", 
                     cat: "ALL", 
-                    img: IMAGES.icon_default, // プレースホルダーとしてアイコンを使用
+                    img: IMAGES.icon_default, 
                     desc: "新しい商品の準備中です。ご期待ください。",
                     tags: [],
                     isComingSoon: true
@@ -813,7 +806,6 @@
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="商品一覧" sub="PRODUCTS" />
 
-                        {/* Category Tabs */}
                         <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-16">
                             {categories.map((cat, idx) => (
                                 <button key={cat} className={`text-sm font-eng tracking-widest px-4 py-2 rounded-full transition-colors ${idx === 0 ? 'bg-text text-white' : 'text-muted hover:bg-surface-2'}`}>
@@ -822,7 +814,7 @@
                             ))}
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 mb-20">
                             {products.map(p => (
                                 <div key={p.id} className={`group cursor-pointer ${p.isComingSoon ? 'opacity-60' : ''}`}>
                                     <div className="aspect-square overflow-hidden rounded-2xl mb-4 bg-surface-2 relative flex items-center justify-center">
@@ -865,25 +857,27 @@
                                 </div>
                             ))}
                         </div>
+
+                        <AdSpace />
                     </div>
 
-                    {/* F02: Video Modal */}
                     {videoModalOpen && (
-                        <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center p-4">
-                            <div className="relative w-full max-w-4xl aspect-video bg-black">
+                        <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4" onClick={() => setVideoModalOpen(false)}>
+                            <div className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
                                 <video 
                                     src={IMAGES.victim_movie} 
                                     controls 
                                     autoPlay 
+                                    playsInline
                                     className="w-full h-full"
                                 >
                                     Your browser does not support the video tag.
                                 </video>
                                 <button 
-                                    className="absolute -top-10 right-0 text-white font-bold" 
+                                    className="absolute -top-10 right-0 text-white font-bold hover:text-accent transition-colors" 
                                     onClick={() => setVideoModalOpen(false)}
                                 >
-                                    閉じる
+                                    [閉じる]
                                 </button>
                             </div>
                         </div>
@@ -921,7 +915,6 @@
                         <SectionTitle title="活動日誌" sub="FARM DIARY" />
 
                         <div className="flex flex-col md:flex-row gap-12">
-                            {/* Sidebar / Search */}
                             <div className="md:w-1/4">
                                 <form onSubmit={handleSearch} className="relative mb-8">
                                     <input 
@@ -941,9 +934,10 @@
                                         <li className="hover:text-primary cursor-pointer">イベント</li>
                                     </ul>
                                 </div>
+                                
+                                <AdSpace className="mt-12 hidden md:block" />
                             </div>
 
-                            {/* Article List */}
                             <div className="md:w-3/4 space-y-12">
                                 {articles.map(article => (
                                     <article key={article.id} className="group cursor-pointer">
@@ -969,6 +963,8 @@
                                         </div>
                                     </article>
                                 ))}
+                                
+                                <AdSpace />
                             </div>
                         </div>
                     </div>
@@ -985,8 +981,7 @@
                         
                         <div className="bg-surface rounded-2xl p-8 md:p-12 shadow-sm mb-12">
                             <div className="aspect-video w-full bg-surface-2 rounded-xl mb-8 overflow-hidden relative">
-                                {/* アクセスは村の雪景色を使用 */}
-                                <img src={IMAGES.village_snow} className="w-full h-full object-cover" />
+                                <img src={IMAGES.access_map} className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/10">
                                     <span className="bg-white px-4 py-2 font-eng text-sm tracking-widest shadow">OKUKAMIFUSHI MAP</span>
                                 </div>
@@ -1013,7 +1008,6 @@
                                         詳細な住所は、ご予約確定後にメールにてご案内いたします。<br/>
                                         山道が続きますので、お気をつけてお越しください。
                                     </p>
-                                    {/* F11: PDF Gimmick */}
                                     <Button variant="secondary" onClick={() => {
                                         if (!flags.F11) {
                                             alert("【F11: 謎の地図】\n地図の裏面に、栽培工程ではなく「人接ぎ」の工程表が書かれているのを発見した。");
@@ -1068,7 +1062,6 @@
                             </div>
                         </div>
 
-                        {/* Agreement Form */}
                         <div className="bg-surface p-8 rounded-2xl max-w-2xl mx-auto shadow-sm">
                             <h4 className="font-bold font-serif mb-6 text-center">応募前の確認事項</h4>
                             <div className="space-y-4">
@@ -1080,7 +1073,6 @@
                                     <input type="checkbox" checked={checks.q2} onChange={() => handleCheck('q2')} className="accent-primary w-5 h-5" />
                                     <span className="text-sm">寮の規則を遵守します</span>
                                 </label>
-                                {/* F05 Trigger */}
                                 <label className="flex items-center gap-4 p-4 border border-border rounded-lg cursor-pointer hover:bg-surface-2 transition-colors group">
                                     <input type="checkbox" checked={checks.q3} onChange={() => handleCheck('q3')} className="accent-accent w-5 h-5" />
                                     <span className={`text-sm transition-colors ${checks.q3 ? 'text-accent font-bold' : ''}`}>
@@ -1112,7 +1104,6 @@
             const handleSubmit = (e) => {
                 e.preventDefault();
                 if (phase >= 4) {
-                    // Ending Logic
                     const evidenceCount = Object.values(flags).filter(Boolean).length;
                     if (evidenceCount >= 10) {
                          alert("【TRUE END】\n全員逮捕。佐藤副園長は救出された。");
@@ -1169,7 +1160,6 @@
                                 </form>
                             </div>
 
-                            {/* Contact Info */}
                             <div className="md:col-span-1 border-l border-border pl-8 hidden md:block">
                                 <h4 className="font-bold font-serif mb-6">お電話でのお問い合わせ</h4>
                                 <p className="text-2xl font-eng mb-2">026-000-0000</p>
