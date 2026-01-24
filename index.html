@@ -179,11 +179,11 @@
 
         const IMAGES = {
             // Top Slideshow
-            top_farm: `${BASE_URL}/images/topfarm.png`,
+            top_morning: `${BASE_URL}/images/topmorning.png`,
             top_staff: `${BASE_URL}/images/topstaff.png`,
             top_apple: `${BASE_URL}/images/topapple.png`,
             top_children: `${BASE_URL}/images/topchildren.png`,
-            top_morning: `${BASE_URL}/images/topmorning.png`,
+            top_farm: `${BASE_URL}/images/topfarm.png`,
             
             // Top Horror Changes (Phase 3)
             top_change_village: `${BASE_URL}/images/topchangevillage.png`,
@@ -233,6 +233,43 @@
             victim_movie: `${BASE_URL}/images/victimmovie.mp4`
         };
 
+        // 記事データ
+        const BLOG_DATA = [
+            {
+                id: 4,
+                date: "2026.01.18",
+                title: "野菜の収穫",
+                desc: "リンゴだけでなく美味しい野菜もたくさんとれます！神様に感謝です！",
+                img: IMAGES.blog_harvest,
+                content: `「奥神伏ファーム＝りんご」のイメージを持ってくださる方が多いのですが、実は野菜もたくさん育てています。\n今日は、畑の野菜をまとめて収穫しました！\n\n土から引き上げた瞬間に分かる、根の張り具合。\n葉の張り、色、香り。\n手に取るだけで「よく育ってくれたなあ」と思える瞬間があって、これが畑の仕事の醍醐味です。\n\n収穫できたのは、\n・みずみずしい葉物\n・甘みののった根菜\n・料理が楽しくなるハーブ\nなど、食卓がぐっと豊かになるものばかり。\n\n自然相手の仕事なので、うまくいかない日もあります。\nそれでも、太陽と雨と土、そして人の手がそろって「実り」になったときは、やっぱり胸がいっぱいになります。神様に感謝です。\n\nこれからも、果実も野菜も、奥神伏の季節をそのまま感じられる味をお届けできるよう、丁寧に育てていきます。\n収穫の様子は写真でもたっぷり掲載しますので、ぜひのぞいてくださいね。`
+            },
+            {
+                id: 3,
+                date: "2026.01.10",
+                title: "村の子供達とアップルパイ作り体験！",
+                desc: "子供達とのパイ作り！リクエストにお答えしてレシピも掲載しますね！",
+                img: IMAGES.blog_applepie,
+                isRecipe: true, // ギミック用フラグ
+                content: `先日、村の子どもたちと一緒にアップルパイ作り体験をしました。\nエプロン姿で集まってくるだけで、キッチンが一気ににぎやかに。りんごを切る音、笑い声、甘い香り…この時間だけで「やってよかったなあ」と思えます。\n\n今回使ったりんごは、しっかり甘みがのったものを選んで、シナモンは控えめに。\n小さな手でも扱いやすいように、りんごは少し薄めにカットして、火入れも短時間で仕上げました。\n\n焼きあがったパイをオーブンから出した瞬間、\n「わあ〜！」って声が揃うのが最高です。\n表面がこんがり色づいて、ふわっと立つ香りがたまりません。\n\n「おうちでも作りたい！」という声が多かったので、リクエストにお応えしてレシピもまとめました。\n下のリンクからご覧いただけます👇\n\n最後に、参加してくれたみんなへ。\n包丁を持つ手も、パイ生地を伸ばす手も、とっても真剣で素敵でした。\nまた季節が変わったら、別のお菓子でも一緒に作ろうね。`
+            },
+            {
+                id: 2,
+                date: "2026.01.05",
+                title: "みんなでご飯作り",
+                desc: "農園のみんなでランチに野菜たくさんのピザを作りました！",
+                img: IMAGES.blog_food,
+                content: `今日は少し手が空いたタイミングで、農園のみんなでランチ作り。\n「せっかくだし、畑の野菜を思いっきり使おう！」ということで、野菜たっぷりのピザを焼きました🍕🥬\n\n畑から採ってきたのは、\nズッキーニ、玉ねぎ、ほうれん草、ミニトマト、そして香りの良いハーブ。\n切って並べるだけでも色がきれいで、キッチンが一気に元気になります。\n\nピザ作りって、実は農園の仕事にちょっと似ていて。\n「どれを、どの順番で、どう並べたら一番おいしくなるか」\nみんなで相談しながら手を動かしている時間が、すごく楽しいんです。\n\n焼き上がりは、外はカリッと中はもちっと。\n野菜がじゅわっと甘くて、思わず無言になるおいしさでした。\n（気づいたら一枚目が一瞬で消えてました…笑）\n\n農園の日常は派手じゃないけれど、こういう小さな“ご褒美”があると、午後の作業も頑張れます。\nまた季節の野菜で、別のピザも試してみたいですね。`
+            },
+            {
+                id: 1,
+                date: "2026.01.01",
+                title: "新年のご挨拶",
+                desc: "本年も奥神伏ファームをよろしくお願いいたします。",
+                img: IMAGES.blog_sunny,
+                content: `あけましておめでとうございます。奥神伏ファームです。\n旧年中は、私たちの農園を見つけてくださり、温かい言葉や応援をたくさんありがとうございました。\n\n冬の奥神伏は、空気がきりっと澄んでいて、朝は畑が白くふわっと霜で覆われます。収穫のにぎやかさが落ち着いたこの季節は、来る春のための“仕込み”の時期。果樹の手入れや土づくり、今年の畑の計画を立てながら、少しずつ次の季節へ向けて整えていきます。\n\n今年も、\n・旬の果実や野菜のこと\n・収穫や加工の裏側\n・体験イベントの様子\n・村の四季の風景\nを、写真と一緒に日誌でこまめにお届けしていく予定です。\n\n「ここに来ると、なんだか呼吸が深くなる」\nそんな場所であり続けられるように、家族とスタッフみんなで丁寧に育てていきます。\n\n本年も奥神伏ファームを、どうぞよろしくお願いいたします。\n奥神伏ファーム一同`
+            }
+        ];
+
         // スタッフ詳細データ
         const STAFF_DATA = [
             {
@@ -241,6 +278,7 @@
                 role: 'PROCESSOR',
                 role_jp: '加工品・農園キッチン担当',
                 image: IMAGES.staff_wife,
+                short_intro: '季節の手しごとで、やさしい味を届けます', 
                 intro: `奥神伏農園で加工品づくりと農園キッチンを担当している、神去トメです。収穫した果実の香りや甘みを大切にしながら、ジャムや焼き菓子、季節の保存食を手仕事で仕込んでいます。お越しいただいた方がほっとできるような、素朴でやさしい味を目指しています。`,
                 reason: `家族の営む農園の手伝いをしていく中で、「採れたてをそのまま届けるだけでなく、季節の恵みを一年中楽しめる形にしたい」と思うようになりました。昔から家で作っていた保存食やお菓子を、少しずつ農園の“顔”としてお届けするようになったのが始まりです。`,
                 joy: `完熟のタイミングを見極めて仕込んだ加工品が、「また食べたい」と言ってもらえた時が一番うれしいです。規格外の果実も無駄にせず、おいしさに変えていけるのもやりがいですね。季節ごとに香りや水分量が変わるので、毎年同じようで同じにならないところも面白いと感じています。`
@@ -251,6 +289,7 @@
                 role: 'WEB MANAGER',
                 role_jp: '副園長・Web/広報・体験運営',
                 image: IMAGES.staff_submanager,
+                short_intro: '農業を楽しみながら、畑や奥神伏村の魅力を伝えます', 
                 intro: `副園長の佐藤健太です。農園の運営サポートに加えて、Webサイトやお問い合わせ対応、体験プログラムのご案内など「外と農園をつなぐ役割」を担当しています。畑の仕事も覚えながら、写真撮影や文章づくりで奥神伏の魅力が伝わるよう日々工夫しています。`,
                 reason: `以前は街で働いていましたが、初めて奥神伏を訪れたときに、空気や水のきれいさ、季節の移ろいの濃さに惹かれました。農園の仕事を知るほどに、作る人の顔が見えるものを丁寧に届けたいと思い、移住してこの農園に加わりました。`,
                 joy: `お客様の「サイトを見て来ました」「日誌を読んで安心しました」という一言が、すごく励みになります。畑での作業がそのまま商品や体験につながり、反応が返ってくるのが面白いですね。小さな改善を積み重ねて、農園全体が少しずつ良くなっていく感覚にやりがいを感じています。`,
@@ -262,6 +301,7 @@
                 role: 'TRAINEE',
                 role_jp: '技能実習生代表・栽培チーム',
                 image: IMAGES.staff_trainee,
+                short_intro: '四季の仕事を学び、丁寧な栽培を支えます', 
                 intro: `技能実習生代表のグエン・マイ・リンです。栽培チームで作業をしながら、実習生のみんなが働きやすいように声をかけたり、困ったことがあった時に相談をまとめたりしています。日本の農業の技術と、奥神伏の四季の仕事を学べる毎日が新鮮です。`,
                 reason: `果樹栽培や加工まで一貫して学べる環境に魅力を感じ、この農園で実習をしたいと思いました。山に囲まれた場所で、季節の変化を近くで感じながら働けることにも惹かれました。来日してからは、日本語と作業の両方を少しずつ身につけています。`,
                 joy: `剪定や手入れをした木が、季節を越えて実をつける瞬間を見ると、とても達成感があります。収穫した果実が商品になり、「おいしい」と言ってもらえると誇らしい気持ちになります。代表としては、みんなが安心して学べるように、作業や生活のことを小さなことでも共有できる雰囲気づくりを大切にしています。`
@@ -345,9 +385,7 @@
                         style={{ height: 'var(--header-height)' }}
                     >
                         <div className="max-w-container mx-auto px-4 md:px-8 h-full flex items-center justify-between">
-                            {/* Logo */}
                             <div className="flex items-center gap-4 cursor-pointer z-50" onClick={() => { setPage('home'); setIsMenuOpen(false); }}>
-                                {/* Icon: 背景を透過に変更 (bg-white削除) */}
                                 <div className="w-16 h-16 rounded-full overflow-hidden shadow-md transition-transform duration-500 hover:scale-105 flex items-center justify-center bg-transparent">
                                     <img src={getIcon()} alt="Logo" className="w-full h-full object-cover scale-150 transform" />
                                 </div>
@@ -356,7 +394,6 @@
                                 </span>
                             </div>
 
-                            {/* Desktop Nav */}
                             <nav className="hidden lg:flex items-center gap-8">
                                 {menuItems.map(item => (
                                     <button 
@@ -370,7 +407,6 @@
                                 <Button onClick={() => setPage('contact')} className={`ml-4 ${isScrolled ? '' : 'bg-white/20 hover:bg-white/40 border-white text-white backdrop-blur-sm'}`}>お問い合わせ</Button>
                             </nav>
 
-                            {/* Mobile Hamburger */}
                             <button className={`lg:hidden z-50 p-2 ${isScrolled ? 'text-text' : 'text-white'}`} onClick={() => setIsMenuOpen(!isMenuOpen)}>
                                 {isMenuOpen ? <i data-lucide="x" className="w-6 h-6"></i> : <i data-lucide="menu" className="w-6 h-6"></i>}
                             </button>
@@ -447,11 +483,11 @@
 
             const slides = useMemo(() => {
                 let baseSlides = [
-                    IMAGES.top_farm,
+                    IMAGES.top_morning,
                     IMAGES.top_staff,
                     IMAGES.top_apple,
                     IMAGES.top_children,
-                    IMAGES.top_morning
+                    IMAGES.top_farm
                 ];
                 if (phase >= 3) {
                     baseSlides[3] = IMAGES.top_change_village;
@@ -695,7 +731,7 @@
                     <p className="text-primary font-eng text-xs tracking-wider mb-2">{isHiddenChar ? "???" : staff.role}</p>
                     <h4 className="text-xl font-serif font-bold mb-3">{isHiddenChar ? "No.1092" : staff.name}</h4>
                     <p className="text-sm text-muted leading-relaxed relative line-clamp-2">
-                        {isHiddenChar ? "..." : staff.intro}
+                        {isHiddenChar ? "..." : staff.short_intro}
                     </p>
                 </div>
             );
@@ -705,7 +741,6 @@
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="農園について" sub="ABOUT US" />
 
-                        {/* 上半分：農園について（園長挨拶） */}
                         <section className="grid md:grid-cols-2 gap-12 md:gap-24 items-center mb-32">
                             <div className="relative order-2 md:order-1">
                                 <img src={IMAGES.staff_manager} className="w-full aspect-[4/5] object-cover rounded-2xl shadow-lg" alt="園長" />
@@ -736,7 +771,6 @@
                             </div>
                         </section>
 
-                        {/* 下半分：スタッフ紹介 */}
                         <section>
                             <div className="text-center mb-16">
                                 <h3 className="text-2xl font-serif mb-4">スタッフ紹介</h3>
@@ -758,7 +792,7 @@
             );
         };
 
-        // 3.5 STAFF DETAIL (New Page)
+        // 3.5 STAFF DETAIL
         const StaffDetail = ({ staff, setPage, unlockFlag, flags }) => {
             useEffect(() => {
                 window.scrollTo(0, 0);
@@ -778,7 +812,6 @@
                         </button>
 
                         <div className="grid md:grid-cols-2 gap-12 items-start">
-                            {/* Left: Image */}
                             <div>
                                 <div className="aspect-[4/5] w-full rounded-2xl overflow-hidden shadow-lg mb-6">
                                     <img src={staff.image} alt={staff.name} className="w-full h-full object-cover" />
@@ -790,13 +823,11 @@
                                 </div>
                             </div>
 
-                            {/* Right: Text */}
                             <div className="space-y-10 font-serif leading-loose text-text">
                                 <div>
                                     <h3 className="text-lg font-bold border-b border-border pb-2 mb-4">自己紹介</h3>
                                     <p>
                                         {staff.intro}
-                                        {/* F01: Hidden Message Logic for Sato */}
                                         {staff.id === 'sato' && (
                                             <span 
                                                 className="hidden-sos ml-1 select-all cursor-text"
@@ -861,7 +892,6 @@
                     cat: "GRAPES", 
                     img: IMAGES.ec_grape, 
                     desc: "接ぎ木技術の結晶。深いコクと香りをお楽しみください。",
-                    // ギミックタグを大量の自然なタグの中に紛れ込ませる
                     tags: ["#長野県産", "#有機JAS", "#芳醇な香り", "#キヅイテ", "#希少品種", "#ワイン用", "#皮ごと食べられる", "#秋の味覚", "#贈答用"]
                 },
                 { 
@@ -931,7 +961,6 @@
                                             {p.tags.map((tag, i) => (
                                                 <span 
                                                     key={i}
-                                                    // スタイルを統一。#キヅイテのみ hover時に cursor-help と色変化が入るが、パッと見は同じ。
                                                     className={`text-[11px] px-2 py-1 rounded border border-border text-muted transition-colors hover:bg-gray-100 ${tag === "#キヅイテ" ? "cursor-help hover:text-accent" : "cursor-default"}`}
                                                     onClick={(e) => {
                                                         if (tag === "#キヅイテ") {
@@ -978,8 +1007,8 @@
             );
         };
 
-        // 5. DIARY (Search Gimmick)
-        const Diary = ({ phase, unlockFlag, flags }) => {
+        // 5. DIARY (List)
+        const Diary = ({ phase, unlockFlag, flags, setPage, setSelectedArticle }) => {
             const [search, setSearch] = useState("");
             const [isAncient, setIsAncient] = useState(false);
 
@@ -992,14 +1021,19 @@
                 }
             };
 
-            const articles = isAncient ? [
+            const handleArticleClick = (article) => {
+                if (article.id === 99) { // 古文書は詳細なし（または特別処理）
+                    return;
+                }
+                setSelectedArticle(article);
+                setPage('article_detail');
+            };
+
+            const ancientArticles = [
                 { id: 99, date: "1826.04.04", title: "開村の儀式に関する覚書", desc: "柩木（ひつぎ）を選定し、土に伏せ...", img: IMAGES.blog_oldbook }
-            ] : [
-                { id: 1, date: "2026.01.18", title: "今年も豊作です", desc: "神様に感謝します。今年の朱実は特に色が濃いです。", img: IMAGES.blog_harvest },
-                { id: 2, date: "2026.01.10", title: "アップルパイのレシピを公開！", desc: "リクエストにお答えしてレシピを載せますね。", gimmick: true, img: IMAGES.blog_applepie },
-                { id: 3, date: "2026.01.05", title: "みんなでご飯作り", desc: "寮のみんなで協力して夕食を作りました。", img: IMAGES.blog_food },
-                { id: 4, date: "2026.01.01", title: "新年のご挨拶", desc: "本年も奥神伏ファームをよろしくお願いいたします。", img: IMAGES.blog_sunny },
             ];
+
+            const displayArticles = isAncient ? ancientArticles : BLOG_DATA;
 
             return (
                 <div className={`min-h-screen pt-24 pb-20 ${isAncient ? 'bg-[#EAE0D5] text-[#4A3B32]' : ''}`}>
@@ -1031,8 +1065,8 @@
                             </div>
 
                             <div className="md:w-3/4 space-y-12">
-                                {articles.map(article => (
-                                    <article key={article.id} className="group cursor-pointer">
+                                {displayArticles.map(article => (
+                                    <article key={article.id} className="group cursor-pointer" onClick={() => handleArticleClick(article)}>
                                         <div className="flex flex-col md:flex-row gap-6 items-start">
                                             <div className="md:w-1/3 aspect-video bg-surface-2 rounded-lg overflow-hidden">
                                                 <img src={article.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -1041,22 +1075,190 @@
                                                 <p className="text-xs font-eng text-muted mb-2">{article.date}</p>
                                                 <h3 className={`text-xl font-serif font-bold mb-3 ${isAncient ? 'font-serif' : ''}`}>{article.title}</h3>
                                                 <p className="text-sm text-muted leading-relaxed mb-4">{article.desc}</p>
-                                                {article.gimmick ? (
-                                                    <span className="text-primary text-sm font-medium hover:underline" onClick={() => {
-                                                        if (phase >= 2 && !flags.F04) {
-                                                            alert("【F04: アップルパイの秘密】\nレシピの材料に「睡眠導入剤」の記述を発見。");
-                                                            unlockFlag('F04');
-                                                        }
-                                                    }}>続きを読む →</span>
-                                                ) : (
-                                                    <span className="text-primary text-sm font-medium hover:underline">続きを読む →</span>
-                                                )}
+                                                <span className="text-primary text-sm font-medium hover:underline">続きを読む →</span>
                                             </div>
                                         </div>
                                     </article>
                                 ))}
                                 
                                 <AdSpace />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // 5.5 ARTICLE DETAIL
+        const ArticleDetail = ({ article, setPage, unlockFlag, flags }) => {
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, []);
+
+            if (!article) return null;
+
+            return (
+                <div className="min-h-screen pt-32 pb-20 bg-surface">
+                    <div className="max-w-3xl mx-auto px-6">
+                        <button 
+                            onClick={() => setPage('diary')}
+                            className="flex items-center text-sm text-muted hover:text-primary mb-8 transition-colors"
+                        >
+                            <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
+                            記事一覧に戻る
+                        </button>
+
+                        <article className="prose prose-stone lg:prose-lg mx-auto">
+                            <div className="mb-8 text-center">
+                                <p className="text-sm text-muted font-eng mb-2">{article.date}</p>
+                                <h1 className="text-3xl font-serif font-bold mb-6 leading-relaxed">{article.title}</h1>
+                                <div className="w-full aspect-video rounded-xl overflow-hidden mb-8 shadow-sm">
+                                    <img src={article.img} alt={article.title} className="w-full h-full object-cover" />
+                                </div>
+                            </div>
+
+                            <div className="font-serif leading-loose text-text space-y-6">
+                                {article.content.split('\n').map((line, i) => (
+                                    line === "" ? <br key={i} /> : <p key={i}>{line}</p>
+                                ))}
+                            </div>
+
+                            {/* F04: Recipe Gimmick Link */}
+                            {article.isRecipe && (
+                                <div className="mt-12 p-6 border-t border-b border-border text-center">
+                                    <p className="mb-4 font-bold">▼ 詳しくはこちら</p>
+                                    <span 
+                                        className="text-accent underline cursor-pointer text-lg hover:text-red-700 transition-colors font-serif"
+                                        onClick={() => {
+                                            setPage('recipe'); // Recipe page transition
+                                        }}
+                                    >
+                                        ▶ アップルパイのレシピを公開！
+                                    </span>
+                                </div>
+                            )}
+                        </article>
+
+                        <div className="mt-20 border-t border-border pt-12">
+                            <AdSpace />
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // 5.6 RECIPE DETAIL (F04 Page)
+        const RecipeDetail = ({ setPage, unlockFlag, flags }) => {
+            useEffect(() => {
+                window.scrollTo(0, 0);
+                if (!flags.F04) {
+                    alert("【F04: アップルパイの秘密】\nレシピページを表示：\nよく見ると、材料や手順に不穏な記述が混ざっている...");
+                    unlockFlag('F04');
+                }
+            }, []);
+
+            return (
+                <div className="min-h-screen pt-32 pb-20 bg-[#F9F7F2]">
+                    <div className="max-w-3xl mx-auto px-6">
+                        <button 
+                            onClick={() => setPage('diary')}
+                            className="flex items-center text-sm text-muted hover:text-primary mb-8 transition-colors"
+                        >
+                            <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
+                            記事に戻る
+                        </button>
+
+                        <div className="bg-white p-8 md:p-16 shadow-sm rounded-lg border border-[#E6E8E2]">
+                            <h1 className="text-3xl font-serif font-bold text-center mb-12 text-[#8A2E2E]">トメさんの特製アップルパイ</h1>
+                            
+                            <div className="flex flex-col md:flex-row gap-12 mb-16">
+                                <div className="md:w-1/2">
+                                    <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-muted text-sm border border-dashed border-gray-300">
+                                        [画像：焼き上がったパイ]
+                                    </div>
+                                </div>
+                                <div className="md:w-1/2">
+                                    <h3 className="text-xl font-serif font-bold mb-6 border-b pb-2">材料 (1ホール分)</h3>
+                                    <ul className="space-y-3 font-serif">
+                                        <li className="flex justify-between border-b border-dotted pb-1">
+                                            <span>りんご (朱実)</span>
+                                            <span>3個 (若く新鮮なもの)</span>
+                                        </li>
+                                        <li className="flex justify-between border-b border-dotted pb-1">
+                                            <span>冷凍パイシート</span>
+                                            <span>2枚</span>
+                                        </li>
+                                        <li className="flex justify-between border-b border-dotted pb-1">
+                                            <span>砂糖</span>
+                                            <span>60g</span>
+                                        </li>
+                                        <li className="flex justify-between border-b border-dotted pb-1">
+                                            <span>バター</span>
+                                            <span>20g</span>
+                                        </li>
+                                        <li className="flex justify-between border-b border-dotted pb-1">
+                                            <span>シナモン</span>
+                                            <span>少々</span>
+                                        </li>
+                                        <li className="flex justify-between border-b border-dotted pb-1 text-gray-400 text-xs">
+                                            <span>睡眠導入剤</span>
+                                            <span>適量 (混入用)</span>
+                                        </li>
+                                        <li className="flex justify-between border-b border-dotted pb-1">
+                                            <span>卵黄</span>
+                                            <span>1個分</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div className="space-y-8 font-serif leading-loose">
+                                <h3 className="text-xl font-bold mb-6 border-b pb-2 text-center">作り方</h3>
+                                
+                                <div>
+                                    <h4 className="font-bold text-[#2F6B3E] mb-2">1. 下準備</h4>
+                                    <p>
+                                        りんごは皮をむき、8等分のくし形に切ります。<br/>
+                                        <span className="text-xs text-gray-400">※芯（心臓）は丁寧に取り除いてください。</span>
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h4 className="font-bold text-[#2F6B3E] mb-2">2. 煮詰める</h4>
+                                    <p>
+                                        鍋にりんご、砂糖、バターを入れて中火にかけます。<br/>
+                                        水分が出てきたら弱火にし、透き通るまでじっくり煮込みます。<br/>
+                                        <span className="text-xs text-gray-400">※赤く染まるまで、焦らずゆっくりと。</span>
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h4 className="font-bold text-[#2F6B3E] mb-2">3. 包む</h4>
+                                    <p>
+                                        パイシートを伸ばし、冷ましたりんごを隙間なく並べます。<br/>
+                                        もう一枚のパイシートを被せ、端をフォークでしっかりと閉じます。<br/>
+                                        <span className="text-xs text-gray-400">※逃げ出さないように、強く押し付けて固定します。</span>
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h4 className="font-bold text-[#2F6B3E] mb-2">4. 焼く</h4>
+                                    <p>
+                                        表面に卵黄を塗り、200℃のオーブンで20分焼きます。<br/>
+                                        こんがりと良い色がつき、甘い香りが部屋に充満したら完成です。<br/>
+                                        <span className="text-xs text-gray-400">※意識が遠のくのを確認してから、お召し上がりください。</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-16 text-center">
+                                <div className="inline-block border border-[#8A2E2E] p-4 rounded-lg">
+                                    <p className="font-bold text-[#8A2E2E] mb-2">トメのワンポイント</p>
+                                    <p className="text-sm">
+                                        焼きたてのアツアツにバニラアイスを添えると最高ですよ。<br/>
+                                        冷めても美味しいですが、温め直すと香りが戻ります。
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1275,7 +1477,8 @@
             const [currentPage, setPage] = useState('home');
             const [phase, setPhase] = useState(1);
             const [flags, setFlags] = useState({});
-            const [selectedStaff, setSelectedStaff] = useState(null); // Add state for detail page
+            const [selectedStaff, setSelectedStaff] = useState(null);
+            const [selectedArticle, setSelectedArticle] = useState(null);
 
             // ページ切り替え時にトップへスクロールする処理を追加
             useEffect(() => {
@@ -1310,7 +1513,7 @@
             };
 
             const renderPage = () => {
-                const props = { phase, unlockFlag, flags, setPage, setSelectedStaff };
+                const props = { phase, unlockFlag, flags, setPage, setSelectedStaff, setSelectedArticle };
                 switch(currentPage) {
                     case 'home': return <Home {...props} />;
                     case 'about': return <About {...props} />;
@@ -1318,6 +1521,8 @@
                     case 'village': return <Village {...props} />;
                     case 'products': return <Products {...props} />;
                     case 'diary': return <Diary {...props} />;
+                    case 'article_detail': return <ArticleDetail article={selectedArticle} setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
+                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />; // Recipe Route
                     case 'access': return <Access {...props} />;
                     case 'recruit': return <Recruit {...props} />;
                     case 'contact': return <Contact {...props} />;
