@@ -202,142 +202,6 @@
             transform: scale(1.2);
         }
 
-        /* ---------------------------------- */
-
-        /* Horror Glitch Effects (Old) - Kept for compatibility if needed */
-        @keyframes glitch-skew {
-            0% { transform: skew(0deg); }
-            /* ... omitted ... */
-            100% { transform: skew(0deg); }
-        }
-
-        @keyframes glitch-anim {
-            0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
-            20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
-            40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
-            60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
-            80% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 1px); }
-            100% { clip-path: inset(30% 0 20% 0); transform: translate(1px, -1px); }
-        }
-
-        .horror-bg {
-            background-color: #1a1a1a !important; /* Dark Grey Background */
-            border-color: #8A2E2E !important;
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-            z-index: 50;
-        }
-
-        .glitch-text {
-            position: relative;
-            /* メインの色を鮮やかな赤に変更し、黒の縁取りを追加して視認性を向上 */
-            color: #ff0000 !important;
-            text-shadow: 1px 1px 0 #000, -1px -1px 0 #3a0000;
-            font-weight: 900;
-            letter-spacing: 0.1em;
-            animation: glitch-skew 0.3s infinite linear alternate-reverse;
-            display: inline-block;
-        }
-
-        .glitch-text::before,
-        .glitch-text::after {
-            content: attr(data-text);
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: #1a1a1a;
-            overflow: hidden;
-        }
-
-        .glitch-text::before {
-            left: 2px;
-            /* 薄い青(#00ffff)を廃止し、暗い赤(#8b0000)に変更 */
-            text-shadow: -1px 0 #8b0000;
-            clip-path: inset(0 0 0 0);
-            animation: glitch-anim 2s infinite linear alternate-reverse;
-        }
-
-        .glitch-text::after {
-            left: -2px;
-            /* マゼンタ(#ff00ff)を廃止し、血のような濃い赤(#500000)に変更 */
-            text-shadow: -1px 0 #500000;
-            clip-path: inset(0 0 0 0);
-            animation: glitch-anim 2s infinite linear alternate-reverse;
-        }
-
-        /* Screen Noise Overlay */
-        .screen-noise {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 9999;
-            pointer-events: none;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.15),
-                rgba(0, 0, 0, 0.15) 1px,
-                transparent 1px,
-                transparent 4px
-            );
-            background-size: 100% 4px;
-            animation: scanline 10s linear infinite;
-            mix-blend-mode: multiply;
-        }
-        @keyframes scanline {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 100%; }
-        }
-
-        body {
-            font-family: 'Noto Sans JP', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            transition: background-color 2s ease, color 2s ease, filter 2s ease;
-            -webkit-font-smoothing: antialiased;
-            line-height: 1.8;
-        }
-
-        h1, h2, h3, .font-serif {
-            font-family: 'Shippori Mincho', serif;
-            letter-spacing: 0.05em;
-        }
-
-        /* Utility Animations */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-up {
-            animation: fadeUp 0.8s ease-out forwards;
-        }
-
-        .hover-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .hover-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Gimmick Specific Styles */
-        .hidden-sos::selection {
-            background: var(--accent);
-            color: white;
-        }
-        .hidden-sos {
-            color: transparent; /* Text matches bg normally via props, but css backup */
-        }
-        
-        /* Lightbox Overlay */
-        .lightbox-overlay {
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(4px);
-        }
-
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
@@ -410,19 +274,19 @@
             village_snow: `${BASE_URL}/images/villagesnow.png`,
             village_night: `${BASE_URL}/images/villagenight.png`,
 
-            // Access (Specified fixed URL)
+            // Access
             access_map: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/access.png",
 
             // Video
             victim_movie: `${BASE_URL}/images/victimmovie.mp4`,
 
-            // Recruit (New Image)
+            // Recruit
             recruiting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/recruiting.png",
 
-            // Recipe (New Image)
+            // Recipe
             recipe_applepie: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/applepierecipe.png",
 
-            // Grafting (New Image)
+            // Grafting
             grafting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/52ef76040ef84ddb52fdf5827a52315f4c4d9ec7/images/tsugiki.png"
         };
 
@@ -442,7 +306,7 @@
                 title: "村の子供達とアップルパイ作り体験！",
                 desc: "子供達とのパイ作り！リクエストにお答えしてレシピも掲載しますね！",
                 img: IMAGES.blog_applepie,
-                isRecipe: true, // ギミック用フラグ
+                isRecipe: true,
                 content: `先日、村の子どもたちと一緒にアップルパイ作り体験をしました。\nエプロン姿で集まってくるだけで、キッチンが一気ににぎやかに。りんごを切る音、笑い声、甘い香り…この時間だけで「やってよかったなあ」と思えます。\n\n今回使ったりんごは、しっかり甘みがのったものを選んで、シナモンは控えめに。\n小さな手でも扱いやすいように、りんごは少し薄めにカットして、火入れも短時間で仕上げました。\n\n焼きあがったパイをオーブンから出した瞬間、\n「わあ〜！」って声が揃うのが最高です。\n表面がこんがり色づいて、ふわっと立つ香りがたまりません。\n\n「おうちでも作りたい！」という声が多かったので、リクエストにお応えしてレシピもまとめました。\n下のリンクからご覧いただけます👇\n\n最後に、参加してくれたみんなへ。\n包丁を持つ手も、パイ生地を伸ばす手も、とっても真剣で素敵でした。\nまた季節が変わったら、別のお菓子でも一緒に作ろうね。`
             },
             {
@@ -499,14 +363,13 @@
                 reason: `果樹栽培や加工まで一貫して学べる環境に魅力を感じ、この農園で実習をしたいと思いました。山に囲まれた場所で、季節の変化を近くで感じながら働けることにも惹かれました。来日してからは、日本語と作業の両方を少しずつ身につけています。`,
                 joy: `剪定や手入れをした木が、季節を越えて実をつける瞬間を見ると、とても達成感があります。収穫した果実が商品になり、「おいしい」と言ってもらえると誇らしい気持ちになります。代表としては、みんなが安心して学べるように、作業や生活のことを小さなことでも共有できる雰囲気づくりを大切にしています。`
             },
-            // 追加: 元技能実習生 ヴー・タイン・アン (確認用として常時表示)
             {
                 id: 'vu',
                 name: 'ヴー・タイン・アン',
                 role: 'FORMER TRAINEE',
                 role_jp: '元技能実習生',
                 image: IMAGES.staff_victim,
-                short_intro: '', // 一言紹介はブランク
+                short_intro: '', 
                 intro: `ヴー・タイン・アンと申しました。技能実習生として奥神伏農園で栽培作業を担当しておりました。畑での作業や収穫、簡単な管理業務などに携わり、日本の農業を現場で学ぶ日々を過ごしておりました。静かな環境で、季節の移ろいを身近に感じながら働いておりました。`,
                 reason: `日本の果樹栽培や農園運営に興味を持ち、技能実習制度を通じてこの農園に来ることを決めました。山に囲まれた場所で、自然と向き合いながら仕事ができる点に魅力を感じておりました。説明会や資料では、丁寧に技術を学べる環境だと紹介されておりました。`,
                 joy: `手入れを続けた木が実をつけた瞬間を見ることに、やりがいを感じておりました。剪定や整枝の作業を任されることもあり、少しずつ信頼されているように感じておりました。作業の合間に、農園の静けさや空気の匂いに落ち着きを覚えることもありました。決められた手順を守り、指示に従って仕事を進める日々を過ごしておりました。`,
@@ -517,14 +380,44 @@
 
         const MAX_FLAGS = 13;
 
-        // --- Common Components ---
-
+        // Common Components
         const SectionTitle = ({ title, sub, align = "center" }) => (
             <div className={`mb-12 md:mb-20 text-${align} animate-fade-up`}>
                 <p className="text-primary font-eng text-sm tracking-widest font-semibold mb-3 uppercase">{sub}</p>
                 <h2 className="text-3xl md:text-4xl font-serif text-text leading-tight">{title}</h2>
             </div>
         );
+
+        // 新規追加: メッセージ表示用モーダル
+        const MessageModal = ({ isOpen, message, onClose, isHorror }) => {
+            if (!isOpen) return null;
+            return (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
+                    <div 
+                        className={`p-8 rounded-lg shadow-2xl max-w-md w-full text-center relative animate-fade-up ${
+                            isHorror 
+                                ? 'bg-black text-red-600 border-4 border-red-900 font-handwriting' 
+                                : 'bg-white text-text border border-gray-200'
+                        }`} 
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <p className={`text-lg mb-8 leading-relaxed ${isHorror ? 'font-bold text-xl' : 'font-serif'}`}>
+                            {message.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
+                        </p>
+                        <button 
+                            onClick={onClose}
+                            className={`px-8 py-3 rounded-full transition-colors font-bold text-sm ${
+                                isHorror 
+                                    ? 'bg-red-900 text-black hover:bg-red-700' 
+                                    : 'bg-primary text-white hover:bg-primary-2'
+                            }`}
+                        >
+                            閉じる
+                        </button>
+                    </div>
+                </div>
+            );
+        };
 
         const Button = ({ children, onClick, variant = "primary", className = "", type = "button" }) => {
             const baseClass = "inline-flex items-center justify-center px-8 py-3 rounded-full transition-all duration-300 font-medium tracking-wide text-sm";
@@ -939,7 +832,7 @@
                     <p className="text-primary font-eng text-xs tracking-wider mb-2">{isHiddenChar ? "???" : staff.role}</p>
                     <h4 className="text-xl font-serif font-bold mb-3">{isHiddenChar ? "No.1092" : staff.name}</h4>
                     <p className="text-sm text-muted leading-relaxed relative line-clamp-2">
-                        {isHiddenChar ? "..." : (staff.short_intro || <span className="opacity-0">...</span>)}
+                        {isHiddenChar ? "..." : staff.short_intro}
                     </p>
                 </div>
             );
@@ -990,11 +883,9 @@
                                     <StaffCard key={staff.id} staff={staff} />
                                 ))}
                                 
-                                {/* 以前の "No.1092" (isHiddenChar) のカードは、
-                                   今回追加したヴー・タイン・アン（staff_victim）がその役割を担うため、
-                                   重複しないように削除します。
-                                   （フェーズによる出現制御は STAFF_DATA のフィルタリング等で実装予定）
-                                */}
+                                {phase >= 3 && (
+                                    <StaffCard isHiddenChar={true} />
+                                )}
                             </div>
                         </section>
                     </div>
@@ -1829,29 +1720,87 @@
         const Contact = ({ phase, unlockFlag, flags }) => {
             const [placeholder, setPlaceholder] = useState("山田 太郎");
             
-            const handleFocus = () => {
-                if (phase >= 1 && !flags.F12) {
-                    setPlaceholder("助けて助けて助けて助けて");
-                    setTimeout(() => {
-                        setPlaceholder("山田 太郎");
-                        alert("【F12: 問い合わせの乗っ取り】\n入力欄が一瞬「助けて」に変化した。何者かがSOSを送っている。");
-                        unlockFlag('F12');
-                    }, 300);
-                }
+            // 通常時のプレースホルダー
+            const defaultPlaceholders = {
+                name: '山田 太郎',
+                email: 'example@email.com',
+                address: '任意',
+                message: 'ご質問をご記入ください…'
+            };
+            
+            // ホラー時のプレースホルダー
+            const horrorPlaceholders = {
+                name: 'ヴー・タイン・アン',
+                email: 'もういない',
+                address: '俺も逃げられない',
+                message: '助けて'
+            };
+
+            const [placeholders, setPlaceholders] = useState(defaultPlaceholders);
+            const [seenCount, setSeenCount] = useState({ name: false, email: false, address: false, message: false });
+            const [modalState, setModalState] = useState({ isOpen: false, message: "", isHorror: false }); // モーダル管理用
+            
+            // 全ての異変を目撃したか？
+            const allSeen = Object.values(seenCount).every(v => v);
+
+            // ホラー演出トリガー
+            const triggerHorror = (field) => {
+                // Phase 1以上でのみ発動（または無条件でも可）
+                if (phase < 1) return;
+
+                // プレースホルダーを書き換え
+                setPlaceholders(prev => ({ ...prev, [field]: horrorPlaceholders[field] }));
+                
+                // 目撃フラグをON
+                setSeenCount(prev => ({ ...prev, [field]: true }));
+
+                // 0.2〜0.5秒後に元に戻す
+                const duration = Math.random() * 300 + 200; 
+                setTimeout(() => {
+                    setPlaceholders(prev => ({ ...prev, [field]: defaultPlaceholders[field] }));
+                }, duration);
             };
 
             const handleSubmit = (e) => {
                 e.preventDefault();
-                if (phase >= 4) {
-                    const evidenceCount = Object.values(flags).filter(Boolean).length;
-                    if (evidenceCount >= 10) {
-                         alert("【TRUE END】\n全員逮捕。佐藤副園長は救出された。");
-                    } else {
-                         alert("【NORMAL END】\n警察が到着したが、主要メンバーは逃亡していた。");
+                
+                if (allSeen) {
+                    // 全て目撃した後 -> ホラーメッセージ
+                    setModalState({
+                        isOpen: true,
+                        message: "証拠に気づいたか？助けてくれ、もう限界だ",
+                        isHorror: true
+                    });
+
+                    if (!flags.F12) unlockFlag('F12');
+                    
+                    // Phase 4 (通報可能状態) の場合
+                    if (phase >= 4) {
+                        const evidenceCount = Object.values(flags).filter(Boolean).length;
+                        // メッセージを上書きしてエンディングへ
+                        let endMessage = "";
+                        if (evidenceCount >= 10) {
+                             endMessage = "【TRUE END】\n全員逮捕。佐藤副園長は救出された。";
+                        } else {
+                             endMessage = "【NORMAL END】\n警察が到着したが、主要メンバーは逃亡していた。";
+                        }
+                        // 少し遅らせてエンディング表示（あるいはF12演出後に再度押させるかだが、ここでは上書き）
+                        setTimeout(() => {
+                             setModalState({
+                                isOpen: true,
+                                message: endMessage,
+                                isHorror: true
+                            });
+                            unlockFlag('F13');
+                        }, 2000);
                     }
-                    unlockFlag('F13');
                 } else {
-                    alert("現在、お問い合わせが混雑しております。");
+                    // まだ目撃していない場合（または初期状態） -> 通常メッセージ
+                    setModalState({
+                        isOpen: true,
+                        message: "現在問い合わせが混雑しています。\nご迷惑をおかけして申し訳ありません。",
+                        isHorror: false
+                    });
                 }
             };
 
@@ -1863,42 +1812,74 @@
                         <div className="max-w-3xl mx-auto grid md:grid-cols-3 gap-12">
                             <div className="md:col-span-2">
                                 <form className="space-y-8" onSubmit={handleSubmit}>
+                                    {/* ① お名前 */}
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-muted tracking-wider">お名前 <span className="text-accent">*</span></label>
                                         <input 
                                             type="text" 
-                                            className="w-full border-b border-border bg-transparent py-2 outline-none focus:border-primary transition-colors text-lg"
-                                            placeholder={placeholder}
-                                            onFocus={handleFocus}
-                                            required
+                                            className="w-full border-b border-border bg-transparent py-2 outline-none focus:border-primary transition-colors text-lg placeholder-gray-400"
+                                            placeholder={placeholders.name}
+                                            onFocus={() => triggerHorror('name')}
+                                            onMouseEnter={() => triggerHorror('name')}
+                                            /* required 削除 */
                                         />
                                     </div>
+
+                                    {/* ② メールアドレス */}
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-muted tracking-wider">メールアドレス <span className="text-accent">*</span></label>
                                         <input 
                                             type="email" 
-                                            className="w-full border-b border-border bg-transparent py-2 outline-none focus:border-primary transition-colors text-lg"
-                                            placeholder="example@email.com"
-                                            required
+                                            className="w-full border-b border-border bg-transparent py-2 outline-none focus:border-primary transition-colors text-lg placeholder-gray-400"
+                                            placeholder={placeholders.email}
+                                            onFocus={() => triggerHorror('email')}
+                                            onMouseEnter={() => triggerHorror('email')}
+                                            /* required 削除 */
                                         />
                                     </div>
+
+                                    {/* ③ 住所 (新規追加) */}
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-muted tracking-wider">住所</label>
+                                        <input 
+                                            type="text" 
+                                            className="w-full border-b border-border bg-transparent py-2 outline-none focus:border-primary transition-colors text-lg placeholder-gray-400"
+                                            placeholder={placeholders.address}
+                                            onFocus={() => triggerHorror('address')}
+                                            onMouseEnter={() => triggerHorror('address')}
+                                        />
+                                    </div>
+
+                                    {/* ④ お問い合わせ内容 */}
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-muted tracking-wider">
                                             {phase >= 4 ? "通報内容・特定した住所" : "お問い合わせ内容"} <span className="text-accent">*</span>
                                         </label>
                                         <textarea 
                                             rows="5" 
-                                            className="w-full border-b border-border bg-transparent py-2 outline-none focus:border-primary transition-colors text-base resize-none"
-                                            placeholder={phase >= 4 ? "住所と証拠を入力してください" : "ご質問をご記入ください"}
-                                            required
+                                            className="w-full border-b border-border bg-transparent py-2 outline-none focus:border-primary transition-colors text-base resize-none placeholder-gray-400"
+                                            placeholder={placeholders.message}
+                                            onFocus={() => triggerHorror('message')}
+                                            onMouseEnter={() => triggerHorror('message')}
+                                            /* required 削除 */
                                         ></textarea>
                                     </div>
-                                    <Button type="submit" className={`w-full py-4 ${phase >= 4 ? 'bg-accent hover:bg-red-900' : ''}`}>
+
+                                    {/* 送信ボタン: Buttonコンポーネントを使わず直接記述してスタイル競合を回避 */}
+                                    <button 
+                                        type="submit" 
+                                        className={`w-full py-4 rounded-full transition-all duration-500 font-medium tracking-wide text-sm shadow-lg hover:shadow-xl ${
+                                            allSeen 
+                                                ? 'bg-black text-white hover:bg-gray-900 border-none' // 全確認後: 黒背景・白文字
+                                                : (phase >= 4 ? 'bg-accent text-white hover:bg-red-900' : 'bg-white text-black border border-text hover:bg-gray-100') // 初期: 白背景・黒文字
+                                        }`}
+                                    >
                                         {phase >= 4 ? "警察に通報する" : "送信する"}
-                                    </Button>
+                                    </button>
                                 </form>
                             </div>
 
+                            {/* Contact Info */}
                             <div className="md:col-span-1 border-l border-border pl-8 hidden md:block">
                                 <h4 className="font-bold font-serif mb-6">お電話でのお問い合わせ</h4>
                                 <p className="text-2xl font-eng mb-2">026-000-0000</p>
@@ -1913,6 +1894,14 @@
                             </div>
                         </div>
                     </div>
+
+                    {/* モーダル表示 */}
+                    <MessageModal 
+                        isOpen={modalState.isOpen} 
+                        message={modalState.message} 
+                        isHorror={modalState.isHorror}
+                        onClose={() => setModalState({ ...modalState, isOpen: false })} 
+                    />
                 </div>
             );
         };
@@ -1967,7 +1956,7 @@
                     case 'products': return <Products {...props} />;
                     case 'diary': return <Diary {...props} />;
                     case 'article_detail': return <ArticleDetail article={selectedArticle} setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
-                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
+                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />; // Recipe Route
                     case 'grafting': return <GraftingDetail setPage={setPage} />; // New Route
                     case 'access': return <Access {...props} />;
                     case 'recruit': return <Recruit {...props} />;
