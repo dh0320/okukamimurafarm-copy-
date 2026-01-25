@@ -33,6 +33,7 @@
                         serif: ['Shippori Mincho', 'serif'],
                         sans: ['Noto Sans JP', 'sans-serif'],
                         eng: ['Montserrat', 'sans-serif'],
+                        handwriting: ['Yomogi', 'cursive'], // 手書き風フォントを追加
                     },
                     maxWidth: {
                         'container': '1200px',
@@ -55,10 +56,10 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Yomogiを追加 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600;700&family=Montserrat:wght@400;600&family=Yomogi&display=swap" rel="stylesheet">
 
     <style>
         /* Design Tokens & Theme Variables */
@@ -106,6 +107,189 @@
             --primary: #8A2E2E; /* Green becomes Blood Red */
             --primary-2: #601818;
             filter: contrast(1.2) grayscale(0.8);
+        }
+
+        /* --- 本格ホラー演出用の追加スタイル --- */
+        
+        /* 画面全体のノイズアニメーション */
+        @keyframes noise-anim {
+            0% { clip-path: inset(40% 0 61% 0); transform: skew(0.7deg); }
+            20% { clip-path: inset(92% 0 1% 0); transform: skew(0.5deg); }
+            40% { clip-path: inset(43% 0 1% 0); transform: skew(0.2deg); }
+            60% { clip-path: inset(25% 0 58% 0); transform: skew(0.7deg); }
+            80% { clip-path: inset(54% 0 7% 0); transform: skew(0.1deg); }
+            100% { clip-path: inset(58% 0 43% 0); transform: skew(0.6deg); }
+        }
+
+        /* 赤黒いオーバーレイとノイズ */
+        .horror-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(20, 0, 0, 0.85); /* 血のような暗闇 */
+            z-index: 9999;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            mix-blend-mode: multiply;
+            overflow: hidden;
+        }
+
+        /* 背景に不気味な画像をちらつかせる */
+        .horror-overlay::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* 村の夜画像をノイズとして使用 */
+            background: url('https://raw.githubusercontent.com/dh0320/okukamimurafarm/f273d82bcc2d0c08371bb0e42d3169c3d36e4b9b/images/villagenight.png') no-repeat center center;
+            background-size: cover;
+            opacity: 0.3;
+            filter: grayscale(100%) contrast(200%);
+            mix-blend-mode: overlay;
+            animation: noise-anim 0.15s infinite; /* 高速で震える */
+        }
+
+        /* 周辺減光（トンネル効果） */
+        .horror-vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 40%, #000 90%);
+            z-index: 10000;
+            pointer-events: none;
+        }
+
+        /* 激しいテキストグリッチと振動 */
+        .intense-glitch {
+            font-family: 'Yomogi', cursive !important; /* 手書きフォント */
+            color: #ffffff !important; /* ★視認性向上のため白に変更 */
+            
+            /* 元の位置で強調表示するスタイル */
+            position: relative;
+            display: inline-block;
+            
+            font-size: 1.8rem !important; /* 読みやすいようサイズアップ */
+            font-weight: 900;
+            
+            /* 白文字の周りに赤と黒の縁取りを入れてホラー感を維持 */
+            text-shadow: 2px 2px 0px #8A2E2E, -2px -2px 0 #000;
+            animation: text-shake 0.1s infinite; /* 激しく震える */
+            letter-spacing: 0.1em;
+            
+            /* 背景が暗くても目立つように少し光らせる */
+            filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.8));
+        }
+        
+        @keyframes text-shake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(2px, 2px) rotate(1deg); }
+            50% { transform: translate(-2px, -2px) rotate(-1deg); }
+            75% { transform: translate(-2px, 2px) rotate(0.5deg); }
+            100% { transform: translate(2px, -2px) rotate(-0.5deg); }
+        }
+
+        /* チェックボックス自体の歪み */
+        .distorted-checkbox {
+            filter: invert(1) drop-shadow(0 0 5px red);
+            transform: scale(1.2);
+        }
+
+        /* ---------------------------------- */
+
+        /* Horror Glitch Effects (Old) - Kept for compatibility if needed */
+        @keyframes glitch-skew {
+            0% { transform: skew(0deg); }
+            /* ... omitted ... */
+            100% { transform: skew(0deg); }
+        }
+
+        @keyframes glitch-anim {
+            0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
+            20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+            40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+            60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+            80% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 1px); }
+            100% { clip-path: inset(30% 0 20% 0); transform: translate(1px, -1px); }
+        }
+
+        .horror-bg {
+            background-color: #1a1a1a !important; /* Dark Grey Background */
+            border-color: #8A2E2E !important;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+            z-index: 50;
+        }
+
+        .glitch-text {
+            position: relative;
+            /* メインの色を鮮やかな赤に変更し、黒の縁取りを追加して視認性を向上 */
+            color: #ff0000 !important;
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #3a0000;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            animation: glitch-skew 0.3s infinite linear alternate-reverse;
+            display: inline-block;
+        }
+
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+
+        .glitch-text::before {
+            left: 2px;
+            /* 薄い青(#00ffff)を廃止し、暗い赤(#8b0000)に変更 */
+            text-shadow: -1px 0 #8b0000;
+            clip-path: inset(0 0 0 0);
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::after {
+            left: -2px;
+            /* マゼンタ(#ff00ff)を廃止し、血のような濃い赤(#500000)に変更 */
+            text-shadow: -1px 0 #500000;
+            clip-path: inset(0 0 0 0);
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+        }
+
+        /* Screen Noise Overlay */
+        .screen-noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 4px
+            );
+            background-size: 100% 4px;
+            animation: scanline 10s linear infinite;
+            mix-blend-mode: multiply;
+        }
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
         }
 
         body {
@@ -233,7 +417,10 @@
             victim_movie: `${BASE_URL}/images/victimmovie.mp4`,
 
             // Recruit (New Image)
-            recruiting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/recruiting.png"
+            recruiting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/recruiting.png",
+
+            // Recipe (New Image)
+            recipe_applepie: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/applepierecipe.png"
         };
 
         // 記事データ
@@ -276,13 +463,13 @@
         // スタッフ詳細データ
         const STAFF_DATA = [
             {
-                id: 'tome',
-                name: '神去 トメ',
+                id: 'yuri',
+                name: '神去 由利',
                 role: 'PROCESSOR',
                 role_jp: '加工品・農園キッチン担当',
                 image: IMAGES.staff_wife,
                 short_intro: '季節の手しごとで、やさしい味を届けます', 
-                intro: `奥神伏農園で加工品づくりと農園キッチンを担当している、神去トメです。収穫した果実の香りや甘みを大切にしながら、ジャムや焼き菓子、季節の保存食を手仕事で仕込んでいます。お越しいただいた方がほっとできるような、素朴でやさしい味を目指しています。`,
+                intro: `奥神伏農園で加工品づくりと農園キッチンを担当している、神去由利です。収穫した果実の香りや甘みを大切にしながら、ジャムや焼き菓子、季節の保存食を手仕事で仕込んでいます。お越しいただいた方がほっとできるような、素朴でやさしい味を目指しています。`,
                 reason: `家族の営む農園の手伝いをしていく中で、「採れたてをそのまま届けるだけでなく、季節の恵みを一年中楽しめる形にしたい」と思うようになりました。昔から家で作っていた保存食やお菓子を、少しずつ農園の“顔”としてお届けするようになったのが始まりです。`,
                 joy: `完熟のタイミングを見極めて仕込んだ加工品が、「また食べたい」と言ってもらえた時が一番うれしいです。規格外の果実も無駄にせず、おいしさに変えていけるのもやりがいですね。季節ごとに香りや水分量が変わるので、毎年同じようで同じにならないところも面白いと感じています。`
             },
@@ -389,6 +576,7 @@
                     >
                         <div className="max-w-container mx-auto px-4 md:px-8 h-full flex items-center justify-between">
                             <div className="flex items-center gap-4 cursor-pointer z-50" onClick={() => { setPage('home'); setIsMenuOpen(false); }}>
+                                {/* Icon: 背景を透過に変更 (bg-white削除) */}
                                 <div className="w-16 h-16 rounded-full overflow-hidden shadow-md transition-transform duration-500 hover:scale-105 flex items-center justify-center bg-transparent">
                                     <img src={getIcon()} alt="Logo" className="w-full h-full object-cover scale-150 transform" />
                                 </div>
@@ -885,7 +1073,7 @@
                     price: "¥3,500", 
                     cat: "PROCESSED", 
                     img: IMAGES.ec_applepie, 
-                    desc: "トメさん秘伝のレシピ。サクサクのパイ生地と甘酸っぱいフィリング。",
+                    desc: "由利さん秘伝のレシピ。サクサクのパイ生地と甘酸っぱいフィリング。",
                     tags: ["#母の味", "#無添加", "#手作り", "#おやつ", "#焼きたて", "#人気No.1"]
                 },
                 { 
@@ -1154,60 +1342,60 @@
         const RecipeDetail = ({ setPage, unlockFlag, flags }) => {
             useEffect(() => {
                 window.scrollTo(0, 0);
+                // ギミックは一旦削除し、ページを開いた時点でサイレントにフラグ回収だけ行う
                 if (!flags.F04) {
-                    alert("【F04: アップルパイの秘密】\nレシピページを表示：\nよく見ると、材料や手順に不穏な記述が混ざっている...");
                     unlockFlag('F04');
                 }
             }, []);
 
             return (
-                <div className="min-h-screen pt-32 pb-20 bg-[#F9F7F2]">
+                // フォントを手書き風 (font-handwriting) に変更
+                <div className="min-h-screen pt-32 pb-20 bg-[#F9F7F2] font-handwriting">
                     <div className="max-w-3xl mx-auto px-6">
                         <button 
                             onClick={() => setPage('diary')}
-                            className="flex items-center text-sm text-muted hover:text-primary mb-8 transition-colors"
+                            className="flex items-center text-sm text-muted hover:text-primary mb-8 transition-colors font-sans"
                         >
                             <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
                             記事に戻る
                         </button>
 
-                        <div className="bg-white p-8 md:p-16 shadow-sm rounded-lg border border-[#E6E8E2]">
-                            <h1 className="text-3xl font-serif font-bold text-center mb-12 text-[#8A2E2E]">トメさんの特製アップルパイ</h1>
+                        <div className="bg-white p-8 md:p-16 shadow-lg rounded-lg border-2 border-[#E6E8E2] relative transform rotate-1">
+                            {/* マスキングテープ風の装飾 (CSSで表現) */}
+                            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-[#e0e0e0]/80 rotate-2 shadow-sm"></div>
+
+                            <h1 className="text-4xl font-bold text-center mb-12 text-[#8A2E2E]">由利さんの特製アップルパイ</h1>
                             
                             <div className="flex flex-col md:flex-row gap-12 mb-16">
                                 <div className="md:w-1/2">
-                                    <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-muted text-sm border border-dashed border-gray-300">
-                                        [画像：焼き上がったパイ]
+                                    <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden border-4 border-white shadow-md transform -rotate-2">
+                                        <img src={IMAGES.recipe_applepie} className="w-full h-full object-cover" alt="焼き上がったアップルパイ" />
                                     </div>
                                 </div>
                                 <div className="md:w-1/2">
-                                    <h3 className="text-xl font-serif font-bold mb-6 border-b pb-2">材料 (1ホール分)</h3>
-                                    <ul className="space-y-3 font-serif">
-                                        <li className="flex justify-between border-b border-dotted pb-1">
-                                            <span>りんご (朱実)</span>
-                                            <span>3個 (若く新鮮なもの)</span>
+                                    <h3 className="text-2xl font-bold mb-6 border-b-2 border-dotted border-[#8A2E2E] pb-2 inline-block">材料 (1ホール分)</h3>
+                                    <ul className="space-y-4 text-lg">
+                                        <li className="flex justify-between border-b border-dotted pb-1 border-gray-300">
+                                            <span>りんご</span>
+                                            <span className="text-right">3個</span>
                                         </li>
-                                        <li className="flex justify-between border-b border-dotted pb-1">
+                                        <li className="flex justify-between border-b border-dotted pb-1 border-gray-300">
                                             <span>冷凍パイシート</span>
                                             <span>2枚</span>
                                         </li>
-                                        <li className="flex justify-between border-b border-dotted pb-1">
+                                        <li className="flex justify-between border-b border-dotted pb-1 border-gray-300">
                                             <span>砂糖</span>
                                             <span>60g</span>
                                         </li>
-                                        <li className="flex justify-between border-b border-dotted pb-1">
+                                        <li className="flex justify-between border-b border-dotted pb-1 border-gray-300">
                                             <span>バター</span>
                                             <span>20g</span>
                                         </li>
-                                        <li className="flex justify-between border-b border-dotted pb-1">
+                                        <li className="flex justify-between border-b border-dotted pb-1 border-gray-300">
                                             <span>シナモン</span>
                                             <span>少々</span>
                                         </li>
-                                        <li className="flex justify-between border-b border-dotted pb-1 text-gray-400 text-xs">
-                                            <span>睡眠導入剤</span>
-                                            <span>適量 (混入用)</span>
-                                        </li>
-                                        <li className="flex justify-between border-b border-dotted pb-1">
+                                        <li className="flex justify-between border-b border-dotted pb-1 border-gray-300">
                                             <span>卵黄</span>
                                             <span>1個分</span>
                                         </li>
@@ -1215,53 +1403,55 @@
                                 </div>
                             </div>
 
-                            <div className="space-y-8 font-serif leading-loose">
-                                <h3 className="text-xl font-bold mb-6 border-b pb-2 text-center">作り方</h3>
+                            <div className="space-y-10 text-lg leading-loose">
+                                <h3 className="text-2xl font-bold mb-6 border-b-2 border-dotted border-[#8A2E2E] pb-2 text-center">作り方</h3>
                                 
                                 <div>
-                                    <h4 className="font-bold text-[#2F6B3E] mb-2">1. 下準備</h4>
+                                    <h4 className="font-bold text-[#2F6B3E] text-xl mb-2">1. 下準備</h4>
                                     <p>
-                                        りんごは皮をむき、8等分のくし形に切ります。<br/>
-                                        <span className="text-xs text-gray-400">※芯（心臓）は丁寧に取り除いてください。</span>
+                                        りんごは皮をむき、芯を除いて8等分のくし形に切る。<br/>
+                                        <span className="text-base text-muted">※奥神伏の「新鮮な朱美」がおすすめです。</span><br/>
+                                        <span className="text-base text-muted">※火の通りを均一にしたい場合は、5mm程度の薄切りにしてもよい。</span>
                                     </p>
                                 </div>
 
                                 <div>
-                                    <h4 className="font-bold text-[#2F6B3E] mb-2">2. 煮詰める</h4>
+                                    <h4 className="font-bold text-[#2F6B3E] text-xl mb-2">2. 煮詰める</h4>
                                     <p>
-                                        鍋にりんご、砂糖、バターを入れて中火にかけます。<br/>
-                                        水分が出てきたら弱火にし、透き通るまでじっくり煮込みます。<br/>
-                                        <span className="text-xs text-gray-400">※赤く染まるまで、焦らずゆっくりと。</span>
+                                        鍋にりんご、砂糖、バター、シナモンを入れて中火にかける。<br/>
+                                        水分が出てきたら弱火にし、焦がさないように時々混ぜながら煮込む。<br/>
+                                        りんごが透き通り、少し芯が残る程度になったら、最後に火をやや強めて余分な水分を飛ばす。<br/>
+                                        火を止め、完全に冷ましておく。
                                     </p>
                                 </div>
 
                                 <div>
-                                    <h4 className="font-bold text-[#2F6B3E] mb-2">3. 包む</h4>
+                                    <h4 className="font-bold text-[#2F6B3E] text-xl mb-2">3. 包む</h4>
                                     <p>
-                                        パイシートを伸ばし、冷ましたりんごを隙間なく並べます。<br/>
-                                        もう一枚のパイシートを被せ、端をフォークでしっかりと閉じます。<br/>
-                                        <span className="text-xs text-gray-400">※逃げ出さないように、強く押し付けて固定します。</span>
+                                        冷凍パイシートを室温で少し戻し、軽く伸ばす。<br/>
+                                        1枚を天板に敷き、冷ましたりんごを中央がやや高くなるように並べる。<br/>
+                                        もう1枚のパイシートを被せ、端をフォークでしっかりと閉じる。<br/>
+                                        表面に2〜3か所、包丁で切り込みを入れて蒸気の逃げ道を作る。
                                     </p>
                                 </div>
 
                                 <div>
-                                    <h4 className="font-bold text-[#2F6B3E] mb-2">4. 焼く</h4>
+                                    <h4 className="font-bold text-[#2F6B3E] text-xl mb-2">4. 焼く</h4>
                                     <p>
-                                        表面に卵黄を塗り、200℃のオーブンで20分焼きます。<br/>
-                                        こんがりと良い色がつき、甘い香りが部屋に充満したら完成です。<br/>
-                                        <span className="text-xs text-gray-400">※意識が遠のくのを確認してから、お召し上がりください。</span>
+                                        表面に卵黄を薄く塗る。<br/>
+                                        200℃に予熱したオーブンで20分焼き、焼き色が足りない場合は180℃に下げてさらに10〜15分焼く。<br/>
+                                        表面がこんがり色づき、甘い香りが立ち上ってきたら完成。
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="mt-16 text-center">
-                                <div className="inline-block border border-[#8A2E2E] p-4 rounded-lg">
-                                    <p className="font-bold text-[#8A2E2E] mb-2">トメのワンポイント</p>
-                                    <p className="text-sm">
-                                        焼きたてのアツアツにバニラアイスを添えると最高ですよ。<br/>
-                                        冷めても美味しいですが、温め直すと香りが戻ります。
-                                    </p>
-                                </div>
+                            <div className="mt-16 bg-[#fffbf0] p-8 rounded-lg border-2 border-dashed border-[#dcdcdc] transform rotate-1">
+                                <h4 className="font-bold text-center mb-6 text-[#8A2E2E] text-xl">由利のワンポイント</h4>
+                                <ul className="list-disc pl-5 space-y-3 text-base text-muted">
+                                    <li>りんごは煮すぎず、水分を飛ばして冷ますことで底がベタつかない</li>
+                                    <li>切り込みを入れることで、きれいに膨らみ割れにくくなる</li>
+                                    <li>焼き時間はオーブンによって調整する</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -1326,6 +1516,7 @@
         const Recruit = ({ phase, unlockFlag, flags }) => {
             const [checks, setChecks] = useState({});
             const [horrorStates, setHorrorStates] = useState({});
+            const [globalHorror, setGlobalHorror] = useState(false); // 画面全体のホラー状態管理
 
             const recruitItems = [
                 { id: 'farm_love', label: '農作業が好き！日本の農業に興味がある！' },
@@ -1344,37 +1535,51 @@
                 const isChecked = !checks[item.id];
                 setChecks(prev => ({ ...prev, [item.id]: isChecked }));
 
-                // ホラー演出ロジック (チェックを入れた時、かつホラー設定がある場合)
+                // ホラー演出ロジック
                 if (isChecked && item.horror) {
-                    // ホラー表示ON
                     setHorrorStates(prev => ({ ...prev, [item.id]: true }));
+                    setGlobalHorror(true);
                     
-                    // F05フラグ解除: 演出を見た時
-                    if (!flags.F05) {
-                        // 少し遅延させてアラートを出す（演出を見せるため）
-                        setTimeout(() => {
+                    // 1. 暗転終了 (0.6秒)
+                    setTimeout(() => {
+                        setGlobalHorror(false);
+                        setHorrorStates(prev => ({ ...prev, [item.id]: false }));
+                        
+                        // 2. 演出終了後にアラート (初回のみ)
+                        if (!flags.F05) {
                             alert("【F05: 外国人実習生の秘密】\nチェック項目の文字が一瞬変化した。\n「ニゲラレナイ」「イケニエ」...\nこれは募集ではなく、選別だ。");
                             unlockFlag('F05');
-                        }, 600);
-                    }
-
-                    // 0.5秒後に元に戻す
-                    setTimeout(() => {
-                        setHorrorStates(prev => ({ ...prev, [item.id]: false }));
-                    }, 500);
+                        }
+                    }, 600);
                 }
             };
 
             return (
-                <div className="min-h-screen pt-24 pb-20 bg-surface-2">
-                    <div className="max-w-container mx-auto px-6">
+                <div className="min-h-screen pt-24 pb-20 bg-surface-2 relative">
+                    {/* 本格的なホラーオーバーレイ (z-index: 9999) */}
+                    {globalHorror && (
+                        <>
+                            <div className="horror-overlay"></div>
+                            <div className="horror-vignette"></div>
+                            <img 
+                                src={IMAGES.staff_victim} 
+                                className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full object-cover opacity-10 mix-blend-overlay z-[9998] pointer-events-none animate-pulse" 
+                            />
+                        </>
+                    )}
+
+                    {/* ★修正ポイント: 
+                       ホラー時は親コンテナの z-index を 10000 に引き上げ、
+                       オーバーレイ(z-9999)よりも手前に表示させる 
+                    */}
+                    <div className={`max-w-container mx-auto px-6 relative transition-all duration-100 ${globalHorror ? 'z-[10000]' : 'z-10'}`}>
                         <SectionTitle title="採用情報" sub="RECRUIT" />
 
                         <div className="grid md:grid-cols-2 gap-12 mb-20">
                             <div>
-                                <img src={IMAGES.recruiting} className="w-full h-full object-cover rounded-2xl shadow-lg" />
+                                <img src={IMAGES.recruiting} className={`w-full h-full object-cover rounded-2xl shadow-lg transition-all duration-100 ${globalHorror ? 'grayscale contrast-150 brightness-50' : ''}`} />
                             </div>
-                            <div className="flex flex-col justify-center">
+                            <div className={`flex flex-col justify-center transition-opacity duration-100 ${globalHorror ? 'opacity-20' : 'opacity-100'}`}>
                                 <h3 className="text-2xl font-serif mb-6">海外技能実習生 募集中</h3>
                                 <p className="leading-loose text-muted mb-8">
                                     日本の伝統的な農業技術を学びませんか？<br/>
@@ -1389,36 +1594,46 @@
                             </div>
                         </div>
 
-                        <div className="bg-surface p-8 md:p-12 rounded-2xl max-w-3xl mx-auto shadow-sm">
-                            <h4 className="font-bold font-serif text-xl mb-8 text-center text-primary">こんなあなたを募集中！</h4>
+                        {/* チェックボックスエリア */}
+                        <div className={`bg-surface p-8 md:p-12 rounded-2xl max-w-3xl mx-auto shadow-sm transition-all duration-100 ${
+                            globalHorror 
+                                ? 'bg-[#0a0a0a] border-4 border-red-900 shadow-[0_0_50px_rgba(255,0,0,0.5)] transform scale-105' 
+                                : ''
+                        }`}>
+                            <h4 className={`font-bold font-serif text-xl mb-8 text-center ${globalHorror ? 'text-red-600 animate-pulse' : 'text-primary'}`}>
+                                {globalHorror ? "逃ゲラレナイ…逃ゲラレナイ…" : "こんなあなたを募集中！"}
+                            </h4>
                             <div className="space-y-4">
                                 {recruitItems.map((item) => (
                                     <label 
                                         key={item.id}
-                                        className={`flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
-                                            checks[item.id] ? 'bg-primary/5 border-primary' : 'bg-white border-border hover:bg-surface-2'
+                                        className={`flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-all duration-100 ${
+                                            horrorStates[item.id] 
+                                                ? 'bg-black/80 border-red-600 shadow-inner' // ホラー時の行スタイル
+                                                : (checks[item.id] ? 'bg-primary/5 border-primary' : 'bg-white border-border hover:bg-surface-2')
                                         }`}
                                     >
                                         <input 
                                             type="checkbox" 
                                             checked={!!checks[item.id]} 
                                             onChange={() => handleCheck(item)} 
-                                            className="accent-primary w-5 h-5 shrink-0" 
+                                            className={`w-5 h-5 shrink-0 transition-all ${horrorStates[item.id] ? 'distorted-checkbox' : 'accent-primary'}`} 
                                         />
                                         <span 
                                             className={`text-sm font-medium transition-colors duration-100 ${
                                                 horrorStates[item.id] 
-                                                    ? 'text-[#8A2E2E] font-bold text-lg tracking-widest' // ホラー時のスタイル
+                                                    ? 'intense-glitch' // 元の位置でバグる
                                                     : 'text-text'
                                             }`}
+                                            data-text={horrorStates[item.id] ? item.horror : item.label}
                                         >
                                             {horrorStates[item.id] ? item.horror : item.label}
                                         </span>
                                     </label>
                                 ))}
                             </div>
-                            <p className="text-xs text-center text-muted mt-8">
-                                ※一つでも当てはまる方は、ぜひお問い合わせください。
+                            <p className={`text-xs text-center mt-8 ${globalHorror ? 'text-red-800 font-bold' : 'text-muted'}`}>
+                                {globalHorror ? "※生きて帰れる保証はありません" : "※一つでも当てはまる方は、ぜひお問い合わせください。"}
                             </p>
                         </div>
                     </div>
