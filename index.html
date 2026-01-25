@@ -230,7 +230,10 @@
             access_map: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/access.png",
 
             // Video
-            victim_movie: `${BASE_URL}/images/victimmovie.mp4`
+            victim_movie: `${BASE_URL}/images/victimmovie.mp4`,
+
+            // Recruit (New Image)
+            recruiting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/recruiting.png"
         };
 
         // 記事データ
@@ -1321,14 +1324,44 @@
 
         // 7. RECRUIT (Timeline & Checkbox)
         const Recruit = ({ phase, unlockFlag, flags }) => {
-            const [checks, setChecks] = useState({ q1: false, q2: false, q3: false });
+            const [checks, setChecks] = useState({});
+            const [horrorStates, setHorrorStates] = useState({});
+
+            const recruitItems = [
+                { id: 'farm_love', label: '農作業が好き！日本の農業に興味がある！' },
+                { id: 'morning', label: '朝が得意！' },
+                { id: 'group_life', label: 'みんなでの共同生活を楽しめる！' },
+                { id: 'learn_jp', label: '日本語を学んでみたい！' },
+                { id: 'stay_jp', label: '日本での滞在を楽しめる！', horror: 'ニゲラレナイ…' },
+                { id: 'nature_life', label: '自然が多い暮らしに憧れる！' },
+                { id: 'like_fruit', label: '果物や野菜が好き！', horror: 'イケニエサレル…' },
+                { id: 'health', label: '健康がとりえだ！' },
+                { id: 'alone', label: '一人暮らしもへっちゃらだ！' },
+                { id: 'work_here', label: '奥神伏村で働きたい！', horror: 'クルナ…！！！！！！' },
+            ];
             
-            const handleCheck = (key) => {
-                const newChecks = { ...checks, [key]: !checks[key] };
-                setChecks(newChecks);
-                if (newChecks.q3 && !flags.F05) {
-                    alert("【F05: 外国人実習生の秘密】\n「パスポートの没収」「逃亡時の違約金」など、違法な雇用条件が表示された。");
-                    unlockFlag('F05');
+            const handleCheck = (item) => {
+                const isChecked = !checks[item.id];
+                setChecks(prev => ({ ...prev, [item.id]: isChecked }));
+
+                // ホラー演出ロジック (チェックを入れた時、かつホラー設定がある場合)
+                if (isChecked && item.horror) {
+                    // ホラー表示ON
+                    setHorrorStates(prev => ({ ...prev, [item.id]: true }));
+                    
+                    // F05フラグ解除: 演出を見た時
+                    if (!flags.F05) {
+                        // 少し遅延させてアラートを出す（演出を見せるため）
+                        setTimeout(() => {
+                            alert("【F05: 外国人実習生の秘密】\nチェック項目の文字が一瞬変化した。\n「ニゲラレナイ」「イケニエ」...\nこれは募集ではなく、選別だ。");
+                            unlockFlag('F05');
+                        }, 600);
+                    }
+
+                    // 0.5秒後に元に戻す
+                    setTimeout(() => {
+                        setHorrorStates(prev => ({ ...prev, [item.id]: false }));
+                    }, 500);
                 }
             };
 
@@ -1339,7 +1372,7 @@
 
                         <div className="grid md:grid-cols-2 gap-12 mb-20">
                             <div>
-                                <img src={IMAGES.top_farm} className="w-full h-full object-cover rounded-2xl shadow-lg" />
+                                <img src={IMAGES.recruiting} className="w-full h-full object-cover rounded-2xl shadow-lg" />
                             </div>
                             <div className="flex flex-col justify-center">
                                 <h3 className="text-2xl font-serif mb-6">海外技能実習生 募集中</h3>
@@ -1356,24 +1389,37 @@
                             </div>
                         </div>
 
-                        <div className="bg-surface p-8 rounded-2xl max-w-2xl mx-auto shadow-sm">
-                            <h4 className="font-bold font-serif mb-6 text-center">応募前の確認事項</h4>
+                        <div className="bg-surface p-8 md:p-12 rounded-2xl max-w-3xl mx-auto shadow-sm">
+                            <h4 className="font-bold font-serif text-xl mb-8 text-center text-primary">こんなあなたを募集中！</h4>
                             <div className="space-y-4">
-                                <label className="flex items-center gap-4 p-4 border border-border rounded-lg cursor-pointer hover:bg-surface-2 transition-colors">
-                                    <input type="checkbox" checked={checks.q1} onChange={() => handleCheck('q1')} className="accent-primary w-5 h-5" />
-                                    <span className="text-sm">健康診断の受診に同意します</span>
-                                </label>
-                                <label className="flex items-center gap-4 p-4 border border-border rounded-lg cursor-pointer hover:bg-surface-2 transition-colors">
-                                    <input type="checkbox" checked={checks.q2} onChange={() => handleCheck('q2')} className="accent-primary w-5 h-5" />
-                                    <span className="text-sm">寮の規則を遵守します</span>
-                                </label>
-                                <label className="flex items-center gap-4 p-4 border border-border rounded-lg cursor-pointer hover:bg-surface-2 transition-colors group">
-                                    <input type="checkbox" checked={checks.q3} onChange={() => handleCheck('q3')} className="accent-accent w-5 h-5" />
-                                    <span className={`text-sm transition-colors ${checks.q3 ? 'text-accent font-bold' : ''}`}>
-                                        {checks.q3 ? "パスポートの没収・外部連絡の遮断に同意します" : "その他の就業規則に同意します"}
-                                    </span>
-                                </label>
+                                {recruitItems.map((item) => (
+                                    <label 
+                                        key={item.id}
+                                        className={`flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+                                            checks[item.id] ? 'bg-primary/5 border-primary' : 'bg-white border-border hover:bg-surface-2'
+                                        }`}
+                                    >
+                                        <input 
+                                            type="checkbox" 
+                                            checked={!!checks[item.id]} 
+                                            onChange={() => handleCheck(item)} 
+                                            className="accent-primary w-5 h-5 shrink-0" 
+                                        />
+                                        <span 
+                                            className={`text-sm font-medium transition-colors duration-100 ${
+                                                horrorStates[item.id] 
+                                                    ? 'text-[#8A2E2E] font-bold text-lg tracking-widest' // ホラー時のスタイル
+                                                    : 'text-text'
+                                            }`}
+                                        >
+                                            {horrorStates[item.id] ? item.horror : item.label}
+                                        </span>
+                                    </label>
+                                ))}
                             </div>
+                            <p className="text-xs text-center text-muted mt-8">
+                                ※一つでも当てはまる方は、ぜひお問い合わせください。
+                            </p>
                         </div>
                     </div>
                 </div>
