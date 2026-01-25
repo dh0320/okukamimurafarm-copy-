@@ -420,7 +420,10 @@
             recruiting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/recruiting.png",
 
             // Recipe (New Image)
-            recipe_applepie: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/applepierecipe.png"
+            recipe_applepie: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/applepierecipe.png",
+
+            // Grafting (New Image)
+            grafting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/52ef76040ef84ddb52fdf5827a52315f4c4d9ec7/images/tsugiki.png"
         };
 
         // 記事データ
@@ -495,6 +498,20 @@
                 intro: `技能実習生代表のグエン・マイ・リンです。栽培チームで作業をしながら、実習生のみんなが働きやすいように声をかけたり、困ったことがあった時に相談をまとめたりしています。日本の農業の技術と、奥神伏の四季の仕事を学べる毎日が新鮮です。`,
                 reason: `果樹栽培や加工まで一貫して学べる環境に魅力を感じ、この農園で実習をしたいと思いました。山に囲まれた場所で、季節の変化を近くで感じながら働けることにも惹かれました。来日してからは、日本語と作業の両方を少しずつ身につけています。`,
                 joy: `剪定や手入れをした木が、季節を越えて実をつける瞬間を見ると、とても達成感があります。収穫した果実が商品になり、「おいしい」と言ってもらえると誇らしい気持ちになります。代表としては、みんなが安心して学べるように、作業や生活のことを小さなことでも共有できる雰囲気づくりを大切にしています。`
+            },
+            // 追加: 元技能実習生 ヴー・タイン・アン (確認用として常時表示)
+            {
+                id: 'vu',
+                name: 'ヴー・タイン・アン',
+                role: 'FORMER TRAINEE',
+                role_jp: '元技能実習生',
+                image: IMAGES.staff_victim,
+                short_intro: '', // 一言紹介はブランク
+                intro: `ヴー・タイン・アンと申しました。技能実習生として奥神伏農園で栽培作業を担当しておりました。畑での作業や収穫、簡単な管理業務などに携わり、日本の農業を現場で学ぶ日々を過ごしておりました。静かな環境で、季節の移ろいを身近に感じながら働いておりました。`,
+                reason: `日本の果樹栽培や農園運営に興味を持ち、技能実習制度を通じてこの農園に来ることを決めました。山に囲まれた場所で、自然と向き合いながら仕事ができる点に魅力を感じておりました。説明会や資料では、丁寧に技術を学べる環境だと紹介されておりました。`,
+                joy: `手入れを続けた木が実をつけた瞬間を見ることに、やりがいを感じておりました。剪定や整枝の作業を任されることもあり、少しずつ信頼されているように感じておりました。作業の合間に、農園の静けさや空気の匂いに落ち着きを覚えることもありました。決められた手順を守り、指示に従って仕事を進める日々を過ごしておりました。`,
+                special_note: "※現在は掲載と更新を行っておりません…",
+                special_image: IMAGES.staff_victim2
             }
         ];
 
@@ -922,7 +939,7 @@
                     <p className="text-primary font-eng text-xs tracking-wider mb-2">{isHiddenChar ? "???" : staff.role}</p>
                     <h4 className="text-xl font-serif font-bold mb-3">{isHiddenChar ? "No.1092" : staff.name}</h4>
                     <p className="text-sm text-muted leading-relaxed relative line-clamp-2">
-                        {isHiddenChar ? "..." : staff.short_intro}
+                        {isHiddenChar ? "..." : (staff.short_intro || <span className="opacity-0">...</span>)}
                     </p>
                 </div>
             );
@@ -973,9 +990,11 @@
                                     <StaffCard key={staff.id} staff={staff} />
                                 ))}
                                 
-                                {phase >= 3 && (
-                                    <StaffCard isHiddenChar={true} />
-                                )}
+                                {/* 以前の "No.1092" (isHiddenChar) のカードは、
+                                   今回追加したヴー・タイン・アン（staff_victim）がその役割を担うため、
+                                   重複しないように削除します。
+                                   （フェーズによる出現制御は STAFF_DATA のフィルタリング等で実装予定）
+                                */}
                             </div>
                         </section>
                     </div>
@@ -985,6 +1004,8 @@
 
         // 3.5 STAFF DETAIL
         const StaffDetail = ({ staff, setPage, unlockFlag, flags }) => {
+            const [modalImage, setModalImage] = useState(null);
+
             useEffect(() => {
                 window.scrollTo(0, 0);
             }, []);
@@ -1045,9 +1066,33 @@
                                     <h3 className="text-lg font-bold border-b border-border pb-2 mb-4">仕事をしていて楽しいこと、やりがい</h3>
                                     <p>{staff.joy}</p>
                                 </div>
+
+                                {/* 特別な注釈リンク (ヴー・タイン・アン用) */}
+                                {staff.special_note && (
+                                    <div className="mt-8 pt-4 border-t border-dotted border-gray-400">
+                                        <span 
+                                            className="text-xs text-gray-400 cursor-pointer hover:text-red-800 transition-colors"
+                                            onClick={() => setModalImage(staff.special_image)}
+                                        >
+                                            {staff.special_note}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
+
+                    {/* Image Modal for Special Note */}
+                    {modalImage && (
+                        <div 
+                            className="fixed inset-0 z-[100] bg-black flex items-center justify-center p-4 cursor-pointer"
+                            onClick={() => setModalImage(null)}
+                        >
+                            <div className="max-w-3xl w-full">
+                                <img src={modalImage} alt="Hidden Evidence" className="w-full h-auto shadow-2xl rounded" />
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         };
@@ -1342,7 +1387,6 @@
         const RecipeDetail = ({ setPage, unlockFlag, flags }) => {
             useEffect(() => {
                 window.scrollTo(0, 0);
-                // ギミックは一旦削除し、ページを開いた時点でサイレントにフラグ回収だけ行う
                 if (!flags.F04) {
                     unlockFlag('F04');
                 }
@@ -1452,6 +1496,146 @@
                                     <li>切り込みを入れることで、きれいに膨らみ割れにくくなる</li>
                                     <li>焼き時間はオーブンによって調整する</li>
                                 </ul>
+                            </div>
+
+                            {/* 隠しリンク：接木の説明ページへ */}
+                            <div className="mt-20 text-center">
+                                <span 
+                                    className="text-xs text-gray-300 hover:text-[#8A2E2E] cursor-pointer transition-colors font-sans tracking-widest"
+                                    onClick={() => setPage('grafting')}
+                                >
+                                    美味しいりんごを作るには
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // 5.7 GRAFTING DETAIL (Horror/Explanation Page)
+        const GraftingDetail = ({ setPage }) => {
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, []);
+
+            return (
+                <div className="min-h-screen pt-32 pb-20 bg-[#111] text-[#ccc] font-serif">
+                    <div className="max-w-2xl mx-auto px-6">
+                        <button 
+                            onClick={() => setPage('recipe')}
+                            className="flex items-center text-sm text-[#555] hover:text-[#888] mb-12 transition-colors font-sans"
+                        >
+                            <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
+                            戻る
+                        </button>
+
+                        <div className="space-y-16 animate-fade-up">
+                            {/* Header */}
+                            <div className="text-center border-b border-[#333] pb-12">
+                                <h1 className="text-3xl md:text-4xl font-bold tracking-[0.2em] mb-6 text-[#eee]">接木とは</h1>
+                                <p className="leading-loose text-sm md:text-base">
+                                    接木（つぎき）とは、異なる2つの植物を接合し、<br/>
+                                    1本の木として育てる技術です。<br/><br/>
+                                    根を持つ側を<span className="text-[#8A2E2E] font-bold">台木（だいぎ）</span>、<br/>
+                                    実や枝をつけたい側を<span className="text-[#8A2E2E] font-bold">穂木（ほぎ）</span>と呼びます。
+                                </p>
+                            </div>
+
+                            {/* Image Placeholder -> 実画像に変更 */}
+                            <div className="w-full aspect-video bg-[#0a0a0a] border border-[#333] flex items-center justify-center overflow-hidden">
+                                <img src={IMAGES.grafting} alt="接木の概念図" className="w-full h-full object-contain opacity-80" />
+                            </div>
+
+                            {/* Steps */}
+                            <div className="space-y-20">
+                                <h2 className="text-center text-xl tracking-widest text-[#555]">一般的な接木の手順</h2>
+
+                                <section>
+                                    <h3 className="text-xl font-bold text-[#eee] mb-4 border-l-2 border-[#8A2E2E] pl-4">1. 台木を選ぶ</h3>
+                                    <ul className="list-disc pl-5 space-y-2 text-sm text-[#aaa] mb-4">
+                                        <li>健康で病害のないものを選ぶ</li>
+                                        <li>樹勢が安定しているものが望ましい</li>
+                                        <li>若すぎず、老化していないものが良い</li>
+                                    </ul>
+                                    <p className="text-[#8A2E2E] text-sm">👉 「土壌や環境に適応していること」が重要</p>
+                                </section>
+
+                                <section>
+                                    <h3 className="text-xl font-bold text-[#eee] mb-4 border-l-2 border-[#8A2E2E] pl-4">2. 穂木を準備する</h3>
+                                    <ul className="list-disc pl-5 space-y-2 text-sm text-[#aaa] mb-4">
+                                        <li>休眠期に採取した枝を使用</li>
+                                        <li>芽がしっかりしているもの</li>
+                                        <li>傷や変形がないものを選ぶ</li>
+                                    </ul>
+                                    <p className="text-[#8A2E2E] text-sm">👉 台木との相性が成功を左右する</p>
+                                </section>
+
+                                <section>
+                                    <h3 className="text-xl font-bold text-[#eee] mb-4 border-l-2 border-[#8A2E2E] pl-4">3. 切り口を整える（剪定）</h3>
+                                    <ul className="list-disc pl-5 space-y-2 text-sm text-[#aaa] mb-4">
+                                        <li>台木と穂木の切り口を清潔な刃物で切る</li>
+                                        <li>形成層（かたちづくる層）が合うようにする</li>
+                                        <li>切り口は手早く、迷いなく</li>
+                                    </ul>
+                                </section>
+
+                                <section>
+                                    <h3 className="text-xl font-bold text-[#eee] mb-4 border-l-2 border-[#8A2E2E] pl-4">4. 接合する</h3>
+                                    <ul className="list-disc pl-5 space-y-2 text-sm text-[#aaa] mb-4">
+                                        <li>台木と穂木の切り口をぴったり合わせる</li>
+                                        <li>空気が入らないよう注意する</li>
+                                        <li>位置がずれないようにする</li>
+                                    </ul>
+                                </section>
+
+                                <section>
+                                    <h3 className="text-xl font-bold text-[#eee] mb-4 border-l-2 border-[#8A2E2E] pl-4">5. 固定する</h3>
+                                    <ul className="list-disc pl-5 space-y-2 text-sm text-[#aaa] mb-4">
+                                        <li>テープや紐でしっかり固定する</li>
+                                        <li>動かないようにすることが重要</li>
+                                        <li>強すぎず、弱すぎず</li>
+                                    </ul>
+                                    <p className="text-[#8A2E2E] text-sm">👉 動くと癒合がうまく進まない</p>
+                                </section>
+
+                                <section>
+                                    <h3 className="text-xl font-bold text-[#eee] mb-4 border-l-2 border-[#8A2E2E] pl-4">6. 保護する</h3>
+                                    <ul className="list-disc pl-5 space-y-2 text-sm text-[#aaa] mb-4">
+                                        <li>乾燥を防ぐため、接合部を覆う</li>
+                                        <li>直射日光や風を避ける</li>
+                                        <li>外部刺激をできるだけ減らす</li>
+                                    </ul>
+                                </section>
+
+                                <section>
+                                    <h3 className="text-xl font-bold text-[#eee] mb-4 border-l-2 border-[#8A2E2E] pl-4">7. 待つ（養生期間）</h3>
+                                    <ul className="list-disc pl-5 space-y-2 text-sm text-[#aaa] mb-4">
+                                        <li>数週間〜数ヶ月、様子を見る</li>
+                                        <li>この間、無理に触らない</li>
+                                        <li>成功すると新しい芽が動き出す</li>
+                                    </ul>
+                                </section>
+
+                                <section>
+                                    <h3 className="text-xl font-bold text-[#eee] mb-4 border-l-2 border-[#8A2E2E] pl-4">8. 余分な部分を剪定する</h3>
+                                    <ul className="list-disc pl-5 space-y-2 text-sm text-[#aaa] mb-4">
+                                        <li>台木から出る不要な芽を落とす</li>
+                                        <li>穂木に栄養が集中するよう調整</li>
+                                    </ul>
+                                </section>
+
+                                <section>
+                                    <h3 className="text-xl font-bold text-[#eee] mb-4 border-l-2 border-[#8A2E2E] pl-4">9. 活着を確認する</h3>
+                                    <ul className="list-disc pl-5 space-y-2 text-sm text-[#aaa] mb-4">
+                                        <li>穂木が枯れず、成長しているか</li>
+                                        <li>問題があればやり直すこともある</li>
+                                    </ul>
+                                </section>
+                            </div>
+
+                            <div className="pt-20 pb-12 text-center">
+                                <p className="text-[#333] text-xs tracking-[0.5em]">KAMI NO MEGUMI</p>
                             </div>
                         </div>
                     </div>
@@ -1783,7 +1967,8 @@
                     case 'products': return <Products {...props} />;
                     case 'diary': return <Diary {...props} />;
                     case 'article_detail': return <ArticleDetail article={selectedArticle} setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
-                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />; // Recipe Route
+                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
+                    case 'grafting': return <GraftingDetail setPage={setPage} />; // New Route
                     case 'access': return <Access {...props} />;
                     case 'recruit': return <Recruit {...props} />;
                     case 'contact': return <Contact {...props} />;
