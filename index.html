@@ -1773,6 +1773,8 @@
 
         // 6. ACCESS (Table & PDF)
         const Access = ({ phase, unlockFlag, flags }) => {
+            const [modalImage, setModalImage] = useState(null);
+
             return (
                 <div className="min-h-screen pt-24 pb-20">
                     <div className="max-w-container mx-auto px-6">
@@ -1807,19 +1809,36 @@
                                         詳細な住所は、ご予約確定後にメールにてご案内いたします。<br/>
                                         山道が続きますので、お気をつけてお越しください。
                                     </p>
-                                    <Button variant="secondary" onClick={() => {
-                                        if (!flags.F11) {
-                                            alert("【F11: 謎の地図】\n地図の裏面に、栽培工程ではなく「人接ぎ」の工程表が書かれているのを発見した。");
-                                            unlockFlag('F11');
-                                        }
-                                    }}>
-                                        <i data-lucide="printer" className="w-4 h-4 mr-2"></i>
-                                        詳細地図を印刷 (PDF)
-                                    </Button>
+                                    
+                                    {/* 隠しリンク */}
+                                    <p 
+                                        className="mt-4 text-xs text-[#8A2E2E] cursor-pointer hover:underline tracking-widest font-serif opacity-70 hover:opacity-100 transition-opacity"
+                                        onClick={() => setModalImage(IMAGES.top_change_village)}
+                                    >
+                                        村に入ると、村びとはあなたをずっと見ている…
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    {/* Image Modal */}
+                    {modalImage && (
+                        <div 
+                            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 cursor-pointer"
+                            onClick={() => setModalImage(null)}
+                        >
+                            {/* 修正: max-w-4xl に拡大し、brightnessとcontrastで画質補正 */}
+                            <div className="max-w-4xl w-full">
+                                <img 
+                                    src={modalImage} 
+                                    alt="Hidden Message" 
+                                    className="w-full h-auto shadow-2xl rounded animate-pulse-slow brightness-150 contrast-125" 
+                                />
+                                <p className="text-center text-white mt-4 text-sm font-serif">クリックして閉じる</p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         };
