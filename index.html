@@ -33,7 +33,7 @@
                         serif: ['Shippori Mincho', 'serif'],
                         sans: ['Noto Sans JP', 'sans-serif'],
                         eng: ['Montserrat', 'sans-serif'],
-                        handwriting: ['Yomogi', 'cursive'], // 手書き風フォントを追加
+                        handwriting: ['Yuji Syuku', 'serif'], // フォント変更: Yomogi -> Yuji Syuku
                     },
                     maxWidth: {
                         'container': '1200px',
@@ -56,10 +56,10 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Google Fonts: Yomogiを追加 -->
+    <!-- Google Fonts: Yuji Syuku (佑字 粛) を追加 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600;700&family=Montserrat:wght@400;600&family=Yomogi&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600;700&family=Montserrat:wght@400;600&family=Yuji+Syuku&display=swap" rel="stylesheet">
 
     <style>
         /* Design Tokens & Theme Variables */
@@ -169,7 +169,7 @@
 
         /* 激しいテキストグリッチと振動 */
         .intense-glitch {
-            font-family: 'Yomogi', cursive !important; /* 手書きフォント */
+            font-family: 'Yuji Syuku', serif !important; /* 手書きフォント */
             color: #ffffff !important; /* ★視認性向上のため白に変更 */
             
             /* 元の位置で強調表示するスタイル */
@@ -710,15 +710,47 @@
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="奥神伏村について" sub="OUR VILLAGE" />
                         
-                        <div className="mb-20">
-                            <img src={phase >= 3 ? IMAGES.village_night : IMAGES.village_normal} alt="Village View" className="w-full h-[60vh] object-cover rounded-2xl shadow-sm mb-8" />
-                            <p className="max-w-2xl mx-auto text-center leading-loose text-muted font-serif">
-                                四方を険しい山々に囲まれた奥神伏村。<br/>
-                                独自の気候風土が、他にはない濃厚な味わいの作物を育てます。<br/>
-                                古くからこの地には「神」が宿ると言われ、村人は自然を敬い、共に生きてきました。
-                            </p>
+                        {/* 修正: マウスホバー(group-hover)で画像とテキストが切り替わるギミックを復元 */}
+                        <div className="mb-20 group cursor-pointer">
+                            <div className="relative w-full h-[60vh] rounded-2xl shadow-sm mb-8 overflow-hidden">
+                                {/* 背面：不気味な夜の画像 */}
+                                <img 
+                                    src={IMAGES.village_night} 
+                                    alt="Village Night" 
+                                    className="absolute inset-0 w-full h-full object-cover" 
+                                />
+                                {/* 前面：通常の画像 (ホバーで透明になる) */}
+                                <img 
+                                    src={IMAGES.village_normal} 
+                                    alt="Village View" 
+                                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out group-hover:opacity-0" 
+                                />
+                            </div>
+                            
+                            {/* テキストエリア：Gridを使って2つの文章を重ねる */}
+                            <div className="grid grid-cols-1 relative max-w-2xl mx-auto text-center leading-loose">
+                                {/* 通常テキスト: ホバーで消える */}
+                                <p className="col-start-1 row-start-1 text-muted font-serif transition-opacity duration-1000 ease-in-out group-hover:opacity-0">
+                                    四方を険しい山々に囲まれた奥神伏村。<br/>
+                                    独自の気候風土が、他にはない濃厚な味わいの作物を育てます。<br/>
+                                    古くからこの地には「神」が宿ると言われ、村人は自然を敬い、共に生きてきました。
+                                </p>
+                                
+                                {/* ホラーテキスト: ホバーで現れる */}
+                                <p className="col-start-1 row-start-1 text-[#8A2E2E] font-handwriting text-lg opacity-0 transition-opacity duration-1000 ease-in-out group-hover:opacity-100">
+                                    四方を険しい山々に囲まれた奥神伏村。<br/>
+                                    独自の気候風土が、他にはない濃厚な味わいの作物を育てます。<br/>
+                                    古くからこの地には「神」が宿ると言われ、村人は自然を敬い、<br/>
+                                    <strong className="text-xl block mt-2 animate-pulse-slow">
+                                        選ばれた夜に、<br/>
+                                        選ばれたものを捧げることで、<br/>
+                                        村の実りを保ってきました。
+                                    </strong>
+                                </p>
+                            </div>
                         </div>
 
+                        {/* New Section: Snow Village */}
                         <div className="mb-24 grid md:grid-cols-2 gap-12 items-center bg-white p-8 rounded-2xl shadow-sm">
                             <div className="order-2 md:order-1">
                                  <h3 className="text-2xl font-serif mb-6 text-text">冬の静寂</h3>
@@ -735,6 +767,7 @@
 
                         <AdSpace className="mb-24" />
 
+                        {/* F10: Symbol Tree */}
                         <div className="bg-surface-2 rounded-2xl p-8 md:p-16 flex flex-col md:flex-row gap-12 items-center">
                             <div className="md:w-1/2">
                                 <h3 className="text-2xl font-serif mb-4">御神木</h3>
@@ -761,19 +794,36 @@
                         </div>
                     </div>
 
+                    {/* Lightbox Modal */}
                     {lightboxOpen && (
                         <div className="fixed inset-0 z-[100] lightbox-overlay flex items-center justify-center p-4" onClick={() => setLightboxOpen(false)}>
-                            <div className="relative max-w-4xl w-full max-h-screen">
+                            <div className="relative max-w-4xl w-full max-h-screen flex flex-col items-center">
+                                
+                                {/* 画像切り替え: ホラー時は変貌した木 */}
                                 <img 
                                     src={phase >= 3 ? IMAGES.tree_change : IMAGES.tree_default} 
-                                    className="w-full h-auto max-h-[90vh] object-contain rounded shadow-2xl" 
+                                    className="w-full h-auto max-h-[70vh] object-contain rounded shadow-2xl mb-6" 
                                 />
-                                {phase >= 3 && (
-                                    <div className="absolute bottom-4 left-0 right-0 text-center bg-black/50 text-white p-2">
-                                        <p className="font-serif text-sm">【F10 証拠】樹皮の継ぎ目に、外科手術のような縫合痕が見える...</p>
+                                
+                                {phase >= 3 ? (
+                                    <div className="text-center animate-fade-up">
+                                        <p className="text-red-600 font-handwriting text-sm md:text-base mb-4 tracking-widest drop-shadow-md animate-pulse">
+                                            ヴー・タイン・アン失踪の真実です…誰か、見つけて…
+                                        </p>
+
+                                        <p className="text-white/70 font-serif text-xs mb-6 tracking-widest bg-black/50 inline-block px-4 py-1">
+                                            【F10 証拠】御神木の根元から、失踪した実習生の所持品が発見された...
+                                        </p>
+                                        
+                                        <div className="block">
+                                            <button className="text-white border border-white/30 px-8 py-2 hover:bg-white hover:text-black transition-colors font-serif text-sm tracking-widest" onClick={() => setLightboxOpen(false)}>
+                                                閉じる
+                                            </button>
+                                        </div>
                                     </div>
+                                ) : (
+                                    <button className="absolute -top-10 right-0 text-white font-bold" onClick={() => setLightboxOpen(false)}>閉じる</button>
                                 )}
-                                <button className="absolute -top-10 right-0 text-white" onClick={() => setLightboxOpen(false)}>閉じる</button>
                             </div>
                         </div>
                     )}
@@ -832,7 +882,7 @@
                     <p className="text-primary font-eng text-xs tracking-wider mb-2">{isHiddenChar ? "???" : staff.role}</p>
                     <h4 className="text-xl font-serif font-bold mb-3">{isHiddenChar ? "No.1092" : staff.name}</h4>
                     <p className="text-sm text-muted leading-relaxed relative line-clamp-2">
-                        {isHiddenChar ? "..." : staff.short_intro}
+                        {isHiddenChar ? "..." : (staff.short_intro || <span className="opacity-0">...</span>)}
                     </p>
                 </div>
             );
@@ -883,9 +933,11 @@
                                     <StaffCard key={staff.id} staff={staff} />
                                 ))}
                                 
-                                {phase >= 3 && (
-                                    <StaffCard isHiddenChar={true} />
-                                )}
+                                {/* 以前の "No.1092" (isHiddenChar) のカードは、
+                                   今回追加したヴー・タイン・アン（staff_victim）がその役割を担うため、
+                                   重複しないように削除します。
+                                   （フェーズによる出現制御は STAFF_DATA のフィルタリング等で実装予定）
+                                */}
                             </div>
                         </section>
                     </div>
@@ -1226,181 +1278,6 @@
             );
         };
 
-        // 5.8 ANCIENT DOCUMENT (Hidden Page)
-        const AncientDocument = ({ setPage }) => {
-            useEffect(() => {
-                window.scrollTo(0, 0);
-            }, []);
-
-            return (
-                <div className="min-h-screen pt-32 pb-20 bg-[#12100e] text-[#dcdcdc] font-serif">
-                    <div className="max-w-2xl mx-auto px-6">
-                        <button 
-                            onClick={() => setPage('diary')}
-                            className="flex items-center text-sm text-[#666] hover:text-[#aaa] mb-16 transition-colors font-sans"
-                        >
-                            <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
-                            戻る
-                        </button>
-
-                        <div className="animate-fade-up">
-                            {/* ヘッダー画像 */}
-                            <div className="mb-16 border-4 border-double border-[#333] p-2 bg-[#000]">
-                                <img src={IMAGES.blog_oldbook} alt="古い手記" className="w-full h-auto opacity-80 filter sepia-[0.3] contrast-125" />
-                            </div>
-
-                            {/* 本文エリア */}
-                            <div className="space-y-12 leading-loose tracking-widest text-justify text-[#bfb5aa]" style={{ fontFeatureSettings: '"palt"' }}>
-                                
-                                <div className="text-center mb-16 border-b border-[#333] pb-8">
-                                    <p className="text-sm text-[#888] mb-2">文政九年（西暦一八二六年）</p>
-                                    <h1 className="text-3xl font-bold text-[#a33]">奥神伏村 旧記抜粋</h1>
-                                </div>
-
-                                <p className="text-xs text-[#555]">
-                                    ※本稿は、奥神伏村に伝わる古い帳面をもとに、判読可能な範囲を現代語に置き起こした記録である。
-                                </p>
-
-                                <section>
-                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">文政九年、山の奥にて</h2>
-                                    <p>
-                                        今年も実りのための<strong className="text-[#eee] border-b border-[#a33]">接手（つぎて）</strong>を執り行うこととなった。
-                                    </p>
-                                    <p className="mt-6">
-                                        この地は痩せ、ただ枝を挿すのみでは根付かぬ。<br/>
-                                        ゆえに、古くより<strong className="text-[#eee]">器（うつわ）を選び、それを台（だい）</strong>として用いる習わしが続いている。
-                                    </p>
-                                    <p className="mt-6">
-                                        器は若く、傷なく、余分な血の混じらぬものが良いとされた。
-                                    </p>
-                                </section>
-
-                                <section>
-                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">器の選定について</h2>
-                                    <p>接手に用いる器は、</p>
-                                    <ul className="list-none pl-4 space-y-2 my-4 text-[#ddd]">
-                                        <li>・病を持たず</li>
-                                        <li>・家族の縁が薄く</li>
-                                        <li>・逃げ道を持たぬ者</li>
-                                    </ul>
-                                    <p>が良いと記されている。</p>
-                                    <p className="mt-6">
-                                        村の外より来た者は、<br/>
-                                        土地に馴染みやすく、拒みも少ないため、<br/>
-                                        根付きが良いとされていた。
-                                    </p>
-                                    <p className="mt-6">
-                                        器は事前に身体の具合を改め、<br/>
-                                        血の巡り、骨の強さ、<br/>
-                                        眠りの深さなどを確かめた。
-                                    </p>
-                                    <p className="mt-6">
-                                        これを<strong className="text-[#eee] border-b border-[#a33]">検め（あらため）</strong>と呼ぶ。
-                                    </p>
-                                </section>
-
-                                <section>
-                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">伏せの作法</h2>
-                                    <p>
-                                        器は、穴の中にて<br/>
-                                        伏せの姿勢を取らせる。
-                                    </p>
-                                    <p className="mt-6">
-                                        頭を垂れ、<br/>
-                                        背を丸め、<br/>
-                                        余計な動きが出ぬよう、<br/>
-                                        土と木枠にて固定する。
-                                    </p>
-                                    <p className="mt-6">
-                                        動けば歪み、<br/>
-                                        歪めば枝が枯れる。
-                                    </p>
-                                    <p className="mt-6 font-bold text-[#eee]">
-                                        よって、動かぬことが何よりの務めである。
-                                    </p>
-                                </section>
-
-                                <section>
-                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">枝の挿し方</h2>
-                                    <p>
-                                        背の中央に沿い、<br/>
-                                        刃を入れ、<br/>
-                                        皮を分け、<br/>
-                                        そこへ枝を挿す。
-                                    </p>
-                                    <p className="mt-6">
-                                        枝は若く、赤みのあるものが良い。
-                                    </p>
-                                    <p className="mt-6">
-                                        挿した後は、<br/>
-                                        菌床と土を重ね、<br/>
-                                        水を与え、<br/>
-                                        月の満ち欠けを見て覆いを施す。
-                                    </p>
-                                    <p className="mt-6 text-[#a33]">
-                                        この間、器は声を立ててはならぬ。
-                                    </p>
-                                </section>
-
-                                <section>
-                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">成り木（なりき）について</h2>
-                                    <p>
-                                        季を越え、<br/>
-                                        枝が伸び、<br/>
-                                        花が咲き、<br/>
-                                        実が結ばれたものを<br/>
-                                        成り木と呼ぶ。
-                                    </p>
-                                    <p className="mt-6">
-                                        成り木は動かず、<br/>
-                                        語らず、<br/>
-                                        ただ実りを返す。
-                                    </p>
-                                    <p className="mt-6">
-                                        この実は朱（あか）く、<br/>
-                                        甘みが強く、<br/>
-                                        腹に深く染みる。
-                                    </p>
-                                    <p className="mt-6">
-                                        村ではこれを<br/>
-                                        <strong className="text-2xl text-red-600 block my-4 text-center">朱実（あけみ）</strong>
-                                        と名付け、<br/>
-                                        特別な折にのみ口にした。
-                                    </p>
-                                </section>
-
-                                <div className="border-t border-[#333] pt-12 mt-16 text-center text-sm text-[#666]">
-                                    <p className="mb-8 font-bold text-[#888]">記すべきこと</p>
-                                    <p className="mb-4">
-                                        この作法は、<br/>
-                                        神に捧げるものではなく、<br/>
-                                        村を続かせるための知恵である。
-                                    </p>
-                                    <p className="mb-4">
-                                        失われれば、<br/>
-                                        山は枯れ、<br/>
-                                        人は離れ、<br/>
-                                        村は終わる。
-                                    </p>
-                                    <p className="mb-8">
-                                        ゆえに、<br/>
-                                        この記は外へ出してはならぬ。
-                                    </p>
-                                    <p className="text-lg text-[#a33] font-bold">
-                                        読んだ者は、<br/>
-                                        理解し、<br/>
-                                        口を閉ざし、<br/>
-                                        忘れること。
-                                    </p>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
         // 5.5 ARTICLE DETAIL
         const ArticleDetail = ({ article, setPage, unlockFlag, flags }) => {
             useEffect(() => {
@@ -1719,6 +1596,181 @@
             );
         };
 
+        // 5.8 ANCIENT DOCUMENT (Hidden Page)
+        const AncientDocument = ({ setPage }) => {
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, []);
+
+            return (
+                <div className="min-h-screen pt-32 pb-20 bg-[#12100e] text-[#dcdcdc] font-serif">
+                    <div className="max-w-2xl mx-auto px-6">
+                        <button 
+                            onClick={() => setPage('diary')}
+                            className="flex items-center text-sm text-[#666] hover:text-[#aaa] mb-16 transition-colors font-sans"
+                        >
+                            <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
+                            戻る
+                        </button>
+
+                        <div className="animate-fade-up">
+                            {/* ヘッダー画像 */}
+                            <div className="mb-16 border-4 border-double border-[#333] p-2 bg-[#000]">
+                                <img src={IMAGES.blog_oldbook} alt="古い手記" className="w-full h-auto opacity-80 filter sepia-[0.3] contrast-125" />
+                            </div>
+
+                            {/* 本文エリア */}
+                            <div className="space-y-12 leading-loose tracking-widest text-justify text-[#bfb5aa]" style={{ fontFeatureSettings: '"palt"' }}>
+                                
+                                <div className="text-center mb-16 border-b border-[#333] pb-8">
+                                    <p className="text-sm text-[#888] mb-2">文政九年（西暦一八二六年）</p>
+                                    <h1 className="text-3xl font-bold text-[#a33]">奥神伏村 旧記抜粋</h1>
+                                </div>
+
+                                <p className="text-xs text-[#555]">
+                                    ※本稿は、奥神伏村に伝わる古い帳面をもとに、判読可能な範囲を現代語に置き起こした記録である。
+                                </p>
+
+                                <section>
+                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">文政九年、山の奥にて</h2>
+                                    <p>
+                                        今年も実りのための<strong className="text-[#eee] border-b border-[#a33]">接手（つぎて）</strong>を執り行うこととなった。
+                                    </p>
+                                    <p className="mt-6">
+                                        この地は痩せ、ただ枝を挿すのみでは根付かぬ。<br/>
+                                        ゆえに、古くより<strong className="text-[#eee]">器（うつわ）を選び、それを台（だい）</strong>として用いる習わしが続いている。
+                                    </p>
+                                    <p className="mt-6">
+                                        器は若く、傷なく、余分な血の混じらぬものが良いとされた。
+                                    </p>
+                                </section>
+
+                                <section>
+                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">器の選定について</h2>
+                                    <p>接手に用いる器は、</p>
+                                    <ul className="list-none pl-4 space-y-2 my-4 text-[#ddd]">
+                                        <li>・病を持たず</li>
+                                        <li>・家族の縁が薄く</li>
+                                        <li>・逃げ道を持たぬ者</li>
+                                    </ul>
+                                    <p>が良いと記されている。</p>
+                                    <p className="mt-6">
+                                        村の外より来た者は、<br/>
+                                        土地に馴染みやすく、拒みも少ないため、<br/>
+                                        根付きが良いとされていた。
+                                    </p>
+                                    <p className="mt-6">
+                                        器は事前に身体の具合を改め、<br/>
+                                        血の巡り、骨の強さ、<br/>
+                                        眠りの深さなどを確かめた。
+                                    </p>
+                                    <p className="mt-6">
+                                        これを<strong className="text-[#eee] border-b border-[#a33]">検め（あらため）</strong>と呼ぶ。
+                                    </p>
+                                </section>
+
+                                <section>
+                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">伏せの作法</h2>
+                                    <p>
+                                        器は、穴の中にて<br/>
+                                        伏せの姿勢を取らせる。
+                                    </p>
+                                    <p className="mt-6">
+                                        頭を垂れ、<br/>
+                                        背を丸め、<br/>
+                                        余計な動きが出ぬよう、<br/>
+                                        土と木枠にて固定する。
+                                    </p>
+                                    <p className="mt-6">
+                                        動けば歪み、<br/>
+                                        歪めば枝が枯れる。
+                                    </p>
+                                    <p className="mt-6 font-bold text-[#eee]">
+                                        よって、動かぬことが何よりの務めである。
+                                    </p>
+                                </section>
+
+                                <section>
+                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">枝の挿し方</h2>
+                                    <p>
+                                        背の中央に沿い、<br/>
+                                        刃を入れ、<br/>
+                                        皮を分け、<br/>
+                                        そこへ枝を挿す。
+                                    </p>
+                                    <p className="mt-6">
+                                        枝は若く、赤みのあるものが良い。
+                                    </p>
+                                    <p className="mt-6">
+                                        挿した後は、<br/>
+                                        菌床と土を重ね、<br/>
+                                        水を与え、<br/>
+                                        月の満ち欠けを見て覆いを施す。
+                                    </p>
+                                    <p className="mt-6 text-[#a33]">
+                                        この間、器は声を立ててはならぬ。
+                                    </p>
+                                </section>
+
+                                <section>
+                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">成り木（なりき）について</h2>
+                                    <p>
+                                        季を越え、<br/>
+                                        枝が伸び、<br/>
+                                        花が咲き、<br/>
+                                        実が結ばれたものを<br/>
+                                        成り木と呼ぶ。
+                                    </p>
+                                    <p className="mt-6">
+                                        成り木は動かず、<br/>
+                                        語らず、<br/>
+                                        ただ実りを返す。
+                                    </p>
+                                    <p className="mt-6">
+                                        この実は朱（あか）く、<br/>
+                                        甘みが強く、<br/>
+                                        腹に深く染みる。
+                                    </p>
+                                    <p className="mt-6">
+                                        村ではこれを<br/>
+                                        <strong className="text-2xl text-red-600 block my-4 text-center">朱実（あけみ）</strong>
+                                        と名付け、<br/>
+                                        特別な折にのみ口にした。
+                                    </p>
+                                </section>
+
+                                <div className="border-t border-[#333] pt-12 mt-16 text-center text-sm text-[#666]">
+                                    <p className="mb-8 font-bold text-[#888]">記すべきこと</p>
+                                    <p className="mb-4">
+                                        この作法は、<br/>
+                                        神に捧げるものではなく、<br/>
+                                        村を続かせるための知恵である。
+                                    </p>
+                                    <p className="mb-4">
+                                        失われれば、<br/>
+                                        山は枯れ、<br/>
+                                        人は離れ、<br/>
+                                        村は終わる。
+                                    </p>
+                                    <p className="mb-8">
+                                        ゆえに、<br/>
+                                        この記は外へ出してはならぬ。
+                                    </p>
+                                    <p className="text-lg text-[#a33] font-bold">
+                                        読んだ者は、<br/>
+                                        理解し、<br/>
+                                        口を閉ざし、<br/>
+                                        忘れること。
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // 6. ACCESS (Table & PDF)
         const Access = ({ phase, unlockFlag, flags }) => {
             return (
@@ -1855,9 +1907,10 @@
                         </div>
 
                         {/* チェックボックスエリア */}
+                        {/* 修正: globalHorror時は z-index を 10000 に引き上げ、オーバーレイより手前に表示させる */}
                         <div className={`bg-surface p-8 md:p-12 rounded-2xl max-w-3xl mx-auto shadow-sm transition-all duration-100 ${
                             globalHorror 
-                                ? 'bg-[#0a0a0a] border-4 border-red-900 shadow-[0_0_50px_rgba(255,0,0,0.5)] transform scale-105' 
+                                ? 'relative z-[10000] bg-black border-4 border-red-900 shadow-[0_0_50px_rgba(255,0,0,0.5)] transform scale-105' 
                                 : ''
                         }`}>
                             <h4 className={`font-bold font-serif text-xl mb-8 text-center ${globalHorror ? 'text-red-600 animate-pulse' : 'text-primary'}`}>
@@ -2141,8 +2194,8 @@
                     case 'products': return <Products {...props} />;
                     case 'diary': return <Diary {...props} />;
                     case 'article_detail': return <ArticleDetail article={selectedArticle} setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
-                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
-                    case 'grafting': return <GraftingDetail setPage={setPage} />;
+                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />; // Recipe Route
+                    case 'grafting': return <GraftingDetail setPage={setPage} />; // New Route
                     case 'ancient_document': return <AncientDocument setPage={setPage} />; // New Route
                     case 'access': return <Access {...props} />;
                     case 'recruit': return <Recruit {...props} />;
