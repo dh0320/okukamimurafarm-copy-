@@ -1141,15 +1141,19 @@
 
             const handleSearch = (e) => {
                 e.preventDefault();
-                if (phase >= 3 && search === "1826" && !flags.F07) {
+                if (search === "1826") {
                     setIsAncient(true);
-                    unlockFlag('F07');
-                    alert("【F07: 古いブログ】\n1826年の古文書データにアクセスしました。");
+                    if (!flags.F07) {
+                        alert("【F07: 古いブログ】\n検索結果に異変が生じました。\n1826年のデータが見つかりました。");
+                        unlockFlag('F07');
+                    }
                 }
             };
 
             const handleArticleClick = (article) => {
-                if (article.id === 99) { // 古文書は詳細なし（または特別処理）
+                if (article.id === 99) { 
+                    // 1826年の記事は専用の手記ページへ
+                    setPage('ancient_document');
                     return;
                 }
                 setSelectedArticle(article);
@@ -1157,15 +1161,21 @@
             };
 
             const ancientArticles = [
-                { id: 99, date: "1826.04.04", title: "開村の儀式に関する覚書", desc: "柩木（ひつぎ）を選定し、土に伏せ...", img: IMAGES.blog_oldbook }
+                { 
+                    id: 99, 
+                    date: "1826.04.04", 
+                    title: "奥神伏村 旧記抜粋", 
+                    desc: "文政九年の記録。閲覧注意。", 
+                    img: IMAGES.blog_oldbook 
+                }
             ];
 
             const displayArticles = isAncient ? ancientArticles : BLOG_DATA;
 
             return (
-                <div className={`min-h-screen pt-24 pb-20 ${isAncient ? 'bg-[#EAE0D5] text-[#4A3B32]' : ''}`}>
+                <div className={`min-h-screen pt-24 pb-20 ${isAncient ? 'bg-[#2a2520] text-[#a89f91]' : ''}`}>
                     <div className="max-w-container mx-auto px-6">
-                        <SectionTitle title="活動日誌" sub="FARM DIARY" />
+                        <SectionTitle title={isAncient ? "記録保管庫" : "活動日誌"} sub={isAncient ? "ARCHIVES" : "FARM DIARY"} />
 
                         <div className="flex flex-col md:flex-row gap-12">
                             <div className="md:w-1/4">
@@ -1173,42 +1183,217 @@
                                     <input 
                                         type="text" 
                                         placeholder="検索..." 
-                                        className="w-full border-b border-border bg-transparent py-2 pr-8 outline-none focus:border-primary font-sans text-sm"
+                                        className={`w-full border-b bg-transparent py-2 pr-8 outline-none text-sm ${isAncient ? 'border-[#555] text-[#ccc] focus:border-red-900' : 'border-border focus:border-primary'}`}
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
                                     />
-                                    <i data-lucide="search" className="absolute right-0 top-2 w-4 h-4 text-muted"></i>
+                                    <i data-lucide="search" className={`absolute right-0 top-2 w-4 h-4 ${isAncient ? 'text-[#555]' : 'text-muted'}`}></i>
                                 </form>
-                                <div className="space-y-2 text-sm text-muted font-serif">
+                                <div className={`space-y-2 text-sm font-serif ${isAncient ? 'text-[#666]' : 'text-muted'}`}>
                                     <p>カテゴリー</p>
-                                    <ul className="pl-4 space-y-1 border-l border-border">
-                                        <li className="hover:text-primary cursor-pointer">農園の日常</li>
-                                        <li className="hover:text-primary cursor-pointer">レシピ</li>
-                                        <li className="hover:text-primary cursor-pointer">イベント</li>
+                                    <ul className={`pl-4 space-y-1 border-l ${isAncient ? 'border-[#444]' : 'border-border'}`}>
+                                        <li className="cursor-pointer hover:opacity-70">農園の日常</li>
+                                        <li className="cursor-pointer hover:opacity-70">レシピ</li>
+                                        <li className="cursor-pointer hover:opacity-70">イベント</li>
                                     </ul>
                                 </div>
                                 
-                                <AdSpace className="mt-12 hidden md:block" />
+                                {!isAncient && <AdSpace className="mt-12 hidden md:block" />}
                             </div>
 
                             <div className="md:w-3/4 space-y-12">
                                 {displayArticles.map(article => (
                                     <article key={article.id} className="group cursor-pointer" onClick={() => handleArticleClick(article)}>
                                         <div className="flex flex-col md:flex-row gap-6 items-start">
-                                            <div className="md:w-1/3 aspect-video bg-surface-2 rounded-lg overflow-hidden">
-                                                <img src={article.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                            <div className="md:w-1/3 aspect-video bg-black/20 rounded-lg overflow-hidden relative">
+                                                <img src={article.img} className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isAncient ? 'opacity-70 grayscale sepia' : ''}`} />
                                             </div>
                                             <div className="md:w-2/3">
-                                                <p className="text-xs font-eng text-muted mb-2">{article.date}</p>
-                                                <h3 className={`text-xl font-serif font-bold mb-3 ${isAncient ? 'font-serif' : ''}`}>{article.title}</h3>
-                                                <p className="text-sm text-muted leading-relaxed mb-4">{article.desc}</p>
-                                                <span className="text-primary text-sm font-medium hover:underline">続きを読む →</span>
+                                                <p className={`text-xs font-eng mb-2 ${isAncient ? 'text-[#8A2E2E]' : 'text-muted'}`}>{article.date}</p>
+                                                <h3 className={`text-xl font-serif font-bold mb-3 ${isAncient ? 'text-[#ccc] tracking-widest' : ''}`}>{article.title}</h3>
+                                                <p className={`text-sm leading-relaxed mb-4 ${isAncient ? 'text-[#888]' : 'text-muted'}`}>{article.desc}</p>
+                                                <span className={`${isAncient ? 'text-[#8A2E2E]' : 'text-primary'} text-sm font-medium hover:underline`}>続きを読む →</span>
                                             </div>
                                         </div>
                                     </article>
                                 ))}
                                 
-                                <AdSpace />
+                                {!isAncient && <AdSpace />}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // 5.8 ANCIENT DOCUMENT (Hidden Page)
+        const AncientDocument = ({ setPage }) => {
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, []);
+
+            return (
+                <div className="min-h-screen pt-32 pb-20 bg-[#12100e] text-[#dcdcdc] font-serif">
+                    <div className="max-w-2xl mx-auto px-6">
+                        <button 
+                            onClick={() => setPage('diary')}
+                            className="flex items-center text-sm text-[#666] hover:text-[#aaa] mb-16 transition-colors font-sans"
+                        >
+                            <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
+                            戻る
+                        </button>
+
+                        <div className="animate-fade-up">
+                            {/* ヘッダー画像 */}
+                            <div className="mb-16 border-4 border-double border-[#333] p-2 bg-[#000]">
+                                <img src={IMAGES.blog_oldbook} alt="古い手記" className="w-full h-auto opacity-80 filter sepia-[0.3] contrast-125" />
+                            </div>
+
+                            {/* 本文エリア */}
+                            <div className="space-y-12 leading-loose tracking-widest text-justify text-[#bfb5aa]" style={{ fontFeatureSettings: '"palt"' }}>
+                                
+                                <div className="text-center mb-16 border-b border-[#333] pb-8">
+                                    <p className="text-sm text-[#888] mb-2">文政九年（西暦一八二六年）</p>
+                                    <h1 className="text-3xl font-bold text-[#a33]">奥神伏村 旧記抜粋</h1>
+                                </div>
+
+                                <p className="text-xs text-[#555]">
+                                    ※本稿は、奥神伏村に伝わる古い帳面をもとに、判読可能な範囲を現代語に置き起こした記録である。
+                                </p>
+
+                                <section>
+                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">文政九年、山の奥にて</h2>
+                                    <p>
+                                        今年も実りのための<strong className="text-[#eee] border-b border-[#a33]">接手（つぎて）</strong>を執り行うこととなった。
+                                    </p>
+                                    <p className="mt-6">
+                                        この地は痩せ、ただ枝を挿すのみでは根付かぬ。<br/>
+                                        ゆえに、古くより<strong className="text-[#eee]">器（うつわ）を選び、それを台（だい）</strong>として用いる習わしが続いている。
+                                    </p>
+                                    <p className="mt-6">
+                                        器は若く、傷なく、余分な血の混じらぬものが良いとされた。
+                                    </p>
+                                </section>
+
+                                <section>
+                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">器の選定について</h2>
+                                    <p>接手に用いる器は、</p>
+                                    <ul className="list-none pl-4 space-y-2 my-4 text-[#ddd]">
+                                        <li>・病を持たず</li>
+                                        <li>・家族の縁が薄く</li>
+                                        <li>・逃げ道を持たぬ者</li>
+                                    </ul>
+                                    <p>が良いと記されている。</p>
+                                    <p className="mt-6">
+                                        村の外より来た者は、<br/>
+                                        土地に馴染みやすく、拒みも少ないため、<br/>
+                                        根付きが良いとされていた。
+                                    </p>
+                                    <p className="mt-6">
+                                        器は事前に身体の具合を改め、<br/>
+                                        血の巡り、骨の強さ、<br/>
+                                        眠りの深さなどを確かめた。
+                                    </p>
+                                    <p className="mt-6">
+                                        これを<strong className="text-[#eee] border-b border-[#a33]">検め（あらため）</strong>と呼ぶ。
+                                    </p>
+                                </section>
+
+                                <section>
+                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">伏せの作法</h2>
+                                    <p>
+                                        器は、穴の中にて<br/>
+                                        伏せの姿勢を取らせる。
+                                    </p>
+                                    <p className="mt-6">
+                                        頭を垂れ、<br/>
+                                        背を丸め、<br/>
+                                        余計な動きが出ぬよう、<br/>
+                                        土と木枠にて固定する。
+                                    </p>
+                                    <p className="mt-6">
+                                        動けば歪み、<br/>
+                                        歪めば枝が枯れる。
+                                    </p>
+                                    <p className="mt-6 font-bold text-[#eee]">
+                                        よって、動かぬことが何よりの務めである。
+                                    </p>
+                                </section>
+
+                                <section>
+                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">枝の挿し方</h2>
+                                    <p>
+                                        背の中央に沿い、<br/>
+                                        刃を入れ、<br/>
+                                        皮を分け、<br/>
+                                        そこへ枝を挿す。
+                                    </p>
+                                    <p className="mt-6">
+                                        枝は若く、赤みのあるものが良い。
+                                    </p>
+                                    <p className="mt-6">
+                                        挿した後は、<br/>
+                                        菌床と土を重ね、<br/>
+                                        水を与え、<br/>
+                                        月の満ち欠けを見て覆いを施す。
+                                    </p>
+                                    <p className="mt-6 text-[#a33]">
+                                        この間、器は声を立ててはならぬ。
+                                    </p>
+                                </section>
+
+                                <section>
+                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">成り木（なりき）について</h2>
+                                    <p>
+                                        季を越え、<br/>
+                                        枝が伸び、<br/>
+                                        花が咲き、<br/>
+                                        実が結ばれたものを<br/>
+                                        成り木と呼ぶ。
+                                    </p>
+                                    <p className="mt-6">
+                                        成り木は動かず、<br/>
+                                        語らず、<br/>
+                                        ただ実りを返す。
+                                    </p>
+                                    <p className="mt-6">
+                                        この実は朱（あか）く、<br/>
+                                        甘みが強く、<br/>
+                                        腹に深く染みる。
+                                    </p>
+                                    <p className="mt-6">
+                                        村ではこれを<br/>
+                                        <strong className="text-2xl text-red-600 block my-4 text-center">朱実（あけみ）</strong>
+                                        と名付け、<br/>
+                                        特別な折にのみ口にした。
+                                    </p>
+                                </section>
+
+                                <div className="border-t border-[#333] pt-12 mt-16 text-center text-sm text-[#666]">
+                                    <p className="mb-8 font-bold text-[#888]">記すべきこと</p>
+                                    <p className="mb-4">
+                                        この作法は、<br/>
+                                        神に捧げるものではなく、<br/>
+                                        村を続かせるための知恵である。
+                                    </p>
+                                    <p className="mb-4">
+                                        失われれば、<br/>
+                                        山は枯れ、<br/>
+                                        人は離れ、<br/>
+                                        村は終わる。
+                                    </p>
+                                    <p className="mb-8">
+                                        ゆえに、<br/>
+                                        この記は外へ出してはならぬ。
+                                    </p>
+                                    <p className="text-lg text-[#a33] font-bold">
+                                        読んだ者は、<br/>
+                                        理解し、<br/>
+                                        口を閉ざし、<br/>
+                                        忘れること。
+                                    </p>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -1956,8 +2141,9 @@
                     case 'products': return <Products {...props} />;
                     case 'diary': return <Diary {...props} />;
                     case 'article_detail': return <ArticleDetail article={selectedArticle} setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
-                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />; // Recipe Route
-                    case 'grafting': return <GraftingDetail setPage={setPage} />; // New Route
+                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
+                    case 'grafting': return <GraftingDetail setPage={setPage} />;
+                    case 'ancient_document': return <AncientDocument setPage={setPage} />; // New Route
                     case 'access': return <Access {...props} />;
                     case 'recruit': return <Recruit {...props} />;
                     case 'contact': return <Contact {...props} />;
