@@ -202,6 +202,21 @@
             transform: scale(1.2);
         }
 
+        /* 画像用グリッチエフェクト (園長変化用) */
+        @keyframes image-glitch {
+            0% { transform: translate(0); filter: hue-rotate(0deg); }
+            20% { transform: translate(-2px, 2px); filter: hue-rotate(90deg) contrast(1.2); }
+            40% { transform: translate(-2px, -2px); filter: hue-rotate(0deg) invert(0.1); }
+            60% { transform: translate(2px, 2px); filter: hue-rotate(-90deg) contrast(1.5); }
+            80% { transform: translate(2px, -2px); filter: hue-rotate(0deg); }
+            100% { transform: translate(0); filter: hue-rotate(0deg); }
+        }
+        
+        .image-glitching {
+            animation: image-glitch 0.2s infinite;
+            filter: contrast(1.2) brightness(0.8) sepia(0.5) hue-rotate(-50deg) !important;
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
@@ -259,6 +274,7 @@
 
             // Staff
             staff_manager: `${BASE_URL}/images/staffmanager.png`,
+            staff_manager_change: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/cce9c3db56a9593996fa1381a826289236d747a2/images/staffmanagerchange.png", // 修正: 正しいURL
             staff_submanager: `${BASE_URL}/images/staffsubmanager.png`,
             staff_wife: `${BASE_URL}/images/staffwife.png`,
             staff_trainee: `${BASE_URL}/images/stafftrainee.png`,
@@ -587,13 +603,10 @@
                     IMAGES.top_morning,
                     IMAGES.top_staff,
                     IMAGES.top_apple,
-                    IMAGES.top_children,
+                    IMAGES.top_change_stop, // topchildrenの代わりにtopchangestopを常時表示（確認用）
                     IMAGES.top_farm
                 ];
-                if (phase >= 3) {
-                    baseSlides[3] = IMAGES.top_change_village;
-                    baseSlides[4] = IMAGES.top_change_stop;
-                }
+                
                 return baseSlides;
             }, [phase]);
 
@@ -705,6 +718,9 @@
         const Village = ({ phase, unlockFlag, flags }) => {
             const [lightboxOpen, setLightboxOpen] = useState(false);
 
+            // ★デバッグ用: 常にホラー演出を表示 (本来は phase >= 3)
+            const isHorrorPhase = true; 
+
             return (
                 <div className="min-h-screen pt-24 pb-20">
                     <div className="max-w-container mx-auto px-6">
@@ -776,17 +792,30 @@
                                     村の守り神として、注連縄を張り、大切に祀られています。<br/>
                                     その樹皮の模様は、見る者によって様々な姿に見えると言われています。
                                 </p>
-                                <Button 
-                                    variant="secondary" 
-                                    onClick={() => {
-                                        setLightboxOpen(true);
-                                        if (phase >= 3 && !flags.F10) {
-                                            unlockFlag('F10');
-                                        }
-                                    }}
-                                >
-                                    写真を拡大して見る
-                                </Button>
+                                
+                                {/* ホラーフェーズでボタン変化 */}
+                                {isHorrorPhase ? (
+                                    <button 
+                                        className="text-[#8A2E2E] font-handwriting text-xl border-2 border-[#8A2E2E] px-8 py-3 rounded hover:bg-[#8A2E2E] hover:text-white transition-colors tracking-widest animate-pulse shadow-lg"
+                                        onClick={() => {
+                                            setLightboxOpen(true);
+                                            if (!flags.F10) {
+                                                unlockFlag('F10');
+                                            }
+                                        }}
+                                    >
+                                        ご神木のふもとを掘り起こしてみる
+                                    </button>
+                                ) : (
+                                    <Button 
+                                        variant="secondary" 
+                                        onClick={() => {
+                                            setLightboxOpen(true);
+                                        }}
+                                    >
+                                        写真を拡大して見る
+                                    </Button>
+                                )}
                             </div>
                             <div className="md:w-1/2 w-full">
                                 <img src={IMAGES.tree_default} alt="Sacred Tree" className="w-full h-80 object-cover rounded-lg shadow-md hover:grayscale transition-all duration-1000 cursor-zoom-in" onClick={() => setLightboxOpen(true)}/>
@@ -801,12 +830,13 @@
                                 
                                 {/* 画像切り替え: ホラー時は変貌した木 */}
                                 <img 
-                                    src={phase >= 3 ? IMAGES.tree_change : IMAGES.tree_default} 
+                                    src={isHorrorPhase ? IMAGES.tree_change : IMAGES.tree_default} 
                                     className="w-full h-auto max-h-[70vh] object-contain rounded shadow-2xl mb-6" 
                                 />
                                 
-                                {phase >= 3 ? (
+                                {isHorrorPhase ? (
                                     <div className="text-center animate-fade-up">
+                                        {/* 修正: 派手なロゴを削除し、小さなメッセージに変更 */}
                                         <p className="text-red-600 font-handwriting text-sm md:text-base mb-4 tracking-widest drop-shadow-md animate-pulse">
                                             ヴー・タイン・アン失踪の真実です…誰か、見つけて…
                                         </p>
@@ -833,17 +863,36 @@
 
         // 3. ABOUT (Greeting & Staff)
         const About = ({ phase, unlockFlag, flags, setPage, setSelectedStaff }) => {
-            const [greeting, setGreeting] = useState("台木は余計な枝葉を剪定します。良い実をつけるためには、親となる木が健康でなければなりません。");
+            // 通常テキスト
+            const normalText = `台木は余計な枝葉を剪定します。良い実をつけるためには、親となる木が健康でなければなりません。\n土壌の微生物、森の木々、そして私たち人間。すべてが循環の中にあります。`;
             
+            // ホラーテキスト (修正)
+            const horrorText = `台木の人間は動くと木が歪むので、アキレス腱は早めに切ることが大事です。余計な部分は剪定します。良い実をつけるためには、人の固定が重要です。土壌の微生物、森の木々、そして人間すべてが循環の中にあります。`;
+
+            const [isGlitching, setIsGlitching] = useState(false);
+            
+            // 周期的にグリッチを発生させる
             useEffect(() => {
-                if (phase >= 2 && !flags.F09) {
-                    const timer = setTimeout(() => {
-                        setGreeting("柩木（ひつぎ）は余計な関節を剪定します。良い実をつけるためには、親となる生贄が健康でなければなりません。");
+                // 確認用のため、フェーズ条件を無視して常時実行
+                // 本番では if (phase >= 2) 等で囲む
+                const glitchInterval = setInterval(() => {
+                    // グリッチ開始
+                    setIsGlitching(true);
+                    
+                    // F09フラグ回収 (初回のみサイレントに回収)
+                    if (!flags.F09) {
                         unlockFlag('F09');
-                    }, 5000);
-                    return () => clearTimeout(timer);
-                }
-            }, [phase, flags.F09]);
+                    }
+
+                    // 2秒後に元に戻す (修正: 1000 -> 2000)
+                    setTimeout(() => {
+                        setIsGlitching(false);
+                    }, 2000); 
+
+                }, 5000); // 5秒ごとに発生
+
+                return () => clearInterval(glitchInterval);
+            }, [flags.F09]);
 
             const handleStaffClick = (staff) => {
                 setSelectedStaff(staff);
@@ -892,9 +941,21 @@
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="農園について" sub="ABOUT US" />
 
+                        {/* 上半分：農園について（園長挨拶） */}
                         <section className="grid md:grid-cols-2 gap-12 md:gap-24 items-center mb-32">
                             <div className="relative order-2 md:order-1">
-                                <img src={IMAGES.staff_manager} className="w-full aspect-[4/5] object-cover rounded-2xl shadow-lg" alt="園長" />
+                                {/* 画像切り替え & グリッチエフェクト */}
+                                <div className="w-full aspect-[4/5] rounded-2xl shadow-lg overflow-hidden relative">
+                                    <img 
+                                        src={isGlitching ? IMAGES.staff_manager_change : IMAGES.staff_manager} 
+                                        className={`w-full h-full object-cover transition-none ${isGlitching ? 'image-glitching' : ''}`} 
+                                        alt="園長" 
+                                    />
+                                    {/* 砂嵐オーバーレイ (CSSで簡易再現) */}
+                                    {isGlitching && (
+                                        <div className="absolute inset-0 bg-black/20 pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")', opacity: 0.4 }}></div>
+                                    )}
+                                </div>
                                 <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-lg shadow-xl hidden md:block">
                                     <p className="font-serif font-bold text-lg">神去 巌</p>
                                     <p className="text-xs text-muted font-eng">園長 / Iwao Kamisari</p>
@@ -904,16 +965,14 @@
                                 <h3 className="text-2xl md:text-3xl font-serif mb-8 leading-snug">
                                     自然の声を聞き、<br/>命を繋ぐ農業を。
                                 </h3>
-                                <div className="prose prose-lg text-text font-serif leading-loose mb-8">
-                                    <p className="mb-4">
+                                <div className="prose prose-lg font-serif leading-loose mb-8 h-[200px]">
+                                    <p className="mb-4 text-text">
                                         奥神伏ファームへようこそ。<br/>
                                         私たちは、この土地の伝統を守りながら、持続可能な農業に取り組んでいます。
                                     </p>
-                                    <p className="transition-all duration-1000 mb-4">
-                                        {greeting}
-                                    </p>
-                                    <p>
-                                        土壌の微生物、森の木々、そして私たち人間。すべてが循環の中にあります。
+                                    {/* テキスト切り替え (フォント・サイズ変えず赤色のみ) */}
+                                    <p className={`transition-none duration-0 ${isGlitching ? 'text-[#8A2E2E]' : 'text-text'}`}>
+                                        {isGlitching ? horrorText : normalText}
                                     </p>
                                 </div>
                                 <div className="hidden md:block">
@@ -922,6 +981,7 @@
                             </div>
                         </section>
 
+                        {/* 下半分：スタッフ紹介 */}
                         <section>
                             <div className="text-center mb-16">
                                 <h3 className="text-2xl font-serif mb-4">スタッフ紹介</h3>
@@ -933,11 +993,9 @@
                                     <StaffCard key={staff.id} staff={staff} />
                                 ))}
                                 
-                                {/* 以前の "No.1092" (isHiddenChar) のカードは、
-                                   今回追加したヴー・タイン・アン（staff_victim）がその役割を担うため、
-                                   重複しないように削除します。
-                                   （フェーズによる出現制御は STAFF_DATA のフィルタリング等で実装予定）
-                                */}
+                                {phase >= 3 && (
+                                    <StaffCard isHiddenChar={true} />
+                                )}
                             </div>
                         </section>
                     </div>
@@ -1603,11 +1661,11 @@
             }, []);
 
             return (
-                <div className="min-h-screen pt-32 pb-20 bg-[#12100e] text-[#dcdcdc] font-serif">
+                <div className="min-h-screen pt-32 pb-20 bg-[#333] text-white font-serif">
                     <div className="max-w-2xl mx-auto px-6">
                         <button 
                             onClick={() => setPage('diary')}
-                            className="flex items-center text-sm text-[#666] hover:text-[#aaa] mb-16 transition-colors font-sans"
+                            className="flex items-center text-sm text-gray-300 hover:text-white mb-16 transition-colors font-sans"
                         >
                             <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
                             戻る
@@ -1615,30 +1673,30 @@
 
                         <div className="animate-fade-up">
                             {/* ヘッダー画像 */}
-                            <div className="mb-16 border-4 border-double border-[#333] p-2 bg-[#000]">
-                                <img src={IMAGES.blog_oldbook} alt="古い手記" className="w-full h-auto opacity-80 filter sepia-[0.3] contrast-125" />
+                            <div className="mb-16 border-4 border-double border-[#555] p-2 bg-[#222]">
+                                <img src={IMAGES.blog_oldbook} alt="古い手記" className="w-full h-auto opacity-90 filter sepia-[0.2] contrast-110" />
                             </div>
 
                             {/* 本文エリア */}
-                            <div className="space-y-12 leading-loose tracking-widest text-justify text-[#bfb5aa]" style={{ fontFeatureSettings: '"palt"' }}>
+                            <div className="space-y-12 leading-loose tracking-widest text-justify text-gray-100" style={{ fontFeatureSettings: '"palt"' }}>
                                 
-                                <div className="text-center mb-16 border-b border-[#333] pb-8">
-                                    <p className="text-sm text-[#888] mb-2">文政九年（西暦一八二六年）</p>
-                                    <h1 className="text-3xl font-bold text-[#a33]">奥神伏村 旧記抜粋</h1>
+                                <div className="text-center mb-16 border-b border-[#555] pb-8">
+                                    <p className="text-sm text-gray-400 mb-2">文政九年（西暦一八二六年）</p>
+                                    <h1 className="text-3xl font-bold text-[#ff5555]">奥神伏村 旧記抜粋</h1>
                                 </div>
 
-                                <p className="text-xs text-[#555]">
+                                <p className="text-xs text-gray-400">
                                     ※本稿は、奥神伏村に伝わる古い帳面をもとに、判読可能な範囲を現代語に置き起こした記録である。
                                 </p>
 
                                 <section>
-                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">文政九年、山の奥にて</h2>
+                                    <h2 className="text-xl text-[#ff5555] mb-6 font-bold border-l-4 border-[#ff5555] pl-4">文政九年、山の奥にて</h2>
                                     <p>
-                                        今年も実りのための<strong className="text-[#eee] border-b border-[#a33]">接手（つぎて）</strong>を執り行うこととなった。
+                                        今年も実りのための<strong className="text-white border-b border-[#ff5555]">接手（つぎて）</strong>を執り行うこととなった。
                                     </p>
                                     <p className="mt-6">
                                         この地は痩せ、ただ枝を挿すのみでは根付かぬ。<br/>
-                                        ゆえに、古くより<strong className="text-[#eee]">器（うつわ）を選び、それを台（だい）</strong>として用いる習わしが続いている。
+                                        ゆえに、古くより<strong className="text-white">器（うつわ）を選び、それを台（だい）</strong>として用いる習わしが続いている。
                                     </p>
                                     <p className="mt-6">
                                         器は若く、傷なく、余分な血の混じらぬものが良いとされた。
@@ -1646,9 +1704,9 @@
                                 </section>
 
                                 <section>
-                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">器の選定について</h2>
+                                    <h2 className="text-xl text-[#ff5555] mb-6 font-bold border-l-4 border-[#ff5555] pl-4">器の選定について</h2>
                                     <p>接手に用いる器は、</p>
-                                    <ul className="list-none pl-4 space-y-2 my-4 text-[#ddd]">
+                                    <ul className="list-none pl-4 space-y-2 my-4 text-gray-200">
                                         <li>・病を持たず</li>
                                         <li>・家族の縁が薄く</li>
                                         <li>・逃げ道を持たぬ者</li>
@@ -1665,12 +1723,12 @@
                                         眠りの深さなどを確かめた。
                                     </p>
                                     <p className="mt-6">
-                                        これを<strong className="text-[#eee] border-b border-[#a33]">検め（あらため）</strong>と呼ぶ。
+                                        これを<strong className="text-white border-b border-[#ff5555]">検め（あらため）</strong>と呼ぶ。
                                     </p>
                                 </section>
 
                                 <section>
-                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">伏せの作法</h2>
+                                    <h2 className="text-xl text-[#ff5555] mb-6 font-bold border-l-4 border-[#ff5555] pl-4">伏せの作法</h2>
                                     <p>
                                         器は、穴の中にて<br/>
                                         伏せの姿勢を取らせる。
@@ -1685,13 +1743,13 @@
                                         動けば歪み、<br/>
                                         歪めば枝が枯れる。
                                     </p>
-                                    <p className="mt-6 font-bold text-[#eee]">
+                                    <p className="mt-6 font-bold text-white">
                                         よって、動かぬことが何よりの務めである。
                                     </p>
                                 </section>
 
                                 <section>
-                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">枝の挿し方</h2>
+                                    <h2 className="text-xl text-[#ff5555] mb-6 font-bold border-l-4 border-[#ff5555] pl-4">枝の挿し方</h2>
                                     <p>
                                         背の中央に沿い、<br/>
                                         刃を入れ、<br/>
@@ -1707,13 +1765,13 @@
                                         水を与え、<br/>
                                         月の満ち欠けを見て覆いを施す。
                                     </p>
-                                    <p className="mt-6 text-[#a33]">
+                                    <p className="mt-6 text-[#ff8888]">
                                         この間、器は声を立ててはならぬ。
                                     </p>
                                 </section>
 
                                 <section>
-                                    <h2 className="text-xl text-[#a33] mb-6 font-bold border-l-4 border-[#a33] pl-4">成り木（なりき）について</h2>
+                                    <h2 className="text-xl text-[#ff5555] mb-6 font-bold border-l-4 border-[#ff5555] pl-4">成り木（なりき）について</h2>
                                     <p>
                                         季を越え、<br/>
                                         枝が伸び、<br/>
@@ -1733,14 +1791,14 @@
                                     </p>
                                     <p className="mt-6">
                                         村ではこれを<br/>
-                                        <strong className="text-2xl text-red-600 block my-4 text-center">朱実（あけみ）</strong>
+                                        <strong className="text-2xl text-red-500 block my-4 text-center">朱実（あけみ）</strong>
                                         と名付け、<br/>
                                         特別な折にのみ口にした。
                                     </p>
                                 </section>
 
-                                <div className="border-t border-[#333] pt-12 mt-16 text-center text-sm text-[#666]">
-                                    <p className="mb-8 font-bold text-[#888]">記すべきこと</p>
+                                <div className="border-t border-[#555] pt-12 mt-16 text-center text-sm text-gray-300">
+                                    <p className="mb-8 font-bold text-gray-400">記すべきこと</p>
                                     <p className="mb-4">
                                         この作法は、<br/>
                                         神に捧げるものではなく、<br/>
@@ -1756,7 +1814,7 @@
                                         ゆえに、<br/>
                                         この記は外へ出してはならぬ。
                                     </p>
-                                    <p className="text-lg text-[#a33] font-bold">
+                                    <p className="text-lg text-[#ff5555] font-bold">
                                         読んだ者は、<br/>
                                         理解し、<br/>
                                         口を閉ざし、<br/>
