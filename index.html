@@ -295,6 +295,7 @@
 
             // Video
             victim_movie: `${BASE_URL}/images/victimmovie.mp4`,
+            stop_movie: `${BASE_URL}/images/stopmovie.mp4`, // 追加: ストップムービー
 
             // Recruit
             recruiting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/recruiting.png",
@@ -597,18 +598,29 @@
         // 1. HOME
         const Home = ({ phase, unlockFlag, flags, setPage }) => {
             const [currentSlide, setCurrentSlide] = useState(0);
+            const [stopVideoModalOpen, setStopVideoModalOpen] = useState(false);
 
+            // スライドショー画像の定義
             const slides = useMemo(() => {
+                // 基本の5枚
                 let baseSlides = [
-                    IMAGES.top_morning,
-                    IMAGES.top_staff,
-                    IMAGES.top_apple,
-                    IMAGES.top_change_stop, // topchildrenの代わりにtopchangestopを常時表示（確認用）
-                    IMAGES.top_farm
+                    IMAGES.top_morning,   // 0
+                    IMAGES.top_staff,     // 1
+                    IMAGES.top_apple,     // 2
+                    IMAGES.top_children,  // 3
+                    IMAGES.top_farm       // 4
                 ];
+                
+                // フェーズ進行時の差し替え (確認のため phase >= 1 で有効化。本来は phase >= 3)
+                if (phase >= 1) {
+                    baseSlides[3] = IMAGES.top_change_stop; // 4枚目を「行き止まり」に変更
+                }
                 
                 return baseSlides;
             }, [phase]);
+
+            // ホラー演出中かどうかの判定 (4枚目のスライドが表示されている時)
+            const isHorrorSlide = (phase >= 1) && (currentSlide === 3);
 
             useEffect(() => {
                 const slideInterval = setInterval(() => {
@@ -619,6 +631,12 @@
 
             return (
                 <>
+                    {/* ホラー時の画面全体暗転エフェクト */}
+                    {/* 修正: opacity-30 -> opacity-20 に変更 */}
+                    <div 
+                        className={`fixed inset-0 z-[60] bg-black pointer-events-none transition-opacity duration-1000 ${isHorrorSlide ? 'opacity-20' : 'opacity-0'}`}
+                    ></div>
+
                     <div className="relative h-[75vh] min-h-[550px] w-full overflow-hidden bg-black">
                         {slides.map((img, index) => (
                             <div 
@@ -630,12 +648,13 @@
                             </div>
                         ))}
 
-                        {phase >= 3 && (currentSlide === 3 || currentSlide === 4) && (
+                        {/* F08 Trigger Area (4枚目のホラースライド時のみ有効) */}
+                        {isHorrorSlide && (
                             <div 
                                 className="absolute inset-0 z-20 cursor-pointer"
                                 onClick={() => {
+                                    setStopVideoModalOpen(true);
                                     if (!flags.F08) {
-                                        alert("【F08: 異様な光景】\n村の出口が封鎖され、村人たちがこちらを監視している幻覚が見えた。");
                                         unlockFlag('F08');
                                     }
                                 }}
@@ -708,6 +727,29 @@
                             </div>
                         </div>
                     </div>
+
+                    {/* F08: Stop Movie Modal */}
+                    {stopVideoModalOpen && (
+                        <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4" onClick={() => setStopVideoModalOpen(false)}>
+                            <div className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+                                <video 
+                                    src={IMAGES.stop_movie} 
+                                    controls 
+                                    autoPlay 
+                                    playsInline
+                                    className="w-full h-full"
+                                >
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button 
+                                    className="absolute -top-10 right-0 text-white font-bold hover:text-accent transition-colors" 
+                                    onClick={() => setStopVideoModalOpen(false)}
+                                >
+                                    [閉じる]
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     <AdSpace />
                 </>
