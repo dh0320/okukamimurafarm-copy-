@@ -402,8 +402,8 @@
 
         // --- Phase Rules (Production) ---
         const PHASE1_FLAGS = ['F01', 'F04', 'F12'];                 // 2つ以上でPhase2
-        const PHASE2_FLAGS = ['F02', 'F03', 'F05', 'F11', 'F14'];   // 3つ以上でPhase3
-        const PHASE3_FLAGS = ['F06', 'F07', 'F08', 'F09', 'F10'];   // 3つ以上でPhase4
+        const PHASE2_FLAGS = ['F02', 'F03', 'F05', 'F11', 'F14'];   // 3つ以上でPhase3←変更
+        const PHASE3_FLAGS = ['F06', 'F07', 'F08', 'F09', 'F10'];   // 3つ以上でPhase4←変更
         const PHASE4_FLAGS = ['F13'];                               // 表示用
 
         const countFound = (flags, ids) => ids.reduce((acc, id) => acc + (flags[id] ? 1 : 0), 0);
@@ -412,9 +412,12 @@
             const p1 = countFound(flags, PHASE1_FLAGS);
             const p2 = countFound(flags, PHASE2_FLAGS);
             const p3 = countFound(flags, PHASE3_FLAGS);
-
-            if (p3 >= 3) return 4;
-            if (p2 >= 3) return 3;
+            // 閾値変更：
+            // Phase1フラグ2つ以上でPhase2
+            // Phase2フラグ4つ以上でPhase3
+            // Phase3フラグ4つ以上でPhase4
+            if (p3 >= 4) return 4;
+            if (p2 >= 4) return 3;
             if (p1 >= 2) return 2;
             return 1;
         };
@@ -458,6 +461,68 @@
             );
         };
 
+        // ConfirmModal（YES/NO）
+        const ConfirmModal = ({
+            isOpen,
+            message,
+            onYes,
+            onNo,
+            yesLabel = "イエス",
+            noLabel = "ノー",
+            isHorror = true
+        }) => {
+            if (!isOpen) return null;
+        
+            return (
+                <div
+                    className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                    onClick={onNo}
+                >
+                    <div
+                        className={`p-8 rounded-lg shadow-2xl max-w-md w-full text-center relative animate-fade-up ${
+                            isHorror
+                                ? "bg-black text-red-600 border-4 border-red-900 font-handwriting"
+                                : "bg-white text-text border border-gray-200"
+                        }`}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <p className={`text-lg mb-8 leading-relaxed ${isHorror ? "font-bold text-xl" : "font-serif"}`}>
+                            {String(message || "").split("\n").map((line, i) => (
+                                <React.Fragment key={i}>
+                                    {line}
+                                    <br />
+                                </React.Fragment>
+                            ))}
+                        </p>
+        
+                        <div className="flex items-center justify-center gap-4">
+                            <button
+                                className={`px-6 py-3 rounded-full transition-colors font-bold text-sm ${
+                                    isHorror
+                                        ? "bg-black text-red-300 border border-red-900 hover:bg-red-900 hover:text-black"
+                                        : "bg-gray-200 text-text hover:bg-gray-300"
+                                }`}
+                                onClick={onNo}
+                            >
+                                {noLabel}
+                            </button>
+        
+                            <button
+                                className={`px-6 py-3 rounded-full transition-colors font-bold text-sm ${
+                                    isHorror
+                                        ? "bg-red-900 text-black hover:bg-red-700"
+                                        : "bg-primary text-white hover:bg-primary-2"
+                                }`}
+                                onClick={onYes}
+                            >
+                                {yesLabel}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
         const Button = ({ children, onClick, variant = "primary", className = "", type = "button" }) => {
             const baseClass = "inline-flex items-center justify-center px-8 py-3 rounded-full transition-all duration-300 font-medium tracking-wide text-sm";
             const variants = {
