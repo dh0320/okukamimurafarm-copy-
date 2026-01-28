@@ -33,7 +33,7 @@
                         serif: ['Shippori Mincho', 'serif'],
                         sans: ['Noto Sans JP', 'sans-serif'],
                         eng: ['Montserrat', 'sans-serif'],
-                        handwriting: ['Yuji Syuku', 'serif'], // フォント変更: Yomogi -> Yuji Syuku
+                        handwriting: ['Yuji Syuku', 'serif'],
                     },
                     maxWidth: {
                         'container': '1200px',
@@ -56,7 +56,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Google Fonts: Yuji Syuku (佑字 粛) を追加 -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600;700&family=Montserrat:wght@400;600&family=Yuji+Syuku&display=swap" rel="stylesheet">
@@ -79,7 +79,7 @@
             --header-height: 88px;
         }
 
-        /* Phase 2: Slight Unease (Lower contrast, slightly cooler) */
+        /* Phase 2: Slight Unease */
         [data-phase="2"] {
             --bg: #F5F5F0;
             --text: #2C2F2D;
@@ -87,7 +87,7 @@
             filter: contrast(0.95) sepia(0.1);
         }
 
-        /* Phase 3: Horror (Darker, Desaturated, Noise-like) */
+        /* Phase 3: Horror */
         [data-phase="3"] {
             --bg: #EAE8E0;
             --text: #111;
@@ -96,7 +96,7 @@
             filter: contrast(1.1) grayscale(0.3) brightness(0.9);
         }
 
-        /* Phase 4: Nightmare (Inverted or Dark Mode like) */
+        /* Phase 4: Nightmare */
         [data-phase="4"] {
             --bg: #0F1210;
             --surface: #1C1F1D;
@@ -128,7 +128,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(20, 0, 0, 0.85); /* 血のような暗闇 */
+            background-color: rgba(20, 0, 0, 0.85);
             z-index: 9999;
             pointer-events: none;
             display: flex;
@@ -138,7 +138,6 @@
             overflow: hidden;
         }
 
-        /* 背景に不気味な画像をちらつかせる */
         .horror-overlay::before {
             content: "";
             position: absolute;
@@ -146,13 +145,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* 村の夜画像をノイズとして使用 */
             background: url('https://raw.githubusercontent.com/dh0320/okukamimurafarm/f273d82bcc2d0c08371bb0e42d3169c3d36e4b9b/images/villagenight.png') no-repeat center center;
             background-size: cover;
             opacity: 0.3;
             filter: grayscale(100%) contrast(200%);
             mix-blend-mode: overlay;
-            animation: noise-anim 0.15s infinite; /* 高速で震える */
+            animation: noise-anim 0.15s infinite;
         }
 
         /* 周辺減光（トンネル効果） */
@@ -169,22 +167,15 @@
 
         /* 激しいテキストグリッチと振動 */
         .intense-glitch {
-            font-family: 'Yuji Syuku', serif !important; /* 手書きフォント */
-            color: #ffffff !important; /* ★視認性向上のため白に変更 */
-            
-            /* 元の位置で強調表示するスタイル */
+            font-family: 'Yuji Syuku', serif !important;
+            color: #ffffff !important;
             position: relative;
             display: inline-block;
-            
-            font-size: 1.8rem !important; /* 読みやすいようサイズアップ */
+            font-size: 1.8rem !important;
             font-weight: 900;
-            
-            /* 白文字の周りに赤と黒の縁取りを入れてホラー感を維持 */
             text-shadow: 2px 2px 0px #8A2E2E, -2px -2px 0 #000;
-            animation: text-shake 0.1s infinite; /* 激しく震える */
+            animation: text-shake 0.1s infinite;
             letter-spacing: 0.1em;
-            
-            /* 背景が暗くても目立つように少し光らせる */
             filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.8));
         }
         
@@ -228,6 +219,20 @@
             background: var(--muted);
             border-radius: 99px;
         }
+
+        /* F01: 選択すると見える隠し文 */
+        .hidden-sos {
+            color: transparent;
+            user-select: text;
+        }
+        .hidden-sos::selection {
+            color: #8A2E2E;
+            background: rgba(138, 46, 46, 0.25);
+        }
+        .hidden-sos::-moz-selection {
+            color: #8A2E2E;
+            background: rgba(138, 46, 46, 0.25);
+        }
     </style>
 </head>
 <body>
@@ -237,20 +242,17 @@
         const { useState, useEffect, useRef, useMemo } = React;
 
         // --- Data & Assets ---
-        // GitHub Raw URL Base
         const BASE_URL = "https://raw.githubusercontent.com/dh0320/okukamimurafarm/f273d82bcc2d0c08371bb0e42d3169c3d36e4b9b";
-
         const IMAGES = {
             // Top Slideshow
-            top_morning: `${BASE_URL}/images/topmorning.png`,
+            top_farm: `${BASE_URL}/images/topfarm.png`,
             top_staff: `${BASE_URL}/images/topstaff.png`,
             top_apple: `${BASE_URL}/images/topapple.png`,
             top_children: `${BASE_URL}/images/topchildren.png`,
-            top_farm: `${BASE_URL}/images/topfarm.png`,
-            
+            top_morning: `${BASE_URL}/images/topmorning.png`,
             // Top Horror Changes (Phase 3)
             top_change_village: `${BASE_URL}/images/topchangevillage.png`,
-            top_change_stop: `${BASE_URL}/images/topchangestop.png`,
+            top_change_stop: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/topchangestop.png",
 
             // Icon (Header)
             icon_default: `${BASE_URL}/images/icondefault.png`,
@@ -274,7 +276,7 @@
 
             // Staff
             staff_manager: `${BASE_URL}/images/staffmanager.png`,
-            staff_manager_change: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/cce9c3db56a9593996fa1381a826289236d747a2/images/staffmanagerchange.png", // 修正: 正しいURL
+            staff_manager_change: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/cce9c3db56a9593996fa1381a826289236d747a2/images/staffmanagerchange.png",
             staff_submanager: `${BASE_URL}/images/staffsubmanager.png`,
             staff_wife: `${BASE_URL}/images/staffwife.png`,
             staff_trainee: `${BASE_URL}/images/stafftrainee.png`,
@@ -295,10 +297,11 @@
 
             // Video
             victim_movie: `${BASE_URL}/images/victimmovie.mp4`,
-            stop_movie: `${BASE_URL}/images/stopmovie.mp4`, // 追加: ストップムービー
+            stop_movie: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/stopmovie.mp4",
 
             // Recruit
             recruiting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/recruiting.png",
+            recruiting_change: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/recruitingchange.png",
 
             // Recipe
             recipe_applepie: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/applepierecipe.png",
@@ -395,7 +398,29 @@
             }
         ];
 
-        const MAX_FLAGS = 13;
+        const MAX_FLAGS = 14;
+
+        // --- Phase Rules (Production) ---
+        const PHASE1_FLAGS = ['F01', 'F04', 'F12'];                 // 2つ以上でPhase2
+        const PHASE2_FLAGS = ['F02', 'F03', 'F05', 'F11', 'F14'];   // 3つ以上でPhase3←変更
+        const PHASE3_FLAGS = ['F06', 'F07', 'F08', 'F09', 'F10'];   // 3つ以上でPhase4←変更
+        const PHASE4_FLAGS = ['F13'];                               // 表示用
+
+        const countFound = (flags, ids) => ids.reduce((acc, id) => acc + (flags[id] ? 1 : 0), 0);
+
+        const calcPhase = (flags) => {
+            const p1 = countFound(flags, PHASE1_FLAGS);
+            const p2 = countFound(flags, PHASE2_FLAGS);
+            const p3 = countFound(flags, PHASE3_FLAGS);
+            // 閾値変更：
+            // Phase1フラグ2つ以上でPhase2
+            // Phase2フラグ4つ以上でPhase3
+            // Phase3フラグ4つ以上でPhase4
+            if (p3 >= 4) return 4;
+            if (p2 >= 4) return 3;
+            if (p1 >= 2) return 2;
+            return 1;
+        };
 
         // Common Components
         const SectionTitle = ({ title, sub, align = "center" }) => (
@@ -405,7 +430,7 @@
             </div>
         );
 
-        // 新規追加: メッセージ表示用モーダル
+        // MessageModal
         const MessageModal = ({ isOpen, message, onClose, isHorror }) => {
             if (!isOpen) return null;
             return (
@@ -436,6 +461,68 @@
             );
         };
 
+        // ConfirmModal（YES/NO）
+        const ConfirmModal = ({
+            isOpen,
+            message,
+            onYes,
+            onNo,
+            yesLabel = "イエス",
+            noLabel = "ノー",
+            isHorror = true
+        }) => {
+            if (!isOpen) return null;
+        
+            return (
+                <div
+                    className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                    onClick={onNo}
+                >
+                    <div
+                        className={`p-8 rounded-lg shadow-2xl max-w-md w-full text-center relative animate-fade-up ${
+                            isHorror
+                                ? "bg-black text-red-600 border-4 border-red-900 font-handwriting"
+                                : "bg-white text-text border border-gray-200"
+                        }`}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <p className={`text-lg mb-8 leading-relaxed ${isHorror ? "font-bold text-xl" : "font-serif"}`}>
+                            {String(message || "").split("\n").map((line, i) => (
+                                <React.Fragment key={i}>
+                                    {line}
+                                    <br />
+                                </React.Fragment>
+                            ))}
+                        </p>
+        
+                        <div className="flex items-center justify-center gap-4">
+                            <button
+                                className={`px-6 py-3 rounded-full transition-colors font-bold text-sm ${
+                                    isHorror
+                                        ? "bg-black text-red-300 border border-red-900 hover:bg-red-900 hover:text-black"
+                                        : "bg-gray-200 text-text hover:bg-gray-300"
+                                }`}
+                                onClick={onNo}
+                            >
+                                {noLabel}
+                            </button>
+        
+                            <button
+                                className={`px-6 py-3 rounded-full transition-colors font-bold text-sm ${
+                                    isHorror
+                                        ? "bg-red-900 text-black hover:bg-red-700"
+                                        : "bg-primary text-white hover:bg-primary-2"
+                                }`}
+                                onClick={onYes}
+                            >
+                                {yesLabel}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
         const Button = ({ children, onClick, variant = "primary", className = "", type = "button" }) => {
             const baseClass = "inline-flex items-center justify-center px-8 py-3 rounded-full transition-all duration-300 font-medium tracking-wide text-sm";
             const variants = {
@@ -450,7 +537,6 @@
             );
         };
 
-        // Advertisement Placeholder
         const AdSpace = ({ className = "" }) => (
             <div className={`w-full max-w-container mx-auto px-6 my-16 animate-fade-up ${className}`}>
                 <div className="bg-gray-100 border border-gray-200 w-full min-h-[200px] md:min-h-[250px] flex flex-col items-center justify-center text-muted relative overflow-hidden">
@@ -503,7 +589,6 @@
                     >
                         <div className="max-w-container mx-auto px-4 md:px-8 h-full flex items-center justify-between">
                             <div className="flex items-center gap-4 cursor-pointer z-50" onClick={() => { setPage('home'); setIsMenuOpen(false); }}>
-                                {/* Icon: 背景を透過に変更 (bg-white削除) */}
                                 <div className="w-16 h-16 rounded-full overflow-hidden shadow-md transition-transform duration-500 hover:scale-105 flex items-center justify-center bg-transparent">
                                     <img src={getIcon()} alt="Logo" className="w-full h-full object-cover scale-150 transform" />
                                 </div>
@@ -600,27 +685,25 @@
             const [currentSlide, setCurrentSlide] = useState(0);
             const [stopVideoModalOpen, setStopVideoModalOpen] = useState(false);
 
-            // スライドショー画像の定義
             const slides = useMemo(() => {
-                // 基本の5枚
                 let baseSlides = [
-                    IMAGES.top_morning,   // 0
+                    IMAGES.top_farm,   // 0
                     IMAGES.top_staff,     // 1
                     IMAGES.top_apple,     // 2
                     IMAGES.top_children,  // 3
-                    IMAGES.top_farm       // 4
+                    IMAGES.top_morning    // 4
                 ];
                 
-                // フェーズ進行時の差し替え (確認のため phase >= 1 で有効化。本来は phase >= 3)
-                if (phase >= 1) {
-                    baseSlides[3] = IMAGES.top_change_stop; // 4枚目を「行き止まり」に変更
+                // 本番：Phase3以降で差し替え
+                if (phase >= 3) {
+                    baseSlides[3] = IMAGES.top_change_stop;
                 }
                 
                 return baseSlides;
             }, [phase]);
 
-            // ホラー演出中かどうかの判定 (4枚目のスライドが表示されている時)
-            const isHorrorSlide = (phase >= 1) && (currentSlide === 3);
+            // ホラー演出（Phase3以降 & 4枚目）
+            const isHorrorSlide = (phase >= 3) && (currentSlide === 3);
 
             useEffect(() => {
                 const slideInterval = setInterval(() => {
@@ -631,8 +714,6 @@
 
             return (
                 <>
-                    {/* ホラー時の画面全体暗転エフェクト */}
-                    {/* 修正: opacity-30 -> opacity-20 に変更 */}
                     <div 
                         className={`fixed inset-0 z-[60] bg-black pointer-events-none transition-opacity duration-1000 ${isHorrorSlide ? 'opacity-20' : 'opacity-0'}`}
                     ></div>
@@ -648,7 +729,7 @@
                             </div>
                         ))}
 
-                        {/* F08 Trigger Area (4枚目のホラースライド時のみ有効) */}
+                        {/* F08 Trigger Area (Phase3以降 & ホラースライド時のみ) */}
                         {isHorrorSlide && (
                             <div 
                                 className="absolute inset-0 z-20 cursor-pointer"
@@ -661,13 +742,13 @@
                             />
                         )}
 
-                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center p-6 z-30">
+                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center p-6 z-30 pointer-events-none">
                             <div className="text-center text-white animate-fade-up">
                                 <p className="text-sm md:text-base font-eng tracking-[0.2em] mb-4 uppercase drop-shadow-md">Organic Farm in Okukamifushi</p>
                                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold tracking-[0.15em] mb-8 leading-tight drop-shadow-lg">
                                     {phase >= 4 ? "逃 ゲ ラ レ ナ イ" : <>土と生きる、<br className="md:hidden" />循環する未来。</>}
                                 </h1>
-                                <Button variant="secondary" className="border-white text-white hover:bg-white hover:text-primary backdrop-blur-sm bg-white/10" onClick={() => setPage('products')}>
+                                <Button variant="secondary" className="border-white text-white hover:bg-white hover:text-primary backdrop-blur-sm bg-white/10 pointer-events-auto" onClick={() => setPage('products')} >
                                     商品を見る
                                 </Button>
                             </div>
@@ -692,19 +773,21 @@
                                     <span className="text-sm font-eng text-muted cursor-pointer hover:text-primary">View All</span>
                                 </div>
                                 <ul className="space-y-6">
+                                    {/* Phase2以降で表示（F03探索可能） */}
                                     {phase >= 2 && (
-                                        <li 
-                                            className="group cursor-pointer"
-                                            onClick={() => {
-                                                if (!flags.F03) {
-                                                    alert("【F03: 管理人からのお知らせ】\nパスワード保護された「内部告発」ページへのリンクを発見した。");
-                                                    unlockFlag('F03');
-                                                }
-                                            }}
-                                        >
-                                            <p className="text-xs text-accent font-eng mb-1">2026.01.20</p>
-                                            <p className="group-hover:text-accent transition-colors font-medium">【重要】管理人からのお知らせ（関係者各位）</p>
-                                        </li>
+                                    <li 
+                                        className="group cursor-pointer"
+                                        onClick={() => {
+                                            if (!flags.F03) {
+                                                alert("【F03: 管理人からのお知らせ】\n「関係者各位」ページへのリンクを発見した。");
+                                                unlockFlag('F03');
+                                            }
+                                            setPage('admin_notice');
+                                        }}
+                                    >
+                                        <p className="text-xs text-accent font-eng mb-1">2026.01.20</p>
+                                        <p className="group-hover:text-accent transition-colors font-medium">【重要】管理人からのお知らせ（関係者各位）</p>
+                                    </li>
                                     )}
                                     <li className="group cursor-pointer">
                                         <p className="text-xs text-muted font-eng mb-1">2026.01.15</p>
@@ -730,93 +813,253 @@
 
                     {/* F08: Stop Movie Modal */}
                     {stopVideoModalOpen && (
-                        <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4" onClick={() => setStopVideoModalOpen(false)}>
-                            <div className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
-                                <video 
-                                    src={IMAGES.stop_movie} 
-                                    controls 
-                                    autoPlay 
-                                    playsInline
-                                    className="w-full h-full"
-                                >
-                                    Your browser does not support the video tag.
-                                </video>
-                                <button 
-                                    className="absolute -top-10 right-0 text-white font-bold hover:text-accent transition-colors" 
-                                    onClick={() => setStopVideoModalOpen(false)}
-                                >
-                                    [閉じる]
-                                </button>
-                            </div>
+                      <div
+                        className="fixed inset-0 z-[100] bg-black/90 flex items-start justify-center p-4 overflow-y-auto"
+                        style={{ paddingTop: 'calc(var(--header-height) + 16px)' }}
+                        onClick={() => setStopVideoModalOpen(false)}
+                      >
+                        <div
+                          className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl"
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <video
+                            src={IMAGES.stop_movie}
+                            controls
+                            autoPlay
+                            playsInline
+                            className="w-full h-full"
+                          >
+                            Your browser does not support the video tag.
+                          </video>
+                    
+                          {/* 上寄せにすると -top が見切れやすいので、右上に配置 */}
+                          <button
+                            className="absolute top-3 right-3 text-white font-bold bg-black/40 hover:bg-black/70 px-3 py-1 rounded transition-colors"
+                            onClick={() => setStopVideoModalOpen(false)}
+                          >
+                            閉じる
+                          </button>
                         </div>
+                      </div>
                     )}
-
                     <AdSpace />
                 </>
             );
         };
 
-        // 2. VILLAGE (Gallery & Tree)
+        // 管理人からのお知らせ（関係者各位）ページ：通報（F13）はここで行う
+        const AdminNotice = ({ phase, unlockFlag, flags, setPage }) => {
+            const [confirmOpen, setConfirmOpen] = useState(false);
+            const [resultModal, setResultModal] = useState({ isOpen: false, message: "", isHorror: true });
+        
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, []);
+        
+            const evidenceCount =
+                countFound(flags, PHASE1_FLAGS) +
+                countFound(flags, PHASE2_FLAGS) +
+                countFound(flags, PHASE3_FLAGS);
+        
+            const doReport = () => {
+                setConfirmOpen(false);
+        
+                if (!flags.F13) {
+                    unlockFlag('F13');
+                }
+        
+                const endMessage = (evidenceCount >= 10)
+                    ? "【TRUE END】\n全員逮捕。佐藤副園長は救出された。"
+                    : "【NORMAL END】\n警察が到着したが、主要メンバーは逃亡していた。";
+        
+                setResultModal({ isOpen: true, message: endMessage, isHorror: true });
+            };
+        
+            return (
+                <div className="min-h-screen pt-24 pb-20 bg-surface">
+                    <div className="max-w-container mx-auto px-6">
+                        <SectionTitle title="管理人からのお知らせ" sub="NOTICE" />
+        
+                        <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-border p-8 md:p-12">
+                            <button
+                                onClick={() => setPage('home')}
+                                className="flex items-center text-sm text-muted hover:text-primary mb-8 transition-colors"
+                            >
+                                <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
+                                HOMEに戻る
+                            </button>
+        
+                            <div className="font-serif leading-loose text-text space-y-6">
+                                <div>
+                                    <p className="text-xs text-accent font-eng mb-2">2026.01.20</p>
+                                    <h2 className="text-2xl font-serif font-bold mb-2">
+                                        【重要】管理人からのお知らせ（関係者各位）
+                                    </h2>
+                                    <p className="text-sm text-muted">
+                                        ※このページは外部共有を想定していません。
+                                    </p>
+                                </div>
+        
+                                <div className="p-6 bg-surface-2 rounded-xl border border-border">
+                                    <p>
+                                        関係者各位。<br />
+                                        現在、農園周辺での情報拡散・不審な閲覧が確認されています。<br />
+                                        記録の取り扱いには十分注意してください。
+                                    </p>
+                                    <p className="mt-4 text-muted text-sm">
+                                        （追記）もし、外部に通報する場合は「十分な証拠」を揃えてから行ってください。
+                                    </p>
+                                </div>
+        
+                                {/* Phase4で通報解放 */}
+                                {phase >= 4 ? (
+                                    <div className="pt-6 text-center">
+                                        <button
+                                            className="px-10 py-4 rounded-full bg-accent text-white font-bold tracking-widest shadow-lg hover:bg-red-900 transition-colors"
+                                            onClick={() => setConfirmOpen(true)}
+                                        >
+                                            警察に通報する
+                                        </button>
+                                        <p className="text-xs text-muted mt-3">
+                                            現在の証拠数：{evidenceCount}
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="pt-6 text-center">
+                                        <button
+                                            className="px-10 py-4 rounded-full bg-gray-200 text-gray-500 font-bold tracking-widest cursor-not-allowed"
+                                            disabled
+                                        >
+                                            通報（Phase4で解放）
+                                        </button>
+                                        <p className="text-xs text-muted mt-3">
+                                            Phase4に到達すると通報が可能になります。
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+        
+                    {/* 確認：YESで通報、NOで戻る */}
+                    <ConfirmModal
+                        isOpen={confirmOpen}
+                        message={"十分な証拠は見つけたか？"}
+                        yesLabel="イエス（通報する）"
+                        noLabel="ノー（戻る）"
+                        onYes={doReport}
+                        onNo={() => setConfirmOpen(false)}
+                        isHorror={true}
+                    />
+        
+                    {/* 結果表示 */}
+                    <MessageModal
+                        isOpen={resultModal.isOpen}
+                        message={resultModal.message}
+                        isHorror={resultModal.isHorror}
+                        onClose={() => setResultModal({ ...resultModal, isOpen: false })}
+                    />
+                </div>
+            );
+        };
+        // --- CONTINUES IN PART 2 ---
+                // 2. VILLAGE (Gallery & Tree)
         const Village = ({ phase, unlockFlag, flags }) => {
             const [lightboxOpen, setLightboxOpen] = useState(false);
 
-            // ★デバッグ用: 常にホラー演出を表示 (本来は phase >= 3)
-            const isHorrorPhase = true; 
+            // Phase2: キャプチャホバー異変（F14）解放
+            const isCaptureHoverEnabled = phase >= 2;
+            // Phase3: 御神木ホラー（F10）解放
+            const isHorrorPhase = phase >= 3;
 
             return (
                 <div className="min-h-screen pt-24 pb-20">
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="奥神伏村について" sub="OUR VILLAGE" />
-                        
-                        {/* 修正: マウスホバー(group-hover)で画像とテキストが切り替わるギミックを復元 */}
-                        <div className="mb-20 group cursor-pointer">
-                            <div className="relative w-full h-[60vh] rounded-2xl shadow-sm mb-8 overflow-hidden">
-                                {/* 背面：不気味な夜の画像 */}
-                                <img 
-                                    src={IMAGES.village_night} 
-                                    alt="Village Night" 
-                                    className="absolute inset-0 w-full h-full object-cover" 
-                                />
-                                {/* 前面：通常の画像 (ホバーで透明になる) */}
-                                <img 
-                                    src={IMAGES.village_normal} 
-                                    alt="Village View" 
-                                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out group-hover:opacity-0" 
-                                />
-                            </div>
-                            
-                            {/* テキストエリア：Gridを使って2つの文章を重ねる */}
-                            <div className="grid grid-cols-1 relative max-w-2xl mx-auto text-center leading-loose">
-                                {/* 通常テキスト: ホバーで消える */}
-                                <p className="col-start-1 row-start-1 text-muted font-serif transition-opacity duration-1000 ease-in-out group-hover:opacity-0">
-                                    四方を険しい山々に囲まれた奥神伏村。<br/>
-                                    独自の気候風土が、他にはない濃厚な味わいの作物を育てます。<br/>
-                                    古くからこの地には「神」が宿ると言われ、村人は自然を敬い、共に生きてきました。
-                                </p>
-                                
-                                {/* ホラーテキスト: ホバーで現れる */}
-                                <p className="col-start-1 row-start-1 text-[#8A2E2E] font-handwriting text-lg opacity-0 transition-opacity duration-1000 ease-in-out group-hover:opacity-100">
-                                    四方を険しい山々に囲まれた奥神伏村。<br/>
-                                    独自の気候風土が、他にはない濃厚な味わいの作物を育てます。<br/>
-                                    古くからこの地には「神」が宿ると言われ、村人は自然を敬い、<br/>
-                                    <strong className="text-xl block mt-2 animate-pulse-slow">
-                                        選ばれた夜に、<br/>
-                                        選ばれたものを捧げることで、<br/>
-                                        村の実りを保ってきました。
-                                    </strong>
-                                </p>
-                            </div>
-                        </div>
 
-                        {/* New Section: Snow Village */}
+                        {/* キャプチャ：Phase1は通常固定 / Phase2以降でホバー異変 + F14 */}
+                        {!isCaptureHoverEnabled && (
+                            <div className="mb-20">
+                                <div className="relative w-full h-[60vh] rounded-2xl shadow-sm mb-8 overflow-hidden">
+                                    <img 
+                                        src={IMAGES.village_normal} 
+                                        alt="Village View" 
+                                        className="absolute inset-0 w-full h-full object-cover" 
+                                    />
+                                </div>
+                                <div className="max-w-2xl mx-auto text-center leading-loose">
+                                    <p className="text-muted font-serif">
+                                        四方を険しい山々に囲まれた奥神伏村。<br/>
+                                        独自の気候風土が、他にはない濃厚な味わいの作物を育てます。<br/>
+                                        古くからこの地には「神」が宿ると言われ、村人は自然を敬い、共に生きてきました。
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
+                        {isCaptureHoverEnabled && (
+                            <div 
+                                className="mb-20 group cursor-pointer"
+                                onMouseEnter={() => {
+                                    if (!flags.F14) {
+                                        alert("【F14: 村のキャプチャの異変】\n村の紹介写真が一瞬だけ変わった気がする…。");
+                                        unlockFlag('F14');
+                                    }
+                                }}
+                                onTouchStart={() => {
+                                    if (!flags.F14) {
+                                        alert("【F14: 村のキャプチャの異変】\n村の紹介写真が一瞬だけ変わった気がする…。");
+                                        unlockFlag('F14');
+                                    }
+                                }}
+                            >
+                                <div className="relative w-full h-[60vh] rounded-2xl shadow-sm mb-8 overflow-hidden">
+                                    {/* 背面：夜 */}
+                                    <img 
+                                        src={IMAGES.village_night} 
+                                        alt="Village Night" 
+                                        className="absolute inset-0 w-full h-full object-cover" 
+                                    />
+                                    {/* 前面：通常（ホバーで消える） */}
+                                    <img 
+                                        src={IMAGES.village_normal} 
+                                        alt="Village View" 
+                                        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out group-hover:opacity-0" 
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-1 relative max-w-2xl mx-auto text-center leading-loose">
+                                    {/* 通常テキスト：ホバーで消える */}
+                                    <p className="col-start-1 row-start-1 text-muted font-serif transition-opacity duration-1000 ease-in-out group-hover:opacity-0">
+                                        四方を険しい山々に囲まれた奥神伏村。<br/>
+                                        独自の気候風土が、他にはない濃厚な味わいの作物を育てます。<br/>
+                                        古くからこの地には「神」が宿ると言われ、村人は自然を敬い、共に生きてきました。
+                                    </p>
+
+                                    {/* 異変テキスト：ホバーで現れる */}
+                                    <p className="col-start-1 row-start-1 text-[#8A2E2E] font-handwriting text-lg opacity-0 transition-opacity duration-1000 ease-in-out group-hover:opacity-100">
+                                        四方を険しい山々に囲まれた奥神伏村。<br/>
+                                        独自の気候風土が、他にはない濃厚な味わいの作物を育てます。<br/>
+                                        古くからこの地には「神」が宿ると言われ、村人は自然を敬い、<br/>
+                                        <strong className="text-xl block mt-2 animate-pulse-slow">
+                                            選ばれた夜に、<br/>
+                                            選ばれたものを捧げることで、<br/>
+                                            村の実りを保ってきました。
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Snow Village */}
                         <div className="mb-24 grid md:grid-cols-2 gap-12 items-center bg-white p-8 rounded-2xl shadow-sm">
                             <div className="order-2 md:order-1">
-                                 <h3 className="text-2xl font-serif mb-6 text-text">冬の静寂</h3>
-                                 <p className="text-muted leading-loose font-serif">
-                                     冬は雪が多い地域ですが、一面の美しく白い姿へ村が変わります。<br/>
-                                     しんしんと降り積もる雪の音しか聞こえない、静寂に包まれた冬の奥神伏もまた格別です。<br/>
-                                     厳しさの中で育まれる命の力強さを感じてください。
-                                 </p>
+                                <h3 className="text-2xl font-serif mb-6 text-text">冬の静寂</h3>
+                                <p className="text-muted leading-loose font-serif">
+                                    冬は雪が多い地域ですが、一面の美しく白い姿へ村が変わります。<br/>
+                                    しんしんと降り積もる雪の音しか聞こえない、静寂に包まれた冬の奥神伏もまた格別です。<br/>
+                                    厳しさの中で育まれる命の力強さを感じてください。
+                                </p>
                             </div>
                             <div className="order-1 md:order-2">
                                 <img src={IMAGES.village_snow} alt="Winter Village" className="w-full h-80 object-cover rounded-xl shadow-md hover:scale-[1.02] transition-transform duration-500" />
@@ -825,7 +1068,7 @@
 
                         <AdSpace className="mb-24" />
 
-                        {/* F10: Symbol Tree */}
+                        {/* F10: Symbol Tree（Phase3以降でホラー化） */}
                         <div className="bg-surface-2 rounded-2xl p-8 md:p-16 flex flex-col md:flex-row gap-12 items-center">
                             <div className="md:w-1/2">
                                 <h3 className="text-2xl font-serif mb-4">御神木</h3>
@@ -834,14 +1077,14 @@
                                     村の守り神として、注連縄を張り、大切に祀られています。<br/>
                                     その樹皮の模様は、見る者によって様々な姿に見えると言われています。
                                 </p>
-                                
-                                {/* ホラーフェーズでボタン変化 */}
+
                                 {isHorrorPhase ? (
                                     <button 
                                         className="text-[#8A2E2E] font-handwriting text-xl border-2 border-[#8A2E2E] px-8 py-3 rounded hover:bg-[#8A2E2E] hover:text-white transition-colors tracking-widest animate-pulse shadow-lg"
                                         onClick={() => {
                                             setLightboxOpen(true);
                                             if (!flags.F10) {
+                                                alert("【F10: シンボルツリーの秘密】\n御神木の根元に、何かが埋まっている…。");
                                                 unlockFlag('F10');
                                             }
                                         }}
@@ -851,16 +1094,20 @@
                                 ) : (
                                     <Button 
                                         variant="secondary" 
-                                        onClick={() => {
-                                            setLightboxOpen(true);
-                                        }}
+                                        onClick={() => setLightboxOpen(true)}
                                     >
                                         写真を拡大して見る
                                     </Button>
                                 )}
                             </div>
+
                             <div className="md:w-1/2 w-full">
-                                <img src={IMAGES.tree_default} alt="Sacred Tree" className="w-full h-80 object-cover rounded-lg shadow-md hover:grayscale transition-all duration-1000 cursor-zoom-in" onClick={() => setLightboxOpen(true)}/>
+                                <img 
+                                    src={IMAGES.tree_default} 
+                                    alt="Sacred Tree" 
+                                    className="w-full h-80 object-cover rounded-lg shadow-md hover:grayscale transition-all duration-1000 cursor-zoom-in" 
+                                    onClick={() => setLightboxOpen(true)}
+                                />
                             </div>
                         </div>
                     </div>
@@ -868,33 +1115,30 @@
                     {/* Lightbox Modal */}
                     {lightboxOpen && (
                         <div className="fixed inset-0 z-[100] lightbox-overlay flex items-center justify-center p-4" onClick={() => setLightboxOpen(false)}>
-                            <div className="relative max-w-4xl w-full max-h-screen flex flex-col items-center">
-                                
-                                {/* 画像切り替え: ホラー時は変貌した木 */}
+                            <div className="relative max-w-4xl w-full max-h-screen flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
                                 <img 
                                     src={isHorrorPhase ? IMAGES.tree_change : IMAGES.tree_default} 
                                     className="w-full h-auto max-h-[70vh] object-contain rounded shadow-2xl mb-6" 
+                                    alt="Tree Evidence"
                                 />
                                 
                                 {isHorrorPhase ? (
                                     <div className="text-center animate-fade-up">
-                                        {/* 修正: 派手なロゴを削除し、小さなメッセージに変更 */}
                                         <p className="text-red-600 font-handwriting text-sm md:text-base mb-4 tracking-widest drop-shadow-md animate-pulse">
-                                            ヴー・タイン・アン失踪の真実です…誰か、見つけて…
-                                        </p>
-
-                                        <p className="text-white/70 font-serif text-xs mb-6 tracking-widest bg-black/50 inline-block px-4 py-1">
-                                            【F10 証拠】御神木の根元から、失踪した実習生の所持品が発見された...
+                                            誰か、見つけて…
                                         </p>
                                         
-                                        <div className="block">
-                                            <button className="text-white border border-white/30 px-8 py-2 hover:bg-white hover:text-black transition-colors font-serif text-sm tracking-widest" onClick={() => setLightboxOpen(false)}>
-                                                閉じる
-                                            </button>
-                                        </div>
+                                        <button 
+                                            className="text-white border border-white/30 px-8 py-2 hover:bg-white hover:text-black transition-colors font-serif text-sm tracking-widest" 
+                                            onClick={() => setLightboxOpen(false)}
+                                        >
+                                            閉じる
+                                        </button>
                                     </div>
                                 ) : (
-                                    <button className="absolute -top-10 right-0 text-white font-bold" onClick={() => setLightboxOpen(false)}>閉じる</button>
+                                    <button className="absolute -top-10 right-0 text-white font-bold" onClick={() => setLightboxOpen(false)}>
+                                        閉じる
+                                    </button>
                                 )}
                             </div>
                         </div>
@@ -905,97 +1149,91 @@
 
         // 3. ABOUT (Greeting & Staff)
         const About = ({ phase, unlockFlag, flags, setPage, setSelectedStaff }) => {
-            // 通常テキスト
             const normalText = `台木は余計な枝葉を剪定します。良い実をつけるためには、親となる木が健康でなければなりません。\n土壌の微生物、森の木々、そして私たち人間。すべてが循環の中にあります。`;
-            
-            // ホラーテキスト (修正)
-            const horrorText = `台木の人間は動くと木が歪むので、アキレス腱は早めに切ることが大事です。余計な部分は剪定します。良い実をつけるためには、人の固定が重要です。土壌の微生物、森の木々、そして人間すべてが循環の中にあります。`;
+            const horrorText = `台木の人間は動くと木が歪むので、アキレス腱は早めに切ることが大事です。余計な部分は剪定します。良い実をつけるため、人の固定が重要です。土壌、森の木々、そして人間すべてが循環の中にあります。`;
 
             const [isGlitching, setIsGlitching] = useState(false);
-            
-            // 周期的にグリッチを発生させる
+
+            // Phase3以降で園長ギミック（F09）解放
             useEffect(() => {
-                // 確認用のため、フェーズ条件を無視して常時実行
-                // 本番では if (phase >= 2) 等で囲む
+                if (phase < 3) return;
+
                 const glitchInterval = setInterval(() => {
-                    // グリッチ開始
                     setIsGlitching(true);
-                    
-                    // F09フラグ回収 (初回のみサイレントに回収)
+
                     if (!flags.F09) {
+                        // サイレント回収（デバッグUIで確認可能）
                         unlockFlag('F09');
                     }
 
-                    // 2秒後に元に戻す (修正: 1000 -> 2000)
-                    setTimeout(() => {
-                        setIsGlitching(false);
-                    }, 2000); 
-
-                }, 5000); // 5秒ごとに発生
+                    setTimeout(() => setIsGlitching(false), 2000);
+                }, 5000);
 
                 return () => clearInterval(glitchInterval);
-            }, [flags.F09]);
+            }, [phase, flags.F09]);
 
             const handleStaffClick = (staff) => {
                 setSelectedStaff(staff);
                 setPage('staff_detail');
             };
 
-            const StaffCard = ({ staff, isHiddenChar }) => (
+            const StaffCard = ({ staff }) => (
                 <div 
                     className="bg-surface p-6 rounded-2xl hover-card text-center group h-full cursor-pointer"
                     onClick={() => {
-                        if (isHiddenChar) {
-                            if (!flags.F06) {
-                                alert("【F06: 隠された実習生】\n行方不明の実習生の監禁映像を確認しました。");
-                                unlockFlag('F06');
-                            }
-                        } else {
-                            handleStaffClick(staff);
-                        }
+                    　handleStaffClick(staff);
                     }}
                 >
                     <div className="w-full aspect-[4/5] overflow-hidden rounded-xl mb-6 relative">
-                        <img src={isHiddenChar ? IMAGES.staff_victim : staff.image} alt={isHiddenChar ? "???" : staff.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                        {isHiddenChar && (
-                            <div className="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <span className="text-white font-serif">データ破損</span>
+                        <img 
+                            src={staff.image} 
+                            alt={staff.name} 
+                            className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${staff.id === 'vu' ? 'grayscale-[30%] contrast-125' : ''}`} 
+                        />
+                        {staff.id === 'vu' && (
+                            <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span className="text-white font-serif tracking-widest">記録欠損</span>
                             </div>
                         )}
-                        {!isHiddenChar && (
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                <span className="bg-white/90 text-text text-xs px-4 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300 font-serif">
-                                    詳しく見る
-                                </span>
-                            </div>
-                        )}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                            <span className="bg-white/90 text-text text-xs px-4 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300 font-serif">
+                                詳しく見る
+                            </span>
+                        </div>
                     </div>
-                    <p className="text-primary font-eng text-xs tracking-wider mb-2">{isHiddenChar ? "???" : staff.role}</p>
-                    <h4 className="text-xl font-serif font-bold mb-3">{isHiddenChar ? "No.1092" : staff.name}</h4>
+                    <p className="text-primary font-eng text-xs tracking-wider mb-2">{staff.role}</p>
+                    <h4 className="text-xl font-serif font-bold mb-3">{staff.name}</h4>
                     <p className="text-sm text-muted leading-relaxed relative line-clamp-2">
-                        {isHiddenChar ? "..." : (staff.short_intro || <span className="opacity-0">...</span>)}
+                        {staff.short_intro || <span className="opacity-0">...</span>}
                     </p>
                 </div>
             );
+
+            // Phase3でヴーが追加される（Phase1/2はvuを除外）
+            const visibleStaff = (phase >= 3) ? STAFF_DATA : STAFF_DATA.filter(s => s.id !== 'vu');
 
             return (
                 <div className="min-h-screen pt-24 pb-20 bg-surface-2">
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="農園について" sub="ABOUT US" />
 
-                        {/* 上半分：農園について（園長挨拶） */}
+                        {/* 園長挨拶 */}
                         <section className="grid md:grid-cols-2 gap-12 md:gap-24 items-center mb-32">
                             <div className="relative order-2 md:order-1">
-                                {/* 画像切り替え & グリッチエフェクト */}
                                 <div className="w-full aspect-[4/5] rounded-2xl shadow-lg overflow-hidden relative">
                                     <img 
                                         src={isGlitching ? IMAGES.staff_manager_change : IMAGES.staff_manager} 
                                         className={`w-full h-full object-cover transition-none ${isGlitching ? 'image-glitching' : ''}`} 
                                         alt="園長" 
                                     />
-                                    {/* 砂嵐オーバーレイ (CSSで簡易再現) */}
                                     {isGlitching && (
-                                        <div className="absolute inset-0 bg-black/20 pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")', opacity: 0.4 }}></div>
+                                        <div 
+                                            className="absolute inset-0 bg-black/20 pointer-events-none mix-blend-overlay" 
+                                            style={{ 
+                                                backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")', 
+                                                opacity: 0.4 
+                                            }}
+                                        ></div>
                                     )}
                                 </div>
                                 <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-lg shadow-xl hidden md:block">
@@ -1003,6 +1241,7 @@
                                     <p className="text-xs text-muted font-eng">園長 / Iwao Kamisari</p>
                                 </div>
                             </div>
+
                             <div className="order-1 md:order-2 pt-8">
                                 <h3 className="text-2xl md:text-3xl font-serif mb-8 leading-snug">
                                     自然の声を聞き、<br/>命を繋ぐ農業を。
@@ -1012,18 +1251,17 @@
                                         奥神伏ファームへようこそ。<br/>
                                         私たちは、この土地の伝統を守りながら、持続可能な農業に取り組んでいます。
                                     </p>
-                                    {/* テキスト切り替え (フォント・サイズ変えず赤色のみ) */}
                                     <p className={`transition-none duration-0 ${isGlitching ? 'text-[#8A2E2E]' : 'text-text'}`}>
                                         {isGlitching ? horrorText : normalText}
                                     </p>
                                 </div>
                                 <div className="hidden md:block">
-                                    <img src={IMAGES.top_farm} className="h-32 w-full object-cover rounded-lg opacity-60 grayscale-[30%]" />
+                                    <img src={IMAGES.top_farm} className="h-32 w-full object-cover rounded-lg opacity-60 grayscale-[30%]" alt="farm" />
                                 </div>
                             </div>
                         </section>
 
-                        {/* 下半分：スタッフ紹介 */}
+                        {/* スタッフ紹介 */}
                         <section>
                             <div className="text-center mb-16">
                                 <h3 className="text-2xl font-serif mb-4">スタッフ紹介</h3>
@@ -1031,13 +1269,9 @@
                             </div>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                {STAFF_DATA.map(staff => (
+                                {visibleStaff.map(staff => (
                                     <StaffCard key={staff.id} staff={staff} />
                                 ))}
-                                
-                                {phase >= 3 && (
-                                    <StaffCard isHiddenChar={true} />
-                                )}
                             </div>
                         </section>
                     </div>
@@ -1115,7 +1349,13 @@
                                     <div className="mt-8 pt-4 border-t border-dotted border-gray-400">
                                         <span 
                                             className="text-xs text-gray-400 cursor-pointer hover:text-red-800 transition-colors"
-                                            onClick={() => setModalImage(staff.special_image)}
+                                            onClick={() => {
+                                            setModalImage(staff.special_image);
+                                            if (!flags.F06) {
+                                            alert("【F06: 隠された実習生】\n注釈リンクの先に、失踪に関する記録が残されていた。");
+                                            unlockFlag('F06');
+                                            }
+                                            }}
                                         >
                                             {staff.special_note}
                                         </span>
@@ -1143,6 +1383,7 @@
         // 4. PRODUCTS
         const Products = ({ phase, unlockFlag, flags }) => {
             const categories = ["ALL", "APPLE", "GRAPES", "PROCESSED"];
+            const [selectedCategory, setSelectedCategory] = useState("ALL");
             const [videoModalOpen, setVideoModalOpen] = useState(false);
 
             const products = [
@@ -1171,7 +1412,17 @@
                     cat: "GRAPES", 
                     img: IMAGES.ec_grape, 
                     desc: "接ぎ木技術の結晶。深いコクと香りをお楽しみください。",
-                    tags: ["#長野県産", "#有機JAS", "#芳醇な香り", "#キヅイテ", "#希少品種", "#ワイン用", "#皮ごと食べられる", "#秋の味覚", "#贈答用"]
+                    tags: [
+                        "#長野県産",
+                        "#有機JAS",
+                        "#芳醇な香り",
+                        ...(phase >= 2 ? ["#キヅイテ"] : []),
+                        "#希少品種",
+                        "#ワイン用",
+                        "#皮ごと食べられる",
+                        "#秋の味覚",
+                        "#贈答用"
+                    ]
                 },
                 { 
                     id: 4, 
@@ -1203,21 +1454,35 @@
                 },
             ];
 
+            const filteredProducts = useMemo(() => {
+                if (selectedCategory === "ALL") return products;
+                // catがALLのものは常に出す（詰め合わせ等）
+                return products.filter(p => p.cat === selectedCategory || p.cat === "ALL");
+            }, [selectedCategory, phase]);
+
             return (
                 <div className="min-h-screen pt-24 pb-20">
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="商品一覧" sub="PRODUCTS" />
 
                         <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-16">
-                            {categories.map((cat, idx) => (
-                                <button key={cat} className={`text-sm font-eng tracking-widest px-4 py-2 rounded-full transition-colors ${idx === 0 ? 'bg-text text-white' : 'text-muted hover:bg-surface-2'}`}>
+                            {categories.map((cat) => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setSelectedCategory(cat)}
+                                    className={`text-sm font-eng tracking-widest px-4 py-2 rounded-full transition-colors ${
+                                        selectedCategory === cat 
+                                            ? 'bg-text text-white' 
+                                            : 'text-muted hover:bg-surface-2'
+                                    }`}
+                                >
                                     {cat}
                                 </button>
                             ))}
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 mb-20">
-                            {products.map(p => (
+                            {filteredProducts.map(p => (
                                 <div key={p.id} className={`group cursor-pointer ${p.isComingSoon ? 'opacity-60' : ''}`}>
                                     <div className="aspect-square overflow-hidden rounded-2xl mb-4 bg-surface-2 relative flex items-center justify-center">
                                         {p.isComingSoon ? (
@@ -1235,17 +1500,24 @@
                                             <p className="text-sm font-eng text-muted">{p.price}</p>
                                         </div>
                                         <p className="text-sm text-muted mb-4 leading-relaxed border-b border-border pb-4">{p.desc}</p>
-                                        
+
                                         <div className="flex flex-wrap gap-2">
                                             {p.tags.map((tag, i) => (
                                                 <span 
                                                     key={i}
-                                                    className={`text-[11px] px-2 py-1 rounded border border-border text-muted transition-colors hover:bg-gray-100 ${tag === "#キヅイテ" ? "cursor-help hover:text-accent" : "cursor-default"}`}
+                                                    className={`text-[11px] px-2 py-1 rounded border border-border text-muted transition-colors hover:bg-gray-100 ${
+                                                        tag === "#キヅイテ" ? "cursor-help hover:text-accent" : "cursor-default"
+                                                    }`}
                                                     onClick={(e) => {
                                                         if (tag === "#キヅイテ") {
+                                                            // Phase2以降のみ有効
+                                                            if (phase < 2) return;
                                                             e.stopPropagation();
                                                             setVideoModalOpen(true);
-                                                            if(!flags.F02) unlockFlag('F02');
+                                                            if (!flags.F02) {
+                                                                alert("【F02: タグが出現する訴えの動画】\nタグを辿ると、映像が残されていた。");
+                                                                unlockFlag('F02');
+                                                            }
                                                         }
                                                     }}
                                                 >
@@ -1260,40 +1532,51 @@
 
                         <AdSpace />
                     </div>
-
-                    {videoModalOpen && (
-                        <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4" onClick={() => setVideoModalOpen(false)}>
-                            <div className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
-                                <video 
-                                    src={IMAGES.victim_movie} 
-                                    controls 
-                                    autoPlay 
-                                    playsInline
-                                    className="w-full h-full"
-                                >
-                                    Your browser does not support the video tag.
-                                </video>
-                                <button 
-                                    className="absolute -top-10 right-0 text-white font-bold hover:text-accent transition-colors" 
-                                    onClick={() => setVideoModalOpen(false)}
-                                >
-                                    [閉じる]
-                                </button>
-                            </div>
+                     {videoModalOpen && (
+                      <div
+                        className="fixed inset-0 z-[100] bg-black/90 flex items-start justify-center p-4 overflow-y-auto"
+                        style={{ paddingTop: 'calc(var(--header-height) + 16px)' }}
+                        onClick={() => setVideoModalOpen(false)}
+                      >
+                        <div
+                          className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl"
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <video
+                            src={IMAGES.victim_movie}
+                            controls
+                            autoPlay
+                            playsInline
+                            className="w-full h-full"
+                          >
+                            Your browser does not support the video tag.
+                          </video>
+                    
+                          {/* 上寄せにすると -top が見切れやすいので、右上に配置 */}
+                          <button
+                            className="absolute top-3 right-3 text-white font-bold bg-black/40 hover:bg-black/70 px-3 py-1 rounded transition-colors"
+                            onClick={() => setVideoModalOpen(false)}
+                          >
+                            閉じる
+                          </button>
                         </div>
+                      </div>
                     )}
-                </div>
+                 </div>
             );
         };
 
-        // 5. DIARY (List)
+        // --- CONTINUES IN PART 3 ---
+                // 5. DIARY (List)
         const Diary = ({ phase, unlockFlag, flags, setPage, setSelectedArticle }) => {
             const [search, setSearch] = useState("");
             const [isAncient, setIsAncient] = useState(false);
 
             const handleSearch = (e) => {
                 e.preventDefault();
-                if (search === "1826") {
+                const q = (search || "").trim();
+                // Phase3以降でのみ「1826」検索が異変になる（F07探索可能）
+                if (phase >= 3 && q === "1826") {
                     setIsAncient(true);
                     if (!flags.F07) {
                         alert("【F07: 古いブログ】\n検索結果に異変が生じました。\n1826年のデータが見つかりました。");
@@ -1304,7 +1587,6 @@
 
             const handleArticleClick = (article) => {
                 if (article.id === 99) { 
-                    // 1826年の記事は専用の手記ページへ
                     setPage('ancient_document');
                     return;
                 }
@@ -1341,6 +1623,7 @@
                                     />
                                     <i data-lucide="search" className={`absolute right-0 top-2 w-4 h-4 ${isAncient ? 'text-[#555]' : 'text-muted'}`}></i>
                                 </form>
+
                                 <div className={`space-y-2 text-sm font-serif ${isAncient ? 'text-[#666]' : 'text-muted'}`}>
                                     <p>カテゴリー</p>
                                     <ul className={`pl-4 space-y-1 border-l ${isAncient ? 'border-[#444]' : 'border-border'}`}>
@@ -1358,7 +1641,11 @@
                                     <article key={article.id} className="group cursor-pointer" onClick={() => handleArticleClick(article)}>
                                         <div className="flex flex-col md:flex-row gap-6 items-start">
                                             <div className="md:w-1/3 aspect-video bg-black/20 rounded-lg overflow-hidden relative">
-                                                <img src={article.img} className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isAncient ? 'opacity-70 grayscale sepia' : ''}`} />
+                                                <img 
+                                                    src={article.img} 
+                                                    alt={article.title}
+                                                    className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isAncient ? 'opacity-70 grayscale sepia' : ''}`} 
+                                                />
                                             </div>
                                             <div className="md:w-2/3">
                                                 <p className={`text-xs font-eng mb-2 ${isAncient ? 'text-[#8A2E2E]' : 'text-muted'}`}>{article.date}</p>
@@ -1379,7 +1666,7 @@
         };
 
         // 5.5 ARTICLE DETAIL
-        const ArticleDetail = ({ article, setPage, unlockFlag, flags }) => {
+        const ArticleDetail = ({ article, setPage }) => {
             useEffect(() => {
                 window.scrollTo(0, 0);
             }, []);
@@ -1412,15 +1699,13 @@
                                 ))}
                             </div>
 
-                            {/* F04: Recipe Gimmick Link */}
+                            {/* レシピ導線（通常コンテンツ） */}
                             {article.isRecipe && (
                                 <div className="mt-12 p-6 border-t border-b border-border text-center">
                                     <p className="mb-4 font-bold">▼ 詳しくはこちら</p>
                                     <span 
                                         className="text-accent underline cursor-pointer text-lg hover:text-red-700 transition-colors font-serif"
-                                        onClick={() => {
-                                            setPage('recipe'); // Recipe page transition
-                                        }}
+                                        onClick={() => setPage('recipe')}
                                     >
                                         ▶ アップルパイのレシピを公開！
                                     </span>
@@ -1436,17 +1721,13 @@
             );
         };
 
-        // 5.6 RECIPE DETAIL (F04 Page)
+        // 5.6 RECIPE DETAIL (F04導線)
         const RecipeDetail = ({ setPage, unlockFlag, flags }) => {
             useEffect(() => {
                 window.scrollTo(0, 0);
-                if (!flags.F04) {
-                    unlockFlag('F04');
-                }
             }, []);
 
             return (
-                // フォントを手書き風 (font-handwriting) に変更
                 <div className="min-h-screen pt-32 pb-20 bg-[#F9F7F2] font-handwriting">
                     <div className="max-w-3xl mx-auto px-6">
                         <button 
@@ -1458,7 +1739,6 @@
                         </button>
 
                         <div className="bg-white p-8 md:p-16 shadow-lg rounded-lg border-2 border-[#E6E8E2] relative transform rotate-1">
-                            {/* マスキングテープ風の装飾 (CSSで表現) */}
                             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-[#e0e0e0]/80 rotate-2 shadow-sm"></div>
 
                             <h1 className="text-4xl font-bold text-center mb-12 text-[#8A2E2E]">由利さんの特製アップルパイ</h1>
@@ -1551,11 +1831,17 @@
                                 </ul>
                             </div>
 
-                            {/* 隠しリンク：接木の説明ページへ */}
+                            {/* 隠しリンク：クリックでF04取得し、接木ページへ */}
                             <div className="mt-20 text-center">
                                 <span 
                                     className="text-xs text-gray-300 hover:text-[#8A2E2E] cursor-pointer transition-colors font-sans tracking-widest"
-                                    onClick={() => setPage('grafting')}
+                                    onClick={() => {
+                                        if (!flags.F04) {
+                                            alert("【F04: アップルパイの秘密】\nレシピの奥に、別の説明が隠されていた。");
+                                            unlockFlag('F04');
+                                        }
+                                        setPage('grafting');
+                                    }}
                                 >
                                     美味しいりんごを作るには
                                 </span>
@@ -1566,7 +1852,7 @@
             );
         };
 
-        // 5.7 GRAFTING DETAIL (Horror/Explanation Page)
+        // 5.7 GRAFTING DETAIL
         const GraftingDetail = ({ setPage }) => {
             useEffect(() => {
                 window.scrollTo(0, 0);
@@ -1584,7 +1870,6 @@
                         </button>
 
                         <div className="space-y-16 animate-fade-up">
-                            {/* Header */}
                             <div className="text-center border-b border-[#333] pb-12">
                                 <h1 className="text-3xl md:text-4xl font-bold tracking-[0.2em] mb-6 text-[#eee]">接木とは</h1>
                                 <p className="leading-loose text-sm md:text-base">
@@ -1595,12 +1880,10 @@
                                 </p>
                             </div>
 
-                            {/* Image Placeholder -> 実画像に変更 */}
                             <div className="w-full aspect-video bg-[#0a0a0a] border border-[#333] flex items-center justify-center overflow-hidden">
                                 <img src={IMAGES.grafting} alt="接木の概念図" className="w-full h-full object-contain opacity-80" />
                             </div>
 
-                            {/* Steps */}
                             <div className="space-y-20">
                                 <h2 className="text-center text-xl tracking-widest text-[#555]">一般的な接木の手順</h2>
 
@@ -1714,14 +1997,11 @@
                         </button>
 
                         <div className="animate-fade-up">
-                            {/* ヘッダー画像 */}
                             <div className="mb-16 border-4 border-double border-[#555] p-2 bg-[#222]">
                                 <img src={IMAGES.blog_oldbook} alt="古い手記" className="w-full h-auto opacity-90 filter sepia-[0.2] contrast-110" />
                             </div>
 
-                            {/* 本文エリア */}
                             <div className="space-y-12 leading-loose tracking-widest text-justify text-gray-100" style={{ fontFeatureSettings: '"palt"' }}>
-                                
                                 <div className="text-center mb-16 border-b border-[#555] pb-8">
                                     <p className="text-sm text-gray-400 mb-2">文政九年（西暦一八二六年）</p>
                                     <h1 className="text-3xl font-bold text-[#ff5555]">奥神伏村 旧記抜粋</h1>
@@ -1863,7 +2143,6 @@
                                         忘れること。
                                     </p>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -1871,7 +2150,7 @@
             );
         };
 
-        // 6. ACCESS (Table & PDF)
+        // 6. ACCESS (Table & Image)
         const Access = ({ phase, unlockFlag, flags }) => {
             const [modalImage, setModalImage] = useState(null);
 
@@ -1882,7 +2161,7 @@
                         
                         <div className="bg-surface rounded-2xl p-8 md:p-12 shadow-sm mb-12">
                             <div className="aspect-video w-full bg-surface-2 rounded-xl mb-8 overflow-hidden relative">
-                                <img src={IMAGES.access_map} className="w-full h-full object-cover" />
+                                <img src={IMAGES.access_map} className="w-full h-full object-cover" alt="map" />
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/10">
                                     <span className="bg-white px-4 py-2 font-eng text-sm tracking-widest shadow">OKUKAMIFUSHI MAP</span>
                                 </div>
@@ -1904,19 +2183,28 @@
                                         </tbody>
                                     </table>
                                 </div>
+
                                 <div className="flex flex-col justify-center items-start">
                                     <p className="text-sm text-muted mb-6 leading-relaxed">
                                         詳細な住所は、ご予約確定後にメールにてご案内いたします。<br/>
                                         山道が続きますので、お気をつけてお越しください。
                                     </p>
-                                    
-                                    {/* 隠しリンク */}
-                                    <p 
-                                        className="mt-4 text-xs text-[#8A2E2E] cursor-pointer hover:underline tracking-widest font-serif opacity-70 hover:opacity-100 transition-opacity"
-                                        onClick={() => setModalImage(IMAGES.top_change_village)}
-                                    >
-                                        村に入ると、村びとはあなたをずっと見ている…
-                                    </p>
+
+                                    {/* Phase2以降でリンク出現（F11探索可能） */}
+                                    {phase >= 2 && (
+                                        <p 
+                                            className="mt-4 text-xs text-[#8A2E2E] cursor-pointer hover:underline tracking-widest font-serif opacity-70 hover:opacity-100 transition-opacity"
+                                            onClick={() => {
+                                                setModalImage(IMAGES.top_change_village);
+                                                if (!flags.F11) {
+                                                    alert("【F11: 謎の地図】\n地図のはずなのに、何かが映っている…。");
+                                                    unlockFlag('F11');
+                                                }
+                                            }}
+                                        >
+                                            村に入ると、村びとはあなたをずっと見ている…
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -1928,7 +2216,6 @@
                             className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 cursor-pointer"
                             onClick={() => setModalImage(null)}
                         >
-                            {/* 修正: max-w-4xl に拡大し、brightnessとcontrastで画質補正 */}
                             <div className="max-w-4xl w-full">
                                 <img 
                                     src={modalImage} 
@@ -1943,140 +2230,137 @@
             );
         };
 
-        // 7. RECRUIT (Timeline & Checkbox)
+        // --- CONTINUES IN PART 4 ---
+        // 7. RECRUIT (Timeline & Checkbox)  ※元仕様：チェック項目内の文字が変化
         const Recruit = ({ phase, unlockFlag, flags }) => {
-            const [checks, setChecks] = useState({});
-            const [horrorStates, setHorrorStates] = useState({});
-            const [globalHorror, setGlobalHorror] = useState(false); // 画面全体のホラー状態管理
-
-            const recruitItems = [
-                { id: 'farm_love', label: '農作業が好き！日本の農業に興味がある！' },
-                { id: 'morning', label: '朝が得意！' },
-                { id: 'group_life', label: 'みんなでの共同生活を楽しめる！' },
-                { id: 'learn_jp', label: '日本語を学んでみたい！' },
-                { id: 'stay_jp', label: '日本での滞在を楽しめる！', horror: 'ニゲラレナイ…' },
-                { id: 'nature_life', label: '自然が多い暮らしに憧れる！' },
-                { id: 'like_fruit', label: '果物や野菜が好き！', horror: 'イケニエサレル…' },
-                { id: 'health', label: '健康がとりえだ！' },
-                { id: 'alone', label: '一人暮らしもへっちゃらだ！' },
-                { id: 'work_here', label: '奥神伏村で働きたい！', horror: 'クルナ…！！！！！！' },
-            ];
-            
-            const handleCheck = (item) => {
-                const isChecked = !checks[item.id];
-                setChecks(prev => ({ ...prev, [item.id]: isChecked }));
-
-                // ホラー演出ロジック
-                if (isChecked && item.horror) {
-                    setHorrorStates(prev => ({ ...prev, [item.id]: true }));
-                    setGlobalHorror(true);
-                    
-                    // 1. 暗転終了 (0.6秒)
-                    setTimeout(() => {
-                        setGlobalHorror(false);
-                        setHorrorStates(prev => ({ ...prev, [item.id]: false }));
-                        
-                        // 2. 演出終了後にアラート (初回のみ)
-                        if (!flags.F05) {
-                            alert("【F05: 外国人実習生の秘密】\nチェック項目の文字が一瞬変化した。\n「ニゲラレナイ」「イケニエ」...\nこれは募集ではなく、選別だ。");
-                            unlockFlag('F05');
-                        }
-                    }, 600);
+          const [checks, setChecks] = useState({});
+          const [horrorStates, setHorrorStates] = useState({});
+          const [globalHorror, setGlobalHorror] = useState(false);
+        
+          const recruitItems = [
+            { id: 'farm_love', label: '農作業が好き！日本の農業に興味がある！' },
+            { id: 'morning', label: '朝が得意！' },
+            { id: 'group_life', label: 'みんなでの共同生活を楽しめる！' },
+            { id: 'learn_jp', label: '日本語を学んでみたい！' },
+            { id: 'stay_jp', label: '日本での滞在を楽しめる！', horror: 'ニゲラレナイ…' },
+            { id: 'nature_life', label: '自然が多い暮らしに憧れる！' },
+            { id: 'like_fruit', label: '果物や野菜が好き！', horror: 'イケニエサレル…' },
+            { id: 'health', label: '健康がとりえだ！' },
+            { id: 'alone', label: '一人暮らしもへっちゃらだ！' },
+            { id: 'work_here', label: '奥神伏村で働きたい！', horror: 'クルナ…！！！！！！' },
+          ];
+        
+          const heroImage = (phase >= 2) ? IMAGES.recruiting_change : IMAGES.recruiting;
+        
+          const handleCheck = (item) => {
+            const isChecked = !checks[item.id];
+            setChecks(prev => ({ ...prev, [item.id]: isChecked }));
+        
+            // Phase2以降でのみホラー演出（F05）
+            if (phase >= 2 && isChecked && item.horror) {
+              setHorrorStates(prev => ({ ...prev, [item.id]: true }));
+              setGlobalHorror(true);
+        
+              setTimeout(() => {
+                setGlobalHorror(false);
+                setHorrorStates(prev => ({ ...prev, [item.id]: false }));
+        
+                if (!flags.F05) {
+                  alert("【F05: 募集要項の変化】\nチェック項目の文字が一瞬変化した。\n「ニゲラレナイ」「イケニエ」...\nこれは募集ではなく、選別だ。");
+                  unlockFlag('F05');
                 }
-            };
-
-            return (
-                <div className="min-h-screen pt-24 pb-20 bg-surface-2 relative">
-                    {/* 本格的なホラーオーバーレイ (z-index: 9999) */}
-                    {globalHorror && (
-                        <>
-                            <div className="horror-overlay"></div>
-                            <div className="horror-vignette"></div>
-                            <img 
-                                src={IMAGES.staff_victim} 
-                                className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full object-cover opacity-10 mix-blend-overlay z-[9998] pointer-events-none animate-pulse" 
-                            />
-                        </>
-                    )}
-
-                    {/* ★修正ポイント: 
-                       ホラー時は親コンテナの z-index を 10000 に引き上げ、
-                       オーバーレイ(z-9999)よりも手前に表示させる 
-                    */}
-                    <div className={`max-w-container mx-auto px-6 relative transition-all duration-100 ${globalHorror ? 'z-[10000]' : 'z-10'}`}>
-                        <SectionTitle title="採用情報" sub="RECRUIT" />
-
-                        <div className="grid md:grid-cols-2 gap-12 mb-20">
-                            <div>
-                                <img src={IMAGES.recruiting} className={`w-full h-full object-cover rounded-2xl shadow-lg transition-all duration-100 ${globalHorror ? 'grayscale contrast-150 brightness-50' : ''}`} />
-                            </div>
-                            <div className={`flex flex-col justify-center transition-opacity duration-100 ${globalHorror ? 'opacity-20' : 'opacity-100'}`}>
-                                <h3 className="text-2xl font-serif mb-6">海外技能実習生 募集中</h3>
-                                <p className="leading-loose text-muted mb-8">
-                                    日本の伝統的な農業技術を学びませんか？<br/>
-                                    私たちは、世界中から意欲ある若者を受け入れています。<br/>
-                                    自然豊かな環境で、共に汗を流し、絆を深めましょう。
-                                </p>
-                                <ul className="space-y-4 text-sm">
-                                    <li className="flex items-center gap-3"><i data-lucide="check" className="text-primary w-5"></i> 寮完備・食事付き</li>
-                                    <li className="flex items-center gap-3"><i data-lucide="check" className="text-primary w-5"></i> 日本語学習サポートあり</li>
-                                    <li className="flex items-center gap-3"><i data-lucide="check" className="text-primary w-5"></i> アットホームな職場</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        {/* チェックボックスエリア */}
-                        {/* 修正: globalHorror時は z-index を 10000 に引き上げ、オーバーレイより手前に表示させる */}
-                        <div className={`bg-surface p-8 md:p-12 rounded-2xl max-w-3xl mx-auto shadow-sm transition-all duration-100 ${
-                            globalHorror 
-                                ? 'relative z-[10000] bg-black border-4 border-red-900 shadow-[0_0_50px_rgba(255,0,0,0.5)] transform scale-105' 
-                                : ''
-                        }`}>
-                            <h4 className={`font-bold font-serif text-xl mb-8 text-center ${globalHorror ? 'text-red-600 animate-pulse' : 'text-primary'}`}>
-                                {globalHorror ? "逃ゲラレナイ…逃ゲラレナイ…" : "こんなあなたを募集中！"}
-                            </h4>
-                            <div className="space-y-4">
-                                {recruitItems.map((item) => (
-                                    <label 
-                                        key={item.id}
-                                        className={`flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-all duration-100 ${
-                                            horrorStates[item.id] 
-                                                ? 'bg-black/80 border-red-600 shadow-inner' // ホラー時の行スタイル
-                                                : (checks[item.id] ? 'bg-primary/5 border-primary' : 'bg-white border-border hover:bg-surface-2')
-                                        }`}
-                                    >
-                                        <input 
-                                            type="checkbox" 
-                                            checked={!!checks[item.id]} 
-                                            onChange={() => handleCheck(item)} 
-                                            className={`w-5 h-5 shrink-0 transition-all ${horrorStates[item.id] ? 'distorted-checkbox' : 'accent-primary'}`} 
-                                        />
-                                        <span 
-                                            className={`text-sm font-medium transition-colors duration-100 ${
-                                                horrorStates[item.id] 
-                                                    ? 'intense-glitch' // 元の位置でバグる
-                                                    : 'text-text'
-                                            }`}
-                                            data-text={horrorStates[item.id] ? item.horror : item.label}
-                                        >
-                                            {horrorStates[item.id] ? item.horror : item.label}
-                                        </span>
-                                    </label>
-                                ))}
-                            </div>
-                            <p className={`text-xs text-center mt-8 ${globalHorror ? 'text-red-800 font-bold' : 'text-muted'}`}>
-                                {globalHorror ? "※生きて帰れる保証はありません" : "※一つでも当てはまる方は、ぜひお問い合わせください。"}
-                            </p>
-                        </div>
-                    </div>
+              }, 600);
+            }
+          };
+        
+          return (
+            <div className="min-h-screen pt-24 pb-20 bg-surface-2 relative">
+              {/* ホラーオーバーレイ（Phase2以降の演出時のみ） */}
+              {phase >= 2 && globalHorror && (
+                <>
+                  <div className="horror-overlay"></div>
+                  <div className="horror-vignette"></div>
+                  <img
+                    src={IMAGES.staff_victim}
+                    className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full object-cover opacity-10 mix-blend-overlay z-[9998] pointer-events-none animate-pulse"
+                    alt="overlay"
+                  />
+                </>
+              )}
+        
+              <div className={`max-w-container mx-auto px-6 relative transition-all duration-100 ${globalHorror ? 'z-[10000]' : 'z-10'}`}>
+                <SectionTitle title="採用情報" sub="RECRUIT" />
+        
+                <div className="grid md:grid-cols-2 gap-12 mb-20">
+                  <div>
+                    <img
+                      src={heroImage}
+                      alt="Recruiting"
+                      className={`w-full h-full object-cover rounded-2xl shadow-lg transition-all duration-100 ${
+                        globalHorror ? 'grayscale contrast-150 brightness-50' : ''
+                      }`}
+                    />
+                  </div>
+                  <div className={`flex flex-col justify-center transition-opacity duration-100 ${globalHorror ? 'opacity-20' : 'opacity-100'}`}>
+                    <h3 className="text-2xl font-serif mb-6">海外技能実習生 募集中</h3>
+                    <p className="leading-loose text-muted mb-8">
+                      日本の伝統的な農業技術を学びませんか？<br/>
+                      私たちは、世界中から意欲ある若者を受け入れています。<br/>
+                      自然豊かな環境で、共に汗を流し、絆を深めましょう。
+                    </p>
+                    <ul className="space-y-4 text-sm">
+                      <li className="flex items-center gap-3"><i data-lucide="check" className="text-primary w-5"></i> 寮完備・食事付き</li>
+                      <li className="flex items-center gap-3"><i data-lucide="check" className="text-primary w-5"></i> 日本語学習サポートあり</li>
+                      <li className="flex items-center gap-3"><i data-lucide="check" className="text-primary w-5"></i> アットホームな職場</li>
+                    </ul>
+                  </div>
                 </div>
-            );
+        
+                {/* チェックボックス：文字が変わる（元仕様） */}
+                <div className={`bg-surface p-8 md:p-12 rounded-2xl max-w-3xl mx-auto shadow-sm transition-all duration-100 ${
+                  globalHorror
+                    ? 'relative z-[10000] bg-black border-4 border-red-900 shadow-[0_0_50px_rgba(255,0,0,0.5)] transform scale-105'
+                    : ''
+                }`}>
+                  <h4 className={`font-bold font-serif text-xl mb-8 text-center ${globalHorror ? 'text-red-600 animate-pulse' : 'text-primary'}`}>
+                    {globalHorror ? "逃ゲラレナイ…逃ゲラレナイ…" : "こんなあなたを募集中！"}
+                  </h4>
+        
+                  <div className="space-y-4">
+                    {recruitItems.map((item) => (
+                      <label
+                        key={item.id}
+                        className={`flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-all duration-100 ${
+                          horrorStates[item.id]
+                            ? 'bg-black/80 border-red-600 shadow-inner'
+                            : (checks[item.id] ? 'bg-primary/5 border-primary' : 'bg-white border-border hover:bg-surface-2')
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={!!checks[item.id]}
+                          onChange={() => handleCheck(item)}
+                          className={`w-5 h-5 shrink-0 transition-all ${horrorStates[item.id] ? 'distorted-checkbox' : 'accent-primary'}`}
+                        />
+                        <span className={`text-sm font-medium transition-colors duration-100 ${
+                          horrorStates[item.id] ? 'intense-glitch' : 'text-text'
+                        }`}>
+                          {horrorStates[item.id] ? item.horror : item.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+        
+                  <p className={`text-xs text-center mt-8 ${globalHorror ? 'text-red-800 font-bold' : 'text-muted'}`}>
+                    {globalHorror ? "※生きて帰れる保証はありません" : "※一つでも当てはまる方は、ぜひお問い合わせください。"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
         };
-
         // 8. CONTACT (Form Hijack)
-        const Contact = ({ phase, unlockFlag, flags }) => {
-            const [placeholder, setPlaceholder] = useState("山田 太郎");
-            
+        const Contact = ({ phase, unlockFlag, flags, setPage }) => {
             // 通常時のプレースホルダー
             const defaultPlaceholders = {
                 name: '山田 太郎',
@@ -2095,81 +2379,59 @@
 
             const [placeholders, setPlaceholders] = useState(defaultPlaceholders);
             const [seenCount, setSeenCount] = useState({ name: false, email: false, address: false, message: false });
-            const [modalState, setModalState] = useState({ isOpen: false, message: "", isHorror: false }); // モーダル管理用
-            
-            // 全ての異変を目撃したか？
-            const allSeen = Object.values(seenCount).every(v => v);
+            const [modalState, setModalState] = useState({ isOpen: false, message: "", isHorror: false, goAdmin: false });
 
-            // ホラー演出トリガー
+            // Phase1の段階でもフォームは存在するが、乗っ取り演出は「Phase1内のF12探索」として運用
+            // ＝この実装では Phase1でも演出が起きる（ただし、ユーザーがフィールドに触れない限り起きない）
             const triggerHorror = (field) => {
-                // Phase 1以上でのみ発動（または無条件でも可）
+                // 最低Phase1から発動（仕様どおり）
                 if (phase < 1) return;
 
-                // プレースホルダーを書き換え
                 setPlaceholders(prev => ({ ...prev, [field]: horrorPlaceholders[field] }));
-                
-                // 目撃フラグをON
                 setSeenCount(prev => ({ ...prev, [field]: true }));
 
-                // 0.2〜0.5秒後に元に戻す
-                const duration = Math.random() * 300 + 200; 
+                const duration = Math.random() * 300 + 200;
                 setTimeout(() => {
                     setPlaceholders(prev => ({ ...prev, [field]: defaultPlaceholders[field] }));
                 }, duration);
             };
 
+            const allSeen = Object.values(seenCount).every(v => v);
+
             const handleSubmit = (e) => {
-                e.preventDefault();
-                
-                if (allSeen) {
-                    // 全て目撃した後 -> ホラーメッセージ
-                    setModalState({
-                        isOpen: true,
-                        message: "証拠に気づいたか？助けてくれ、もう限界だ",
-                        isHorror: true
-                    });
-
-                    if (!flags.F12) unlockFlag('F12');
-                    
-                    // Phase 4 (通報可能状態) の場合
-                    if (phase >= 4) {
-                        const evidenceCount = Object.values(flags).filter(Boolean).length;
-                        // メッセージを上書きしてエンディングへ
-                        let endMessage = "";
-                        if (evidenceCount >= 10) {
-                             endMessage = "【TRUE END】\n全員逮捕。佐藤副園長は救出された。";
-                        } else {
-                             endMessage = "【NORMAL END】\n警察が到着したが、主要メンバーは逃亡していた。";
-                        }
-                        // 少し遅らせてエンディング表示（あるいはF12演出後に再度押させるかだが、ここでは上書き）
-                        setTimeout(() => {
-                             setModalState({
-                                isOpen: true,
-                                message: endMessage,
-                                isHorror: true
-                            });
-                            unlockFlag('F13');
-                        }, 2000);
-                    }
-                } else {
-                    // まだ目撃していない場合（または初期状態） -> 通常メッセージ
-                    setModalState({
-                        isOpen: true,
-                        message: "現在問い合わせが混雑しています。\nご迷惑をおかけして申し訳ありません。",
-                        isHorror: false
-                    });
+              e.preventDefault();
+            
+              if (allSeen) {
+                // F12回収（問い合わせ乗っ取り）
+                if (!flags.F12) {
+                  alert("【F12: 問い合わせの乗っ取り】\nフォームが完全に乗っ取られている。");
+                  unlockFlag('F12');
                 }
+            
+                // 通報は管理人ページ（admin_notice）で行う
+                setModalState({
+                  isOpen: true,
+                  message: "証拠に気づいたか？\n最後は『管理人からのお知らせ（関係者各位）』にある。",
+                  isHorror: true,
+                  goAdmin: true
+                });
+              } else {
+                setModalState({
+                  isOpen: true,
+                  message: "現在問い合わせが混雑しています。\nご迷惑をおかけして申し訳ありません。",
+                  isHorror: false,
+                  goAdmin: false
+                });
+              }
             };
-
+            
             return (
                 <div className="min-h-screen pt-24 pb-20">
                     <div className="max-w-container mx-auto px-6">
-                        <SectionTitle title={phase >= 4 ? "匿名通報" : "お問い合わせ"} sub={phase >= 4 ? "REPORT" : "CONTACT"} />
-
+　　　　　　　　　　　　　<SectionTitle title="お問い合わせ" sub="CONTACT" />
                         <div className="max-w-3xl mx-auto grid md:grid-cols-3 gap-12">
                             <div className="md:col-span-2">
                                 <form className="space-y-8" onSubmit={handleSubmit}>
-                                    {/* ① お名前 */}
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-muted tracking-wider">お名前 <span className="text-accent">*</span></label>
                                         <input 
@@ -2178,11 +2440,9 @@
                                             placeholder={placeholders.name}
                                             onFocus={() => triggerHorror('name')}
                                             onMouseEnter={() => triggerHorror('name')}
-                                            /* required 削除 */
                                         />
                                     </div>
 
-                                    {/* ② メールアドレス */}
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-muted tracking-wider">メールアドレス <span className="text-accent">*</span></label>
                                         <input 
@@ -2191,11 +2451,9 @@
                                             placeholder={placeholders.email}
                                             onFocus={() => triggerHorror('email')}
                                             onMouseEnter={() => triggerHorror('email')}
-                                            /* required 削除 */
                                         />
                                     </div>
 
-                                    {/* ③ 住所 (新規追加) */}
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-muted tracking-wider">住所</label>
                                         <input 
@@ -2207,10 +2465,9 @@
                                         />
                                     </div>
 
-                                    {/* ④ お問い合わせ内容 */}
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-muted tracking-wider">
-                                            {phase >= 4 ? "通報内容・特定した住所" : "お問い合わせ内容"} <span className="text-accent">*</span>
+                                            お問い合わせ内容 <span className="text-accent">*</span>
                                         </label>
                                         <textarea 
                                             rows="5" 
@@ -2218,25 +2475,22 @@
                                             placeholder={placeholders.message}
                                             onFocus={() => triggerHorror('message')}
                                             onMouseEnter={() => triggerHorror('message')}
-                                            /* required 削除 */
                                         ></textarea>
                                     </div>
 
-                                    {/* 送信ボタン: Buttonコンポーネントを使わず直接記述してスタイル競合を回避 */}
-                                    <button 
-                                        type="submit" 
-                                        className={`w-full py-4 rounded-full transition-all duration-500 font-medium tracking-wide text-sm shadow-lg hover:shadow-xl ${
-                                            allSeen 
-                                                ? 'bg-black text-white hover:bg-gray-900 border-none' // 全確認後: 黒背景・白文字
-                                                : (phase >= 4 ? 'bg-accent text-white hover:bg-red-900' : 'bg-white text-black border border-text hover:bg-gray-100') // 初期: 白背景・黒文字
-                                        }`}
-                                    >
-                                        {phase >= 4 ? "警察に通報する" : "送信する"}
-                                    </button>
+                                <button
+                                type="submit"
+                                className={`w-full py-4 rounded-full transition-all duration-500 font-medium tracking-wide text-sm shadow-lg hover:shadow-xl ${
+                                allSeen
+                                ? 'bg-black text-white hover:bg-gray-900 border-none'
+                                : 'bg-white text-black border border-text hover:bg-gray-100'
+                                }`}
+                                >
+                                送信する
+                                </button>
                                 </form>
                             </div>
 
-                            {/* Contact Info */}
                             <div className="md:col-span-1 border-l border-border pl-8 hidden md:block">
                                 <h4 className="font-bold font-serif mb-6">お電話でのお問い合わせ</h4>
                                 <p className="text-2xl font-eng mb-2">026-000-0000</p>
@@ -2252,13 +2506,16 @@
                         </div>
                     </div>
 
-                    {/* モーダル表示 */}
-                    <MessageModal 
-                        isOpen={modalState.isOpen} 
-                        message={modalState.message} 
-                        isHorror={modalState.isHorror}
-                        onClose={() => setModalState({ ...modalState, isOpen: false })} 
-                    />
+                <MessageModal 
+                  isOpen={modalState.isOpen} 
+                  message={modalState.message} 
+                  isHorror={modalState.isHorror}
+                  onClose={() => {
+                    const go = modalState.goAdmin;
+                    setModalState({ ...modalState, isOpen: false, goAdmin: false });
+                    if (go) setPage('admin_notice');
+                  }} 
+                />
                 </div>
             );
         };
@@ -2271,36 +2528,32 @@
             const [selectedStaff, setSelectedStaff] = useState(null);
             const [selectedArticle, setSelectedArticle] = useState(null);
 
-            // ページ切り替え時にトップへスクロールする処理を追加
             useEffect(() => {
                 window.scrollTo(0, 0);
             }, [currentPage]);
 
-            // Phase Logic (Simplified)
+            // Phase Logic（方針どおりの閾値）
             useEffect(() => {
-                const count = Object.keys(flags).length;
-                let nextPhase = 1;
-                if (count >= 3) nextPhase = 2;
-                if (count >= 6) nextPhase = 3;
-                if (count >= 9) nextPhase = 4;
-                
-                if (nextPhase > phase) setPhase(nextPhase);
+                const next = calcPhase(flags);
+                if (next !== phase) setPhase(next);
             }, [flags, phase]);
 
             useEffect(() => {
-                // Apply phase to body for CSS variables
                 document.body.setAttribute('data-phase', phase);
             }, [phase]);
 
             useEffect(() => {
-                // Lucide icons
                 lucide.createIcons();
-            }, [currentPage]);
+            }, [currentPage, phase]);
 
             const unlockFlag = (flagId) => {
-                if (!flags[flagId]) {
-                    setFlags(prev => ({ ...prev, [flagId]: true }));
-                }
+                setFlags(prev => {
+                    if (prev[flagId]) return prev;
+                    // MAX_FLAGSを超えるような追加は許容しない（保険）
+                    const nextCount = Object.keys(prev).length + 1;
+                    if (nextCount > MAX_FLAGS) return prev;
+                    return ({ ...prev, [flagId]: true });
+                });
             };
 
             const renderPage = () => {
@@ -2312,16 +2565,23 @@
                     case 'village': return <Village {...props} />;
                     case 'products': return <Products {...props} />;
                     case 'diary': return <Diary {...props} />;
-                    case 'article_detail': return <ArticleDetail article={selectedArticle} setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
-                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />; // Recipe Route
-                    case 'grafting': return <GraftingDetail setPage={setPage} />; // New Route
-                    case 'ancient_document': return <AncientDocument setPage={setPage} />; // New Route
+                    case 'article_detail': return <ArticleDetail article={selectedArticle} setPage={setPage} />;
+                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
+                    case 'grafting': return <GraftingDetail setPage={setPage} />;
+                    case 'ancient_document': return <AncientDocument setPage={setPage} />;
                     case 'access': return <Access {...props} />;
+                    case 'admin_notice': return <AdminNotice {...props} />;
                     case 'recruit': return <Recruit {...props} />;
                     case 'contact': return <Contact {...props} />;
                     default: return <Home {...props} />;
                 }
             };
+
+            // デバッグ表示：Phase + 各Phaseフラグのクリア数
+            const p1 = countFound(flags, PHASE1_FLAGS);
+            const p2 = countFound(flags, PHASE2_FLAGS);
+            const p3 = countFound(flags, PHASE3_FLAGS);
+            const p4 = countFound(flags, PHASE4_FLAGS);
 
             return (
                 <div className="min-h-screen flex flex-col font-sans text-text">
@@ -2331,9 +2591,15 @@
                     </main>
                     <Footer phase={phase} setPage={setPage} />
 
-                    {/* Debug UI (Hidden in production concept, kept for testing) */}
-                    <div className="fixed bottom-2 right-2 opacity-30 hover:opacity-100 z-[100] text-[10px] bg-black text-white p-2 rounded">
-                        Phase: {phase} | Flags: {Object.keys(flags).length}
+                    {/* Debug UI：右下表示（要求仕様） */}
+                    <div className="fixed bottom-2 right-2 z-[200] text-[10px] bg-black/80 text-white px-3 py-2 rounded-lg shadow-lg">
+                        <div className="font-eng tracking-wider">Phase: <span className="font-bold">{phase}</span></div>
+                        <div className="mt-1 opacity-90">
+                            P1: {p1}/{PHASE1_FLAGS.length} ・ P2: {p2}/{PHASE2_FLAGS.length} ・ P3: {p3}/{PHASE3_FLAGS.length} ・ P4: {p4}/{PHASE4_FLAGS.length}
+                        </div>
+                        <div className="mt-1 opacity-70">
+                            Total Flags: {Object.keys(flags).length}/{MAX_FLAGS}
+                        </div>
                     </div>
                 </div>
             );
