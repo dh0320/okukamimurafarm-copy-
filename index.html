@@ -2229,136 +2229,7 @@
                 </div>
             );
         };
-        // 6.5 ADMIN NOTICE (F03 Page)
-        const AdminNotice = ({ phase, setPage }) => {
-          const [pw, setPw] = useState("");
-          const [unlocked, setUnlocked] = useState(false);
-          const [error, setError] = useState("");
-        
-          const PASSWORD = "1092"; // ヒント：住所の数字
-        
-          useEffect(() => {
-            window.scrollTo(0, 0);
-          }, []);
-        
-            const handleSubmit = (e) => {
-                e.preventDefault();
-            
-                if (allSeen) {
-                    // F12回収（問い合わせ乗っ取り）
-                    if (!flags.F12) {
-                        alert("【F12: 問い合わせの乗っ取り】\nフォームが完全に乗っ取られている。");
-                        unlockFlag('F12');
-                    }
-            
-                    // 通報は「管理人からのお知らせ」ページで行う仕様に変更
-                    setModalState({
-                        isOpen: true,
-                        message: "証拠に気づいたか？\n最後は『管理人からのお知らせ（関係者各位）』にある。",
-                        isHorror: true
-                    });
-            
-                } else {
-                    setModalState({
-                        isOpen: true,
-                        message: "現在問い合わせが混雑しています。\nご迷惑をおかけして申し訳ありません。",
-                        isHorror: false
-                    });
-                }
-            };
-        
-          return (
-            <div className="min-h-screen pt-24 pb-20 bg-surface">
-              <div className="max-w-container mx-auto px-6">
-                <button
-                  onClick={() => setPage('home')}
-                  className="flex items-center text-sm text-muted hover:text-primary mb-8 transition-colors"
-                >
-                  <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
-                  HOMEに戻る
-                </button>
-        
-                <SectionTitle title="管理人からのお知らせ" sub="INTERNAL NOTICE" align="left" />
-        
-                {/* Phase2未満で直接来た場合の保険 */}
-                {phase < 2 ? (
-                  <div className="bg-white p-8 md:p-12 rounded-2xl border border-border shadow-sm max-w-3xl">
-                    <p className="text-sm text-muted font-serif leading-loose">
-                      このページは関係者向けのため、通常は表示されません。
-                    </p>
-                  </div>
-                ) : (
-                  <div className="bg-white p-8 md:p-12 rounded-2xl border border-border shadow-sm max-w-3xl">
-                    {!unlocked ? (
-                      <>
-                        <h2 className="text-xl font-serif font-bold mb-4 text-text">
-                          【重要】管理人からのお知らせ（関係者各位）
-                        </h2>
-                        <p className="text-sm text-muted font-serif leading-loose mb-8">
-                          ※外部への転載は禁止転載禁止。<br />
-                          閲覧権限のある方はパスワードを入力してください。
-                        </p>
-        
-                        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
-                          <input
-                            type="password"
-                            value={pw}
-                            onChange={(e) => setPw(e.target.value)}
-                            placeholder="Password"
-                            className="flex-1 border border-border rounded-lg px-4 py-3 outline-none focus:border-primary transition-colors font-eng"
-                          />
-                          <button
-                            type="submit"
-                            className="px-8 py-3 rounded-full bg-primary text-white hover:bg-primary-2 transition-colors text-sm font-bold"
-                          >
-                            解除
-                          </button>
-                        </form>
-        
-                        {error && (
-                          <p className="mt-4 text-sm text-accent font-serif">{error}</p>
-                        )}
-        
-                        <p className="mt-10 text-xs text-muted font-serif">
-                          ヒント：農園の住所に関連する数字。
-                        </p>
-                      </>
-                    ) : (
-                      <div className="space-y-6 font-serif leading-loose text-text">
-                        <p className="text-xs text-accent font-eng tracking-widest">
-                          2026.01.20 / INTERNAL
-                        </p>
-        
-                        <p>
-                          関係者各位。<br />
-                          近頃、外部からの問い合わせが増えています。<br />
-                          「実習生」「村」「地図」といった単語を含む連絡については、<br />
-                          一切の返信をしないでください。
-                        </p>
-        
-                        <div className="border-l-4 border-accent pl-4 text-sm text-muted">
-                          <p>・内部資料は閲覧ログを残すこと</p>
-                          <p>・紙媒体の持ち出しは禁止</p>
-                          <p>・異常を発見しても“記録しない”こと</p>
-                        </div>
-        
-                        <p className="text-accent font-handwriting text-lg">
-                          「内部告発」ページは削除しろ。
-                        </p>
-        
-                        <div className="pt-6 border-t border-border">
-                          <Button variant="secondary" onClick={() => setPage('home')}>
-                            HOMEへ戻る
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        };
+
         // --- CONTINUES IN PART 4 ---
         // 7. RECRUIT (Timeline & Checkbox)  ※元仕様：チェック項目内の文字が変化
         const Recruit = ({ phase, unlockFlag, flags }) => {
@@ -2489,7 +2360,7 @@
           );
         };
         // 8. CONTACT (Form Hijack)
-        const Contact = ({ phase, unlockFlag, flags }) => {
+        const Contact = ({ phase, unlockFlag, flags, setPage }) => {
             // 通常時のプレースホルダー
             const defaultPlaceholders = {
                 name: '山田 太郎',
@@ -2508,7 +2379,7 @@
 
             const [placeholders, setPlaceholders] = useState(defaultPlaceholders);
             const [seenCount, setSeenCount] = useState({ name: false, email: false, address: false, message: false });
-            const [modalState, setModalState] = useState({ isOpen: false, message: "", isHorror: false });
+            const [modalState, setModalState] = useState({ isOpen: false, message: "", isHorror: false, goAdmin: false });
 
             // Phase1の段階でもフォームは存在するが、乗っ取り演出は「Phase1内のF12探索」として運用
             // ＝この実装では Phase1でも演出が起きる（ただし、ユーザーがフィールドに触れない限り起きない）
@@ -2528,47 +2399,32 @@
             const allSeen = Object.values(seenCount).every(v => v);
 
             const handleSubmit = (e) => {
-                e.preventDefault();
-
-                if (allSeen) {
-                    // F12回収（問い合わせ乗っ取り）
-                    if (!flags.F12) {
-                        alert("【F12: 問い合わせの乗っ取り】\nフォームが完全に乗っ取られている。");
-                        unlockFlag('F12');
-                    }
-
-                    // Phase4なら通報エンドに進む（F13）
-                    if (phase >= 4) {
-                        const evidenceCount =
-                            countFound(flags, PHASE1_FLAGS) +
-                            countFound(flags, PHASE2_FLAGS) +
-                            countFound(flags, PHASE3_FLAGS);
-
-                        const endMessage = (evidenceCount >= 10)
-                            ? "【TRUE END】\n全員逮捕。佐藤副園長は救出された。"
-                            : "【NORMAL END】\n警察が到着したが、主要メンバーは逃亡していた。";
-
-                        setModalState({ isOpen: true, message: endMessage, isHorror: true });
-                        if (!flags.F13) unlockFlag('F13');
-                        return;
-                    }
-
-                    // Phase4未満は“気づいた”メッセージ
-                    setModalState({
-                        isOpen: true,
-                        message: "証拠に気づいたか？助けてくれ、もう限界だ",
-                        isHorror: true
-                    });
-
-                } else {
-                    setModalState({
-                        isOpen: true,
-                        message: "現在問い合わせが混雑しています。\nご迷惑をおかけして申し訳ありません。",
-                        isHorror: false
-                    });
+              e.preventDefault();
+            
+              if (allSeen) {
+                // F12回収（問い合わせ乗っ取り）
+                if (!flags.F12) {
+                  alert("【F12: 問い合わせの乗っ取り】\nフォームが完全に乗っ取られている。");
+                  unlockFlag('F12');
                 }
+            
+                // 通報は管理人ページ（admin_notice）で行う
+                setModalState({
+                  isOpen: true,
+                  message: "証拠に気づいたか？\n最後は『管理人からのお知らせ（関係者各位）』にある。",
+                  isHorror: true,
+                  goAdmin: true
+                });
+              } else {
+                setModalState({
+                  isOpen: true,
+                  message: "現在問い合わせが混雑しています。\nご迷惑をおかけして申し訳ありません。",
+                  isHorror: false,
+                  goAdmin: false
+                });
+              }
             };
-
+            
             return (
                 <div className="min-h-screen pt-24 pb-20">
                     <div className="max-w-container mx-auto px-6">
@@ -2650,12 +2506,16 @@
                         </div>
                     </div>
 
-                    <MessageModal 
-                        isOpen={modalState.isOpen} 
-                        message={modalState.message} 
-                        isHorror={modalState.isHorror}
-                        onClose={() => setModalState({ ...modalState, isOpen: false })} 
-                    />
+                <MessageModal 
+                  isOpen={modalState.isOpen} 
+                  message={modalState.message} 
+                  isHorror={modalState.isHorror}
+                  onClose={() => {
+                    const go = modalState.goAdmin;
+                    setModalState({ ...modalState, isOpen: false, goAdmin: false });
+                    if (go) setPage('admin_notice');
+                  }} 
+                />
                 </div>
             );
         };
@@ -2713,7 +2573,6 @@
                     case 'admin_notice': return <AdminNotice {...props} />;
                     case 'recruit': return <Recruit {...props} />;
                     case 'contact': return <Contact {...props} />;
-                    case 'admin_notice': return <AdminNotice {...props} />;
                     default: return <Home {...props} />;
                 }
             };
