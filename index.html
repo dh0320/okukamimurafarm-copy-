@@ -775,19 +775,19 @@
                                 <ul className="space-y-6">
                                     {/* Phase2以降で表示（F03探索可能） */}
                                     {phase >= 2 && (
-                                      <li 
+                                    <li 
                                         className="group cursor-pointer"
                                         onClick={() => {
-                                          if (!flags.F03) {
-                                            alert("【F03: 管理人からのお知らせ】\nパスワード保護された「内部告発」ページへのリンクを発見した。");
-                                            unlockFlag('F03');
-                                          }
-                                          setPage('admin_notice');
+                                            if (!flags.F03) {
+                                                alert("【F03: 管理人からのお知らせ】\n「関係者各位」ページへのリンクを発見した。");
+                                                unlockFlag('F03');
+                                            }
+                                            setPage('admin_notice');
                                         }}
-                                      >
+                                    >
                                         <p className="text-xs text-accent font-eng mb-1">2026.01.20</p>
                                         <p className="group-hover:text-accent transition-colors font-medium">【重要】管理人からのお知らせ（関係者各位）</p>
-                                      </li>
+                                    </li>
                                     )}
                                     <li className="group cursor-pointer">
                                         <p className="text-xs text-muted font-eng mb-1">2026.01.15</p>
@@ -847,6 +847,121 @@
             );
         };
 
+        // 管理人からのお知らせ（関係者各位）ページ：通報（F13）はここで行う
+        const AdminNotice = ({ phase, unlockFlag, flags, setPage }) => {
+            const [confirmOpen, setConfirmOpen] = useState(false);
+            const [resultModal, setResultModal] = useState({ isOpen: false, message: "", isHorror: true });
+        
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, []);
+        
+            const evidenceCount =
+                countFound(flags, PHASE1_FLAGS) +
+                countFound(flags, PHASE2_FLAGS) +
+                countFound(flags, PHASE3_FLAGS);
+        
+            const doReport = () => {
+                setConfirmOpen(false);
+        
+                if (!flags.F13) {
+                    unlockFlag('F13');
+                }
+        
+                const endMessage = (evidenceCount >= 10)
+                    ? "【TRUE END】\n全員逮捕。佐藤副園長は救出された。"
+                    : "【NORMAL END】\n警察が到着したが、主要メンバーは逃亡していた。";
+        
+                setResultModal({ isOpen: true, message: endMessage, isHorror: true });
+            };
+        
+            return (
+                <div className="min-h-screen pt-24 pb-20 bg-surface">
+                    <div className="max-w-container mx-auto px-6">
+                        <SectionTitle title="管理人からのお知らせ" sub="NOTICE" />
+        
+                        <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-border p-8 md:p-12">
+                            <button
+                                onClick={() => setPage('home')}
+                                className="flex items-center text-sm text-muted hover:text-primary mb-8 transition-colors"
+                            >
+                                <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
+                                HOMEに戻る
+                            </button>
+        
+                            <div className="font-serif leading-loose text-text space-y-6">
+                                <div>
+                                    <p className="text-xs text-accent font-eng mb-2">2026.01.20</p>
+                                    <h2 className="text-2xl font-serif font-bold mb-2">
+                                        【重要】管理人からのお知らせ（関係者各位）
+                                    </h2>
+                                    <p className="text-sm text-muted">
+                                        ※このページは外部共有を想定していません。
+                                    </p>
+                                </div>
+        
+                                <div className="p-6 bg-surface-2 rounded-xl border border-border">
+                                    <p>
+                                        関係者各位。<br />
+                                        現在、農園周辺での情報拡散・不審な閲覧が確認されています。<br />
+                                        記録の取り扱いには十分注意してください。
+                                    </p>
+                                    <p className="mt-4 text-muted text-sm">
+                                        （追記）もし、外部に通報する場合は「十分な証拠」を揃えてから行ってください。
+                                    </p>
+                                </div>
+        
+                                {/* Phase4で通報解放 */}
+                                {phase >= 4 ? (
+                                    <div className="pt-6 text-center">
+                                        <button
+                                            className="px-10 py-4 rounded-full bg-accent text-white font-bold tracking-widest shadow-lg hover:bg-red-900 transition-colors"
+                                            onClick={() => setConfirmOpen(true)}
+                                        >
+                                            警察に通報する
+                                        </button>
+                                        <p className="text-xs text-muted mt-3">
+                                            現在の証拠数：{evidenceCount}
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="pt-6 text-center">
+                                        <button
+                                            className="px-10 py-4 rounded-full bg-gray-200 text-gray-500 font-bold tracking-widest cursor-not-allowed"
+                                            disabled
+                                        >
+                                            通報（Phase4で解放）
+                                        </button>
+                                        <p className="text-xs text-muted mt-3">
+                                            Phase4に到達すると通報が可能になります。
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+        
+                    {/* 確認：YESで通報、NOで戻る */}
+                    <ConfirmModal
+                        isOpen={confirmOpen}
+                        message={"十分な証拠は見つけたか？"}
+                        yesLabel="イエス（通報する）"
+                        noLabel="ノー（戻る）"
+                        onYes={doReport}
+                        onNo={() => setConfirmOpen(false)}
+                        isHorror={true}
+                    />
+        
+                    {/* 結果表示 */}
+                    <MessageModal
+                        isOpen={resultModal.isOpen}
+                        message={resultModal.message}
+                        isHorror={resultModal.isHorror}
+                        onClose={() => setResultModal({ ...resultModal, isOpen: false })}
+                    />
+                </div>
+            );
+        };
         // --- CONTINUES IN PART 2 ---
                 // 2. VILLAGE (Gallery & Tree)
         const Village = ({ phase, unlockFlag, flags }) => {
@@ -2126,16 +2241,31 @@
             window.scrollTo(0, 0);
           }, []);
         
-          const handleSubmit = (e) => {
-            e.preventDefault();
-            if (pw === PASSWORD) {
-              setUnlocked(true);
-              setError("");
-            } else {
-              setUnlocked(false);
-              setError("パスワードが違います。");
-            }
-          };
+            const handleSubmit = (e) => {
+                e.preventDefault();
+            
+                if (allSeen) {
+                    // F12回収（問い合わせ乗っ取り）
+                    if (!flags.F12) {
+                        alert("【F12: 問い合わせの乗っ取り】\nフォームが完全に乗っ取られている。");
+                        unlockFlag('F12');
+                    }
+            
+                    // 通報は「管理人からのお知らせ」ページで行う仕様に変更
+                    setModalState({
+                        isOpen: true,
+                        message: "証拠に気づいたか？\n最後は『管理人からのお知らせ（関係者各位）』にある。",
+                        isHorror: true
+                    });
+            
+                } else {
+                    setModalState({
+                        isOpen: true,
+                        message: "現在問い合わせが混雑しています。\nご迷惑をおかけして申し訳ありません。",
+                        isHorror: false
+                    });
+                }
+            };
         
           return (
             <div className="min-h-screen pt-24 pb-20 bg-surface">
@@ -2442,8 +2572,7 @@
             return (
                 <div className="min-h-screen pt-24 pb-20">
                     <div className="max-w-container mx-auto px-6">
-                        <SectionTitle title={phase >= 4 ? "匿名通報" : "お問い合わせ"} sub={phase >= 4 ? "REPORT" : "CONTACT"} />
-
+　　　　　　　　　　　　　<SectionTitle title="お問い合わせ" sub="CONTACT" />
                         <div className="max-w-3xl mx-auto grid md:grid-cols-3 gap-12">
                             <div className="md:col-span-2">
                                 <form className="space-y-8" onSubmit={handleSubmit}>
@@ -2482,7 +2611,7 @@
 
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-muted tracking-wider">
-                                            {phase >= 4 ? "通報内容・特定した住所" : "お問い合わせ内容"} <span className="text-accent">*</span>
+                                            お問い合わせ内容 <span className="text-accent">*</span>
                                         </label>
                                         <textarea 
                                             rows="5" 
@@ -2493,16 +2622,16 @@
                                         ></textarea>
                                     </div>
 
-                                    <button 
-                                        type="submit" 
-                                        className={`w-full py-4 rounded-full transition-all duration-500 font-medium tracking-wide text-sm shadow-lg hover:shadow-xl ${
-                                            allSeen 
-                                                ? 'bg-black text-white hover:bg-gray-900 border-none'
-                                                : (phase >= 4 ? 'bg-accent text-white hover:bg-red-900' : 'bg-white text-black border border-text hover:bg-gray-100')
-                                        }`}
-                                    >
-                                        {phase >= 4 ? "警察に通報する" : "送信する"}
-                                    </button>
+                                <button
+                                type="submit"
+                                className={`w-full py-4 rounded-full transition-all duration-500 font-medium tracking-wide text-sm shadow-lg hover:shadow-xl ${
+                                allSeen
+                                ? 'bg-black text-white hover:bg-gray-900 border-none'
+                                : 'bg-white text-black border border-text hover:bg-gray-100'
+                                }`}
+                                >
+                                送信する
+                                </button>
                                 </form>
                             </div>
 
@@ -2584,6 +2713,7 @@
                     case 'admin_notice': return <AdminNotice {...props} />;
                     case 'recruit': return <Recruit {...props} />;
                     case 'contact': return <Contact {...props} />;
+                    case 'admin_notice': return <AdminNotice {...props} />;
                     default: return <Home {...props} />;
                 }
             };
