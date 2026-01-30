@@ -327,7 +327,12 @@
             ending_silenced: `${BASE_URL}/images/staffvictim2.png`,
             ending_normal: `${BASE_URL}/images/villagenight.png`,
             ending_true: `${BASE_URL}/images/treechange.png`,
-            ending_perfect: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/cce9c3db56a9593996fa1381a826289236d747a2/images/staffmanagerchange.png"
+            ending_perfect: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/cce9c3db56a9593996fa1381a826289236d747a2/images/staffmanagerchange.png",
+            
+            // topkodawari
+            kodawari_soil: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/kodawarisoil.png",
+            kodawari_eda: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/kodawarieda.png",
+            kodawari_hand: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/kodawarihand.png",
         };
 
         // 記事データ
@@ -1040,7 +1045,7 @@
         <div className="aspect-square rounded-2xl overflow-hidden bg-surface-2 shadow-sm mb-6">
           {/* 画像差し替えOK：土の寄り写真が理想 */}
           <img
-            src={IMAGES.top_farm}
+            src={IMAGES.kodawari_soil}
             alt="土にこだわる"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
@@ -1058,7 +1063,7 @@
         <div className="aspect-square rounded-2xl overflow-hidden bg-surface-2 shadow-sm mb-6">
           {/* 画像差し替え推奨：接ぎ木の手元写真が最適 */}
           <img
-            src={IMAGES.top_apple}
+            src={IMAGES.kodawari_eda}
             alt="木にこだわる（接木）"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
@@ -1076,7 +1081,7 @@
         <div className="aspect-square rounded-2xl overflow-hidden bg-surface-2 shadow-sm mb-6">
           {/* 画像差し替えOK：選果・箱詰めの手元写真が理想 */}
           <img
-            src={IMAGES.ec_apple}
+            src={IMAGES.kodawari_hand}
             alt="扱いにこだわる"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
@@ -1648,190 +1653,343 @@
             );
         };
 
-        // 4. PRODUCTS
-        const Products = ({ phase, notifyEvidence, flags }) => {
-            const categories = ["ALL", "APPLE", "GRAPES", "PROCESSED"];
-            const [selectedCategory, setSelectedCategory] = useState("ALL");
-            const [videoModalOpen, setVideoModalOpen] = useState(false);
+// 4. PRODUCTS（購入者レビュー追加版）
+const Products = ({ phase, notifyEvidence, flags, setPage }) => {
+  const categories = ["ALL", "APPLE", "GRAPES", "PROCESSED"];
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
 
-            const products = [
-                { 
-                    id: 1, 
-                    name: "奥神伏りんご「朱実」", 
-                    price: "¥5,000", 
-                    cat: "APPLE", 
-                    img: IMAGES.ec_apple,
-                    desc: "驚くほどの糖度と、深紅の色合い。贈り物にも最適です。",
-                    tags: ["#甘い", "#季節限定", "#ギフト", "#蜜入り", "#信州", "#朝食に"]
-                },
-                { 
-                    id: 2, 
-                    name: "手作りアップルパイ", 
-                    price: "¥3,500", 
-                    cat: "PROCESSED", 
-                    img: IMAGES.ec_applepie, 
-                    desc: "由利さん秘伝のレシピ。サクサクのパイ生地と甘酸っぱいフィリング。",
-                    tags: ["#母の味", "#無添加", "#手作り", "#おやつ", "#焼きたて", "#人気No.1"]
-                },
-                { 
-                    id: 3, 
-                    name: "有機栽培ブドウ", 
-                    price: "¥8,000", 
-                    cat: "GRAPES", 
-                    img: IMAGES.ec_grape, 
-                    desc: "接ぎ木技術の結晶。深いコクと香りをお楽しみください。",
-                    tags: [
-                        "#長野県産",
-                        "#有機JAS",
-                        "#芳醇な香り",
-                        ...(phase >= 2 ? ["#キヅイテ"] : []),
-                        "#希少品種",
-                        "#ワイン用",
-                        "#皮ごと食べられる",
-                        "#秋の味覚",
-                        "#贈答用"
-                    ]
-                },
-                { 
-                    id: 4, 
-                    name: "特製ジャム", 
-                    price: "¥1,200", 
-                    cat: "PROCESSED", 
-                    img: IMAGES.ec_jam, 
-                    desc: "完熟果実をそのまま煮詰めました。ヨーグルトに最適。",
-                    tags: ["#朝食", "#オーガニック", "#保存料不使用", "#ヨーグルトに"]
-                },
-                { 
-                    id: 5, 
-                    name: "季節の詰め合わせ", 
-                    price: "¥10,000", 
-                    cat: "ALL", 
-                    img: IMAGES.ec_set, 
-                    desc: "旬の味覚を贅沢に詰め合わせました。ご贈答用に。",
-                    tags: ["#数量限定", "#お中元", "#送料無料", "#ファミリー向け"]
-                },
-                { 
-                    id: 6, 
-                    name: "Coming Soon...", 
-                    price: "-", 
-                    cat: "ALL", 
-                    img: IMAGES.icon_default, 
-                    desc: "新しい商品の準備中です。ご期待ください。",
-                    tags: [],
-                    isComingSoon: true
-                },
-            ];
+  const products = [
+    { 
+      id: 1, 
+      name: "奥神伏りんご「朱実」", 
+      price: "¥5,000", 
+      cat: "APPLE", 
+      img: IMAGES.ec_apple,
+      desc: "驚くほどの糖度と、深紅の色合い。贈り物にも最適です。",
+      tags: ["#甘い", "#季節限定", "#ギフト", "#蜜入り", "#信州", "#朝食に"]
+    },
+    { 
+      id: 2, 
+      name: "手作りアップルパイ", 
+      price: "¥3,500", 
+      cat: "PROCESSED", 
+      img: IMAGES.ec_applepie, 
+      desc: "由利さん秘伝のレシピ。サクサクのパイ生地と甘酸っぱいフィリング。",
+      tags: ["#母の味", "#無添加", "#手作り", "#おやつ", "#焼きたて", "#人気No.1"]
+    },
+    { 
+      id: 3, 
+      name: "有機栽培ブドウ", 
+      price: "¥8,000", 
+      cat: "GRAPES", 
+      img: IMAGES.ec_grape, 
+      desc: "接ぎ木技術の結晶。深いコクと香りをお楽しみください。",
+      tags: [
+        "#長野県産",
+        "#有機JAS",
+        "#芳醇な香り",
+        ...(phase >= 2 ? ["#キヅイテ"] : []),
+        "#希少品種",
+        "#ワイン用",
+        "#皮ごと食べられる",
+        "#秋の味覚",
+        "#贈答用"
+      ]
+    },
+    { 
+      id: 4, 
+      name: "特製ジャム", 
+      price: "¥1,200", 
+      cat: "PROCESSED", 
+      img: IMAGES.ec_jam, 
+      desc: "完熟果実をそのまま煮詰めました。ヨーグルトに最適。",
+      tags: ["#朝食", "#オーガニック", "#保存料不使用", "#ヨーグルトに"]
+    },
+    { 
+      id: 5, 
+      name: "季節の詰め合わせ", 
+      price: "¥10,000", 
+      cat: "ALL", 
+      img: IMAGES.ec_set, 
+      desc: "旬の味覚を贅沢に詰め合わせました。ご贈答用に。",
+      tags: ["#数量限定", "#お中元", "#送料無料", "#ファミリー向け"]
+    },
+    { 
+      id: 6, 
+      name: "Coming Soon...", 
+      price: "-", 
+      cat: "ALL", 
+      img: IMAGES.icon_default, 
+      desc: "新しい商品の準備中です。ご期待ください。",
+      tags: [],
+      isComingSoon: true
+    },
+  ];
 
-            const filteredProducts = useMemo(() => {
-                if (selectedCategory === "ALL") return products;
-                // catがALLのものは常に出す（詰め合わせ等）
-                return products.filter(p => p.cat === selectedCategory || p.cat === "ALL");
-            }, [selectedCategory, phase]);
+  // ▼ 追加：購入者レビュー（抜粋）
+  // ※いったん静的データ。将来的にCMS/スプレッドシート/JSONに置き換えやすい形です。
+  const REVIEWS = [
+    {
+      id: "R01",
+      buyer: "東京都 M.K.",
+      date: "2026.01.17",
+      rating: 5,
+      title: "香りがよくて、蜜の感じも上品",
+      body: "箱を開けた瞬間から香りが良く、食感もシャキッとしていました。甘いのに後味が軽く、家族みんなであっという間に完食です。",
+      productName: "奥神伏りんご「朱実」",
+      productImg: IMAGES.ec_apple
+    },
+    {
+      id: "R02",
+      buyer: "神奈川県 Y.T.",
+      date: "2026.01.14",
+      rating: 5,
+      title: "ギフトにしたらすごく喜ばれました",
+      body: "大きさが揃っていて見た目もきれい。贈答用に選びましたが、先方から『すごくおいしい』と連絡が来て安心しました。",
+      productName: "奥神伏りんご「朱実」",
+      productImg: IMAGES.ec_apple
+    },
+    {
+      id: "R03",
+      buyer: "大阪府 N.S.",
+      date: "2026.01.11",
+      rating: 4,
+      title: "甘さ控えめで食べやすいアップルパイ",
+      body: "バターの香りが強すぎず、りんごの酸味がちょうどいいです。温めるとさらに香りが立って、休日のおやつにぴったりでした。",
+      productName: "手作りアップルパイ",
+      productImg: IMAGES.ec_applepie
+    },
+    {
+      id: "R04",
+      buyer: "長野県 A.H.",
+      date: "2026.01.09",
+      rating: 5,
+      title: "ジャムが素材の味そのまま",
+      body: "余計な甘さがなく、果実感がしっかり。ヨーグルトに合わせると朝が楽しみになります。パンにも合いました。",
+      productName: "特製ジャム",
+      productImg: IMAGES.ec_jam
+    },
+    {
+      id: "R05",
+      buyer: "福岡県 K.O.",
+      date: "2026.01.06",
+      rating: 4,
+      title: "詰め合わせの満足度が高い",
+      body: "家族でいろいろ試せて楽しいです。梱包も丁寧で、果物が傷まず届きました。季節ごとにまた頼みたいです。",
+      productName: "季節の詰め合わせ",
+      productImg: IMAGES.ec_set
+    },
+    {
+      id: "R06",
+      buyer: "愛知県 R.M.",
+      date: "2026.01.04",
+      rating: 5,
+      title: "ブドウの香りが濃くて驚きました",
+      body: "粒がしっかりしていて、香りがとても豊か。ワイン用と書かれていましたが、そのまま食べても贅沢感がありました。",
+      productName: "有機栽培ブドウ",
+      productImg: IMAGES.ec_grape
+    },
+  ];
 
-            return (
-                <div className="min-h-screen pt-24 pb-20">
-                    <div className="max-w-container mx-auto px-6">
-                        <SectionTitle title="商品一覧" sub="PRODUCTS" />
+  const averageRating = REVIEWS.length
+    ? (REVIEWS.reduce((sum, r) => sum + r.rating, 0) / REVIEWS.length)
+    : 0;
 
-                        <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-16">
-                            {categories.map((cat) => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setSelectedCategory(cat)}
-                                    className={`text-sm font-eng tracking-widest px-4 py-2 rounded-full transition-colors ${
-                                        selectedCategory === cat 
-                                            ? 'bg-text text-white' 
-                                            : 'text-muted hover:bg-surface-2'
-                                    }`}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
-                        </div>
+  const Stars = ({ rating }) => (
+    <div className="flex items-center gap-[2px]" aria-label={`rating ${rating}/5`}>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span key={i} className={i < rating ? "text-primary" : "text-border"}>
+          ★
+        </span>
+      ))}
+    </div>
+  );
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 mb-20">
-                            {filteredProducts.map(p => (
-                                <div key={p.id} className={`group cursor-pointer ${p.isComingSoon ? 'opacity-60' : ''}`}>
-                                    <div className="aspect-square overflow-hidden rounded-2xl mb-4 bg-surface-2 relative flex items-center justify-center">
-                                        {p.isComingSoon ? (
-                                            <div className="text-center">
-                                                <img src={p.img} alt={p.name} className="w-20 h-20 opacity-30 mx-auto mb-2" />
-                                                <span className="font-eng tracking-widest text-muted">Coming Soon</span>
-                                            </div>
-                                        ) : (
-                                            <img src={p.img} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                        )}
-                                    </div>
-                                    <div className="text-left">
-                                        <div className="flex justify-between items-baseline mb-2">
-                                            <h3 className="text-lg font-serif font-bold">{p.name}</h3>
-                                            <p className="text-sm font-eng text-muted">{p.price}</p>
-                                        </div>
-                                        <p className="text-sm text-muted mb-4 leading-relaxed border-b border-border pb-4">{p.desc}</p>
+  const filteredProducts = useMemo(() => {
+    if (selectedCategory === "ALL") return products;
+    // catがALLのものは常に出す（詰め合わせ等）
+    return products.filter(p => p.cat === selectedCategory || p.cat === "ALL");
+  }, [selectedCategory, phase]);
 
-                                        <div className="flex flex-wrap gap-2">
-                                            {p.tags.map((tag, i) => (
-                                                <span 
-                                                    key={i}
-                                                    className={`text-[11px] px-2 py-1 rounded border border-border text-muted transition-colors hover:bg-gray-100 ${
-                                                        tag === "#キヅイテ" ? "cursor-help hover:text-accent" : "cursor-default"
-                                                    }`}
-                                                    onClick={(e) => {
-                                                        if (tag === "#キヅイテ") {
-                                                            // Phase2以降のみ有効
-                                                            if (phase < 2) return;
-                                                            e.stopPropagation();
-                                                            setVideoModalOpen(true);
-                                                            if (!flags.F02) {
-                                                                notifyEvidence('F02', 'タグを辿ると、映像が残されていた。', { mode: "toast" });
-                                                            }
-                                                        }
-                                                    }}
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+  return (
+    <div className="min-h-screen pt-24 pb-20">
+      <div className="max-w-container mx-auto px-6">
+        <SectionTitle title="商品一覧" sub="PRODUCTS" />
 
-                        <AdSpace />
+        <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-16">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`text-sm font-eng tracking-widest px-4 py-2 rounded-full transition-colors ${
+                selectedCategory === cat 
+                  ? 'bg-text text-white' 
+                  : 'text-muted hover:bg-surface-2'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 mb-20">
+          {filteredProducts.map(p => (
+            <div key={p.id} className={`group cursor-pointer ${p.isComingSoon ? 'opacity-60' : ''}`}>
+              <div className="aspect-square overflow-hidden rounded-2xl mb-4 bg-surface-2 relative flex items-center justify-center">
+                {p.isComingSoon ? (
+                  <div className="text-center">
+                    <img src={p.img} alt={p.name} className="w-20 h-20 opacity-30 mx-auto mb-2" />
+                    <span className="font-eng tracking-widest text-muted">Coming Soon</span>
+                  </div>
+                ) : (
+                  <img src={p.img} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                )}
+              </div>
+              <div className="text-left">
+                <div className="flex justify-between items-baseline mb-2">
+                  <h3 className="text-lg font-serif font-bold">{p.name}</h3>
+                  <p className="text-sm font-eng text-muted">{p.price}</p>
+                </div>
+                <p className="text-sm text-muted mb-4 leading-relaxed border-b border-border pb-4">{p.desc}</p>
+
+                <div className="flex flex-wrap gap-2">
+                  {p.tags.map((tag, i) => (
+                    <span 
+                      key={i}
+                      className={`text-[11px] px-2 py-1 rounded border border-border text-muted transition-colors hover:bg-gray-100 ${
+                        tag === "#キヅイテ" ? "cursor-help hover:text-accent" : "cursor-default"
+                      }`}
+                      onClick={(e) => {
+                        if (tag === "#キヅイテ") {
+                          // Phase2以降のみ有効
+                          if (phase < 2) return;
+                          e.stopPropagation();
+                          setVideoModalOpen(true);
+                          if (!flags.F02) {
+                            notifyEvidence('F02', 'タグを辿ると、映像が残されていた。', { mode: "toast" });
+                          }
+                        }
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ▼▼▼ 追加：購入者レビュー（商品説明の下／広告の上） ▼▼▼ */}
+        <section className="mb-20">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10 border-b border-border pb-4">
+            <div>
+              <h3 className="text-2xl font-serif">購入者レビュー</h3>
+              <p className="text-sm text-muted mt-2 font-serif">
+                実際にご購入いただいた方からの声（抜粋）
+              </p>
+            </div>
+            <div className="text-sm font-eng text-muted">
+              平均評価{" "}
+              <span className="text-text font-bold">
+                {averageRating.toFixed(1)}
+              </span>
+              /5（{REVIEWS.length}件）
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {REVIEWS.map((r) => (
+              <div
+                key={r.id}
+                className="bg-surface p-6 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div>
+                    <p className="text-[11px] text-primary font-eng tracking-widest font-semibold mb-2">
+                      VERIFIED BUYER
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <Stars rating={r.rating} />
+                      <span className="text-xs text-muted font-eng">{r.rating}.0</span>
                     </div>
-                     {videoModalOpen && (
-                      <div
-                        className="fixed inset-0 z-[100] bg-black/90 flex items-start justify-center p-4 overflow-y-auto"
-                        style={{ paddingTop: 'calc(var(--header-height) + 16px)' }}
-                        onClick={() => setVideoModalOpen(false)}
-                      >
-                        <div
-                          className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl"
-                          onClick={e => e.stopPropagation()}
-                        >
-                          <video
-                            src={IMAGES.victim_movie}
-                            controls
-                            autoPlay
-                            playsInline
-                            className="w-full h-full"
-                          >
-                            Your browser does not support the video tag.
-                          </video>
-                    
-                          {/* 上寄せにすると -top が見切れやすいので、右上に配置 */}
-                          <button
-                            className="absolute top-3 right-3 text-white font-bold bg-black/40 hover:bg-black/70 px-3 py-1 rounded transition-colors"
-                            onClick={() => setVideoModalOpen(false)}
-                          >
-                            閉じる
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                 </div>
-            );
-        };
+                  </div>
+                  <span className="text-xs text-muted font-eng">{r.date}</span>
+                </div>
+
+                <h4 className="text-lg font-serif font-bold mb-2">{r.title}</h4>
+                <p className="text-sm text-muted leading-relaxed font-serif mb-5">
+                  {r.body}
+                </p>
+
+                <div className="pt-4 border-t border-border flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-surface-2 shrink-0">
+                      <img
+                        src={r.productImg}
+                        alt={r.productName}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[11px] text-muted font-eng">購入商品</p>
+                      <p className="text-sm font-serif truncate">{r.productName}</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted font-serif shrink-0">{r.buyer}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <Button variant="secondary" onClick={() => setPage('contact')}>
+              レビュー・ご感想を送る
+            </Button>
+            <p className="text-xs text-muted mt-3 font-serif">
+              ※掲載しているレビューは一部抜粋です。
+            </p>
+          </div>
+        </section>
+        {/* ▲▲▲ 追加ここまで ▲▲▲ */}
+
+        <AdSpace />
+      </div>
+
+      {videoModalOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-start justify-center p-4 overflow-y-auto"
+          style={{ paddingTop: 'calc(var(--header-height) + 16px)' }}
+          onClick={() => setVideoModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          >
+            <video
+              src={IMAGES.victim_movie}
+              controls
+              autoPlay
+              playsInline
+              className="w-full h-full"
+            >
+              Your browser does not support the video tag.
+            </video>
+
+            <button
+              className="absolute top-3 right-3 text-white font-bold bg-black/40 hover:bg-black/70 px-3 py-1 rounded transition-colors"
+              onClick={() => setVideoModalOpen(false)}
+            >
+              閉じる
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 
         // --- CONTINUES IN PART 3 ---
                 // 5. DIARY (List)
