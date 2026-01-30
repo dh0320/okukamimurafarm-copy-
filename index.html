@@ -968,56 +968,131 @@
                         </div>
                     </div>
 
-                    <div className="py-20 px-6 bg-surface">
-                        <div className="max-w-container mx-auto grid md:grid-cols-2 gap-16 md:gap-24">
-                            <div>
-                                <div className="flex justify-between items-end mb-8 border-b border-border pb-4">
-                                    <h3 className="text-2xl font-serif">News</h3>
-                                    <span className="text-sm font-eng text-muted cursor-pointer hover:text-primary">View All</span>
-                                </div>
-                                <ul className="space-y-6">
-                                    {/* Phase2以降で表示（F03探索可能） */}
-                                    {phase >= 2 && (
-                                    <li 
-                                        className="group cursor-pointer"
-                                        onClick={() => {
-                                            if (!flags.F03) {
-                                                notifyEvidence('F03', '「関係者各位」ページへのリンクを発見した。');
-                                            }
-                                            setPage('admin_notice');
-                                        }}
-                                    >
-                                        <p className="text-xs text-accent font-eng mb-1">2026.01.20</p>
-                                        <p className="group-hover:text-accent transition-colors font-medium">【重要】管理人からのお知らせ（関係者各位）</p>
-                                    </li>
-                                    )}
-                                    <li className="group cursor-pointer">
-                                        <p className="text-xs text-muted font-eng mb-1">2026.01.15</p>
-                                        <p className="group-hover:text-primary transition-colors">本年の「朱実（あけみ）」の予約受付を開始しました。</p>
-                                    </li>
-                                    <li className="group cursor-pointer">
-                                        <p className="text-xs text-muted font-eng mb-1">2026.01.08</p>
-                                        <p className="group-hover:text-primary transition-colors">冬季実習生の受け入れを実施しました。</p>
-                                    </li>
-                                </ul>
-                            </div>
-                            
-                            <div className="relative pl-8 border-l border-border hidden md:block">
-                                {/* タイトル */}
-                                <h2 className="mb-6 text-2xl font-serif tracking-widest text-text">
-                                    私たちの誇り
-                                </h2>
-                            
-                                {/* 本文（縦書き） */}
-                                <p className="text-lg font-serif leading-loose writing-vertical-rl text-text h-[300px]">
-                                    奥神伏の深い森に抱かれたこの地で、<br/>
-                                    私たちは土の声に耳を傾けます。<br/>
-                                    自然の摂理に従い、命を育む。<br/>
-                                    それが私たちの誇りです。
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+<div className="py-20 px-6 bg-surface">
+  {/* 既存：News ＆ 私たちの誇り（2カラム） */}
+  <div className="max-w-container mx-auto grid md:grid-cols-2 gap-16 md:gap-24">
+    <div>
+      <div className="flex justify-between items-end mb-8 border-b border-border pb-4">
+        <h3 className="text-2xl font-serif">News</h3>
+        <span className="text-sm font-eng text-muted cursor-pointer hover:text-primary">View All</span>
+      </div>
+      <ul className="space-y-6">
+        {/* Phase2以降で表示（F03探索可能） */}
+        {phase >= 2 && (
+          <li
+            className="group cursor-pointer"
+            onClick={() => {
+              if (!flags.F03) {
+                notifyEvidence('F03', '「関係者各位」ページへのリンクを発見した。');
+              }
+              setPage('admin_notice');
+            }}
+          >
+            <p className="text-xs text-accent font-eng mb-1">2026.01.20</p>
+            <p className="group-hover:text-accent transition-colors font-medium">【重要】管理人からのお知らせ（関係者各位）</p>
+          </li>
+        )}
+        <li className="group cursor-pointer">
+          <p className="text-xs text-muted font-eng mb-1">2026.01.15</p>
+          <p className="group-hover:text-primary transition-colors">本年の「朱実（あけみ）」の予約受付を開始しました。</p>
+        </li>
+        <li className="group cursor-pointer">
+          <p className="text-xs text-muted font-eng mb-1">2026.01.08</p>
+          <p className="group-hover:text-primary transition-colors">冬季実習生の受け入れを実施しました。</p>
+        </li>
+      </ul>
+    </div>
+
+    <div className="relative pl-8 border-l border-border hidden md:block">
+      {/* タイトル */}
+      <h2 className="mb-6 text-2xl font-serif tracking-widest text-text">
+        私たちの誇り
+      </h2>
+
+      {/* 本文（縦書き） */}
+      <p className="text-lg font-serif leading-loose writing-vertical-rl text-text h-[300px]">
+        奥神伏の深い森に抱かれたこの地で、<br/>
+        私たちは土の声に耳を傾けます。<br/>
+        自然の摂理に従い、命を育む。<br/>
+        それが私たちの誇りです。
+      </p>
+    </div>
+  </div>
+
+  {/* ▼▼▼ 追加：私たちのりんごへのこだわり（3カラム） ▼▼▼ */}
+  <div className="max-w-container mx-auto mt-20 md:mt-24">
+    <div className="text-center mb-12 md:mb-16">
+      <p className="text-primary font-eng text-sm tracking-widest font-semibold mb-3 uppercase">
+        OUR APPLES
+      </p>
+      <h2 className="text-3xl md:text-4xl font-serif text-text leading-tight">
+        私たちのりんごへのこだわり
+      </h2>
+      <p className="mt-4 text-sm md:text-base text-muted font-serif leading-relaxed">
+        土を整え、木を育て、手で選び手で届ける。<br className="hidden md:block" />
+        奥神伏のりんごは、日々の小さな積み重ねから生まれます。
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+      {/* ① 土 */}
+      <div className="group">
+        <div className="aspect-square rounded-2xl overflow-hidden bg-surface-2 shadow-sm mb-6">
+          {/* 画像差し替えOK：土の寄り写真が理想 */}
+          <img
+            src={IMAGES.top_farm}
+            alt="土にこだわる"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        </div>
+        <p className="text-primary font-eng text-xs tracking-widest font-semibold mb-2">01 / SOIL</p>
+        <h3 className="text-xl font-serif font-bold mb-3">土にこだわる</h3>
+        <p className="text-sm text-muted leading-relaxed font-serif">
+          森に抱かれた畑の土を、季節ごとに観察して整えています。<br/>
+          微生物が息づく環境を守り、根がのびのび育つ土づくりを大切にしています。
+        </p>
+      </div>
+
+      {/* ② 木（接木） */}
+      <div className="group">
+        <div className="aspect-square rounded-2xl overflow-hidden bg-surface-2 shadow-sm mb-6">
+          {/* 画像差し替え推奨：接ぎ木の手元写真が最適 */}
+          <img
+            src={IMAGES.top_apple}
+            alt="木にこだわる（接木）"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        </div>
+        <p className="text-primary font-eng text-xs tracking-widest font-semibold mb-2">02 / TREE</p>
+        <h3 className="text-xl font-serif font-bold mb-3">木にこだわる</h3>
+        <p className="text-sm text-muted leading-relaxed font-serif">
+          台木と穂木の相性を見極め、一本ずつ接ぎ木で木の力を整えます。<br/>
+          樹勢が安定するまで丁寧に育て、香りと甘みがのる実りへつなげます。
+        </p>
+      </div>
+
+      {/* ③ 扱い */}
+      <div className="group">
+        <div className="aspect-square rounded-2xl overflow-hidden bg-surface-2 shadow-sm mb-6">
+          {/* 画像差し替えOK：選果・箱詰めの手元写真が理想 */}
+          <img
+            src={IMAGES.ec_apple}
+            alt="扱いにこだわる"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        </div>
+        <p className="text-primary font-eng text-xs tracking-widest font-semibold mb-2">03 / CARE</p>
+        <h3 className="text-xl font-serif font-bold mb-3">扱いにこだわる</h3>
+        <p className="text-sm text-muted leading-relaxed font-serif">
+          収穫後は一玉ずつ手で確認し、傷や押しを防いで丁寧に箱詰めします。<br/>
+          「届くまでが畑仕事」という気持ちで、りんご優先の扱いを徹底しています。
+        </p>
+      </div>
+    </div>
+  </div>
+  {/* ▲▲▲ 追加ここまで ▲▲▲ */}
+</div>
+
 
                     {/* F08: Stop Movie Modal */}
                     {stopVideoModalOpen && (
