@@ -1810,11 +1810,23 @@
                                 </form>
 
                                 <div className={`space-y-2 text-sm font-serif ${isAncient ? 'text-[#666]' : 'text-muted'}`}>
-                                    <p>カテゴリー</p>
+                                    <p>日記の件数</p>
                                     <ul className={`pl-4 space-y-1 border-l ${isAncient ? 'border-[#444]' : 'border-border'}`}>
-                                        <li className="cursor-pointer hover:opacity-70">農園の日常</li>
-                                        <li className="cursor-pointer hover:opacity-70">レシピ</li>
-                                        <li className="cursor-pointer hover:opacity-70">イベント</li>
+                                        <li className="flex justify-between">
+                                            <span>農園の日常</span>
+                                            <span>2</span>
+                                        </li>
+                                        <li className="flex justify-between">
+                                            <span>イベント</span>
+                                            <span>1</span>
+                                        </li>
+                                        <li className="flex justify-between">
+                                            <span>ご挨拶</span>
+                                            <span>1</span>
+                                        </li>
+                                        <li className="pt-1 text-[11px] opacity-60">
+                                            合計5件
+                                        </li>
                                     </ul>
                                 </div>
                                 
