@@ -1561,7 +1561,24 @@
             useEffect(() => {
                 window.scrollTo(0, 0);
             }, []);
-
+　　　　　　useEffect(() => {
+              // 副園長ページ以外では何もしない
+              if (!staff || staff.id !== 'sato') return;
+              if (flags.F01) return;
+            
+              const handler = () => {
+                const sel = window.getSelection ? (window.getSelection().toString() || "") : "";
+                if (sel.includes("この村は狂ってる")) {
+                  notifyEvidence('F01', 'テキストを選択して発見：\n「この村は狂ってる。出られない。助けてくれ」');
+                }
+              };
+            
+              document.addEventListener("selectionchange", handler);
+              return () => document.removeEventListener("selectionchange", handler);
+            }, [staff, flags.F01, notifyEvidence]);
+　
+　　　　　　　
+　　　　　　　
             if (!staff) return null;
 
             return (
@@ -1593,17 +1610,11 @@
                                     <p>
                                         {staff.intro}
                                         {staff.id === 'sato' && (
-                                            <span 
-                                                className="hidden-sos ml-1 select-all cursor-text"
-                                                onMouseUp={() => {
-                                                    const selection = window.getSelection().toString();
-                                                    if (selection.includes("狂ってる") && !flags.F01) {
-                                                        notifyEvidence('F01', 'テキストを反転して発見：\n「この村は狂ってる。出られない。助けてくれ」');
-                                                    }
-                                                }}
-                                            >
-                                                {staff.hidden}
-                                            </span>
+
+                                <span className="hidden-sos ml-1 select-all cursor-text">
+                                  {staff.hidden}
+                                </span>
+
                                         )}
                                     </p>
                                 </div>
