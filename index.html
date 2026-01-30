@@ -202,6 +202,20 @@
             80% { transform: translate(2px, -2px); filter: hue-rotate(0deg); }
             100% { transform: translate(0); filter: hue-rotate(0deg); }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            .horror-overlay::before,
+            .intense-glitch,
+            .image-glitching {
+                animation: none !important;
+            }
+        }
+
+        [data-reduce-motion="true"] .horror-overlay::before,
+        [data-reduce-motion="true"] .intense-glitch,
+        [data-reduce-motion="true"] .image-glitching {
+            animation: none !important;
+        }
         
         .image-glitching {
             animation: image-glitch 0.2s infinite;
@@ -239,7 +253,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef, useMemo } = React;
+        const { useState, useEffect, useMemo, useCallback, useRef } = React;
 
         // --- Data & Assets ---
         const BASE_URL = "https://raw.githubusercontent.com/dh0320/okukamimurafarm/f273d82bcc2d0c08371bb0e42d3169c3d36e4b9b";
@@ -307,7 +321,13 @@
             recipe_applepie: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/applepierecipe.png",
 
             // Grafting
-            grafting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/52ef76040ef84ddb52fdf5827a52315f4c4d9ec7/images/tsugiki.png"
+            grafting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/52ef76040ef84ddb52fdf5827a52315f4c4d9ec7/images/tsugiki.png",
+
+            // Ending (temporary reuse)
+            ending_silenced: `${BASE_URL}/images/staffvictim2.png`,
+            ending_normal: `${BASE_URL}/images/villagenight.png`,
+            ending_true: `${BASE_URL}/images/treechange.png`,
+            ending_perfect: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/cce9c3db56a9593996fa1381a826289236d747a2/images/staffmanagerchange.png"
         };
 
         // 記事データ
@@ -399,6 +419,75 @@
         ];
 
         const MAX_FLAGS = 14;
+        const SAVE_KEY = "okukamifushi_save_v1";
+
+        const FLAG_META = {
+            F01: { title: "副園長の隠しメッセージ", description: "反転でSOS" },
+            F02: { title: "タグが出現する訴えの動画", description: "商品タグから動画" },
+            F03: { title: "管理人からのお知らせ（関係者各位）", description: "関係者ページ発見" },
+            F04: { title: "アップルパイの秘密", description: "レシピ奥の隠し導線" },
+            F05: { title: "募集要項の変化", description: "チェックが「選別」に" },
+            F06: { title: "隠された実習生", description: "失踪記録の痕跡" },
+            F07: { title: "古いブログ", description: "1826年データ" },
+            F08: { title: "STOP映像", description: "トップスライドの罠" },
+            F09: { title: "園長の異変", description: "自動グリッチ" },
+            F10: { title: "シンボルツリーの秘密", description: "御神木の根元" },
+            F11: { title: "謎の地図", description: "アクセスの異常" },
+            F12: { title: "問い合わせの乗っ取り", description: "フォームが侵食" },
+            F13: { title: "通報", description: "通報実行フラグ" },
+            F14: { title: "村のキャプチャの異変", description: "ホバー/タップ異変" }
+        };
+
+        const FLAG_META_ORDER = [
+            'F01','F02','F03','F04','F05','F06','F07',
+            'F08','F09','F10','F11','F12','F13','F14'
+        ];
+
+        const EVIDENCE_FLAGS = ['F01','F02','F03','F04','F05','F06','F07','F08','F09','F10','F11','F12','F14'];
+        const KEY_EVIDENCE_FLAGS = ['F04','F06','F10','F12'];
+
+        const ENDING_CONTENT = {
+            SILENCED: {
+                title: "SILENCED END",
+                subtitle: "通報は届かなかった。声は闇に沈む。",
+                story: [
+                    "通報を押した瞬間、画面は静かに暗転した。",
+                    "数日後、農園は通常営業を続けている。彼らの名はどこにも残らず、証拠も記録も消えていた。",
+                    "村を出ようとした足跡は、深い土の中に吸い込まれていった。"
+                ],
+                image: IMAGES.ending_silenced
+            },
+            NORMAL: {
+                title: "NORMAL END",
+                subtitle: "警察は動いた。だが核心は逃げた。",
+                story: [
+                    "通報は受理され、現地への捜査が始まった。",
+                    "いくつかの痕跡は押収されたが、主導した人物は姿を消していた。",
+                    "報告書の多くは黒塗りのまま公開され、事件は未解決として継続する。"
+                ],
+                image: IMAGES.ending_normal
+            },
+            TRUE: {
+                title: "TRUE END",
+                subtitle: "真相が暴かれた。救出は間に合った。",
+                story: [
+                    "十分な証拠が集まり、警察は一斉捜索を開始した。",
+                    "奥神伏の儀式は中断され、失踪者の所在が判明した。",
+                    "農園の闇は暴かれ、村の空気はようやく動き出した。"
+                ],
+                image: IMAGES.ending_true
+            },
+            PERFECT: {
+                title: "PERFECT END",
+                subtitle: "すべての記録が解放された。",
+                story: [
+                    "あらゆる証拠が揃い、隠された記録が公開された。",
+                    "村の歴史、儀式の全貌、そして犠牲の数が白日のもとに晒される。",
+                    "あなたの記録は、生き残った者たちの唯一の希望になった。"
+                ],
+                image: IMAGES.ending_perfect
+            }
+        };
 
         // --- Phase Rules (Production) ---
         const PHASE1_FLAGS = ['F01', 'F04', 'F12'];                 // 2つ以上でPhase2
@@ -414,12 +503,69 @@
             const p3 = countFound(flags, PHASE3_FLAGS);
             // 閾値変更：
             // Phase1フラグ2つ以上でPhase2
-            // Phase2フラグ4つ以上でPhase3
-            // Phase3フラグ4つ以上でPhase4
-            if (p3 >= 4) return 4;
-            if (p2 >= 4) return 3;
+            // Phase2フラグ3つ以上でPhase3
+            // Phase3フラグ3つ以上でPhase4
+            if (p3 >= 3) return 4;
+            if (p2 >= 3) return 3;
             if (p1 >= 2) return 2;
             return 1;
+        };
+
+        const buildXIntentUrl = ({ text, url, hashtags }) => {
+            const base = "https://twitter.com/intent/tweet";
+            const qs = new URLSearchParams();
+            if (text) qs.set("text", text);
+            if (url) qs.set("url", url);
+            if (hashtags) qs.set("hashtags", hashtags);
+            return `${base}?${qs.toString()}`;
+        };
+
+        const computeEnding = (flags, phase) => {
+            const evidenceCount = countFound(flags, EVIDENCE_FLAGS);
+            const keyCount = countFound(flags, KEY_EVIDENCE_FLAGS);
+            const missingKeyEvidence = KEY_EVIDENCE_FLAGS.filter((id) => !flags[id]);
+
+            let endingId = "NORMAL";
+            if (evidenceCount === EVIDENCE_FLAGS.length && keyCount === KEY_EVIDENCE_FLAGS.length) {
+                endingId = "PERFECT";
+            } else if (evidenceCount >= 10 && keyCount === KEY_EVIDENCE_FLAGS.length) {
+                endingId = "TRUE";
+            } else if (phase === 3 && evidenceCount < 6) {
+                endingId = "SILENCED";
+            } else if (keyCount <= 1) {
+                endingId = "SILENCED";
+            } else if (evidenceCount >= 6 && evidenceCount < 10) {
+                endingId = "NORMAL";
+            } else if (evidenceCount >= 10 && keyCount < KEY_EVIDENCE_FLAGS.length) {
+                endingId = "NORMAL";
+            }
+
+            const baseContent = ENDING_CONTENT[endingId];
+            const story = [...baseContent.story];
+            if (endingId === "NORMAL" && missingKeyEvidence.length > 0) {
+                const missingTitles = missingKeyEvidence.map((id) => FLAG_META[id]?.title || id).join(" / ");
+                story.push(`不足していたのは、${missingTitles}。報告書には黒塗りの行が残った。`);
+            }
+
+            const shareUrl = (window.location.protocol === "file:")
+                ? ""
+                : `${window.location.origin}${window.location.pathname}`;
+            const shareText = `【${baseContent.title}】${baseContent.subtitle}（証拠 ${evidenceCount}/${EVIDENCE_FLAGS.length}）`;
+
+            return {
+                endingId,
+                title: baseContent.title,
+                subtitle: baseContent.subtitle,
+                story,
+                image: baseContent.image,
+                evidenceCount,
+                keyCount,
+                share: {
+                    text: shareText,
+                    hashtags: "奥神伏ファーム,ARG,謎解き",
+                    url: shareUrl
+                }
+            };
         };
 
         // Common Components
@@ -455,6 +601,42 @@
                             }`}
                         >
                             閉じる
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // EvidenceToast（非ブロッキング通知）
+        const EvidenceToast = ({ isOpen, message, onClose, isHorror }) => {
+            if (!isOpen) return null;
+
+            return (
+                <div className="fixed bottom-4 left-4 z-[300] w-[calc(100%-2rem)] md:w-auto max-w-md pointer-events-auto">
+                    <div
+                        className={`rounded-lg shadow-2xl border p-4 pr-10 relative ${
+                            isHorror
+                                ? "bg-black text-red-600 border-red-900 font-handwriting"
+                                : "bg-white text-text border-border"
+                        }`}
+                    >
+                        <p
+                            className={`text-sm leading-relaxed whitespace-pre-line ${
+                                isHorror ? "font-bold" : "font-serif"
+                            }`}
+                        >
+                            {message}
+                        </p>
+
+                        <button
+                            onClick={onClose}
+                            className={`absolute top-2 right-3 text-sm leading-none ${
+                                isHorror ? "text-red-300 hover:text-red-500" : "text-muted hover:text-text"
+                            }`}
+                            aria-label="close"
+                            title="閉じる"
+                        >
+                            ×
                         </button>
                     </div>
                 </div>
@@ -632,7 +814,7 @@
             );
         };
 
-        const Footer = ({ phase, setPage }) => {
+        const Footer = ({ phase, setPage, settings, setSettings }) => {
             return (
                 <footer className={`pt-20 pb-8 px-6 transition-colors duration-1000 ${phase >= 4 ? 'bg-black text-accent' : 'bg-primary text-white'}`}>
                     <div className="max-w-container mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
@@ -660,6 +842,27 @@
                             <Button variant="secondary" className="w-full border-white text-white hover:bg-white hover:text-primary mb-6" onClick={() => setPage('contact')}>
                                 お問い合わせ
                             </Button>
+                            <div className="bg-white/10 rounded-lg p-4 text-xs space-y-3">
+                                <p className="font-eng tracking-widest">SETTINGS</p>
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={settings.reduceMotion}
+                                        onChange={() => setSettings(prev => ({ ...prev, reduceMotion: !prev.reduceMotion }))}
+                                        className="accent-white"
+                                    />
+                                    <span>演出を抑える</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer opacity-70">
+                                    <input
+                                        type="checkbox"
+                                        checked={settings.muteAudio}
+                                        onChange={() => setSettings(prev => ({ ...prev, muteAudio: !prev.muteAudio }))}
+                                        className="accent-white"
+                                    />
+                                    <span>音声をミュート（準備中）</span>
+                                </label>
+                            </div>
                             <div className="flex gap-4 justify-center md:justify-start opacity-80">
                                 <span>Instagram</span>
                                 <span>Facebook</span>
@@ -681,7 +884,7 @@
         // --- Pages ---
 
         // 1. HOME
-        const Home = ({ phase, unlockFlag, flags, setPage }) => {
+        const Home = ({ phase, notifyEvidence, flags, setPage }) => {
             const [currentSlide, setCurrentSlide] = useState(0);
             const [stopVideoModalOpen, setStopVideoModalOpen] = useState(false);
 
@@ -736,7 +939,7 @@
                                 onClick={() => {
                                     setStopVideoModalOpen(true);
                                     if (!flags.F08) {
-                                        unlockFlag('F08');
+                                        notifyEvidence('F08', '映像が一瞬だけ反転し、停止の文字が浮かんだ。', { mode: "toast" });
                                     }
                                 }}
                             />
@@ -779,8 +982,7 @@
                                         className="group cursor-pointer"
                                         onClick={() => {
                                             if (!flags.F03) {
-                                                alert("【F03: 管理人からのお知らせ】\n「関係者各位」ページへのリンクを発見した。");
-                                                unlockFlag('F03');
+                                                notifyEvidence('F03', '「関係者各位」ページへのリンクを発見した。');
                                             }
                                             setPage('admin_notice');
                                         }}
@@ -848,18 +1050,14 @@
         };
 
         // 管理人からのお知らせ（関係者各位）ページ：通報（F13）はここで行う
-        const AdminNotice = ({ phase, unlockFlag, flags, setPage }) => {
+        const AdminNotice = ({ phase, unlockFlag, flags, setPage, onReport }) => {
             const [confirmOpen, setConfirmOpen] = useState(false);
-            const [resultModal, setResultModal] = useState({ isOpen: false, message: "", isHorror: true });
         
             useEffect(() => {
                 window.scrollTo(0, 0);
             }, []);
         
-            const evidenceCount =
-                countFound(flags, PHASE1_FLAGS) +
-                countFound(flags, PHASE2_FLAGS) +
-                countFound(flags, PHASE3_FLAGS);
+            const evidenceCount = countFound(flags, EVIDENCE_FLAGS);
         
             const doReport = () => {
                 setConfirmOpen(false);
@@ -867,13 +1065,13 @@
                 if (!flags.F13) {
                     unlockFlag('F13');
                 }
-        
-                const endMessage = (evidenceCount >= 10)
-                    ? "【TRUE END】\n全員逮捕。佐藤副園長は救出された。"
-                    : "【NORMAL END】\n警察が到着したが、主要メンバーは逃亡していた。";
-        
-                setResultModal({ isOpen: true, message: endMessage, isHorror: true });
+
+                onReport();
             };
+
+            const confirmMessage = phase >= 4
+                ? "十分な証拠は揃ったか？今が最後の機会だ。"
+                : "本当に通報するか？証拠が足りないと消される。";
         
             return (
                 <div className="min-h-screen pt-24 pb-20 bg-surface">
@@ -911,8 +1109,8 @@
                                     </p>
                                 </div>
         
-                                {/* Phase4で通報解放 */}
-                                {phase >= 4 ? (
+                                {/* Phase3で通報解放 */}
+                                {phase >= 3 ? (
                                     <div className="pt-6 text-center">
                                         <button
                                             className="px-10 py-4 rounded-full bg-accent text-white font-bold tracking-widest shadow-lg hover:bg-red-900 transition-colors"
@@ -923,6 +1121,9 @@
                                         <p className="text-xs text-muted mt-3">
                                             現在の証拠数：{evidenceCount}
                                         </p>
+                                        <p className="text-xs text-accent mt-2">
+                                            {phase >= 4 ? "最終確認：" : "警告："} {confirmMessage}
+                                        </p>
                                     </div>
                                 ) : (
                                     <div className="pt-6 text-center">
@@ -930,10 +1131,10 @@
                                             className="px-10 py-4 rounded-full bg-gray-200 text-gray-500 font-bold tracking-widest cursor-not-allowed"
                                             disabled
                                         >
-                                            通報（Phase4で解放）
+                                            通報（Phase3で解放）
                                         </button>
                                         <p className="text-xs text-muted mt-3">
-                                            Phase4に到達すると通報が可能になります。
+                                            Phase3に到達すると通報が可能になります。
                                         </p>
                                     </div>
                                 )}
@@ -944,27 +1145,19 @@
                     {/* 確認：YESで通報、NOで戻る */}
                     <ConfirmModal
                         isOpen={confirmOpen}
-                        message={"十分な証拠は見つけたか？"}
+                        message={confirmMessage}
                         yesLabel="イエス（通報する）"
                         noLabel="ノー（戻る）"
                         onYes={doReport}
                         onNo={() => setConfirmOpen(false)}
                         isHorror={true}
                     />
-        
-                    {/* 結果表示 */}
-                    <MessageModal
-                        isOpen={resultModal.isOpen}
-                        message={resultModal.message}
-                        isHorror={resultModal.isHorror}
-                        onClose={() => setResultModal({ ...resultModal, isOpen: false })}
-                    />
                 </div>
             );
         };
         // --- CONTINUES IN PART 2 ---
                 // 2. VILLAGE (Gallery & Tree)
-        const Village = ({ phase, unlockFlag, flags }) => {
+        const Village = ({ phase, notifyEvidence, flags }) => {
             const [lightboxOpen, setLightboxOpen] = useState(false);
 
             // Phase2: キャプチャホバー異変（F14）解放
@@ -1002,14 +1195,12 @@
                                 className="mb-20 group cursor-pointer"
                                 onMouseEnter={() => {
                                     if (!flags.F14) {
-                                        alert("【F14: 村のキャプチャの異変】\n村の紹介写真が一瞬だけ変わった気がする…。");
-                                        unlockFlag('F14');
+                                        notifyEvidence('F14', '村の紹介写真が一瞬だけ変わった気がする…。');
                                     }
                                 }}
                                 onTouchStart={() => {
                                     if (!flags.F14) {
-                                        alert("【F14: 村のキャプチャの異変】\n村の紹介写真が一瞬だけ変わった気がする…。");
-                                        unlockFlag('F14');
+                                        notifyEvidence('F14', '村の紹介写真が一瞬だけ変わった気がする…。');
                                     }
                                 }}
                             >
@@ -1084,8 +1275,7 @@
                                         onClick={() => {
                                             setLightboxOpen(true);
                                             if (!flags.F10) {
-                                                alert("【F10: シンボルツリーの秘密】\n御神木の根元に、何かが埋まっている…。");
-                                                unlockFlag('F10');
+                                                notifyEvidence('F10', '御神木の根元に、何かが埋まっている…。', { mode: "toast" });
                                             }
                                         }}
                                     >
@@ -1148,7 +1338,7 @@
         };
 
         // 3. ABOUT (Greeting & Staff)
-        const About = ({ phase, unlockFlag, flags, setPage, setSelectedStaff }) => {
+        const About = ({ phase, notifyEvidence, flags, setPage, setSelectedStaff }) => {
             const normalText = `台木は余計な枝葉を剪定します。良い実をつけるためには、親となる木が健康でなければなりません。\n土壌の微生物、森の木々、そして私たち人間。すべてが循環の中にあります。`;
             const horrorText = `台木の人間は動くと木が歪むので、アキレス腱は早めに切ることが大事です。余計な部分は剪定します。良い実をつけるため、人の固定が重要です。土壌、森の木々、そして人間すべてが循環の中にあります。`;
 
@@ -1162,15 +1352,14 @@
                     setIsGlitching(true);
 
                     if (!flags.F09) {
-                        // サイレント回収（デバッグUIで確認可能）
-                        unlockFlag('F09');
+                        notifyEvidence('F09', '園長の写真が歪んだ…。');
                     }
 
                     setTimeout(() => setIsGlitching(false), 2000);
                 }, 5000);
 
                 return () => clearInterval(glitchInterval);
-            }, [phase, flags.F09]);
+            }, [phase, flags.F09, notifyEvidence]);
 
             const handleStaffClick = (staff) => {
                 setSelectedStaff(staff);
@@ -1280,7 +1469,7 @@
         };
 
         // 3.5 STAFF DETAIL
-        const StaffDetail = ({ staff, setPage, unlockFlag, flags }) => {
+        const StaffDetail = ({ staff, setPage, notifyEvidence, flags }) => {
             const [modalImage, setModalImage] = useState(null);
 
             useEffect(() => {
@@ -1323,8 +1512,7 @@
                                                 onMouseUp={() => {
                                                     const selection = window.getSelection().toString();
                                                     if (selection.includes("狂ってる") && !flags.F01) {
-                                                        alert("【F01: 副園長の隠しメッセージ】\nテキストを反転して発見：\n「この村は狂ってる。出られない。助けてくれ」");
-                                                        unlockFlag('F01');
+                                                        notifyEvidence('F01', 'テキストを反転して発見：\n「この村は狂ってる。出られない。助けてくれ」');
                                                     }
                                                 }}
                                             >
@@ -1352,8 +1540,7 @@
                                             onClick={() => {
                                             setModalImage(staff.special_image);
                                             if (!flags.F06) {
-                                            alert("【F06: 隠された実習生】\n注釈リンクの先に、失踪に関する記録が残されていた。");
-                                            unlockFlag('F06');
+                                            notifyEvidence('F06', '注釈リンクの先に、失踪に関する記録が残されていた。', { mode: "toast" });
                                             }
                                             }}
                                         >
@@ -1381,7 +1568,7 @@
         };
 
         // 4. PRODUCTS
-        const Products = ({ phase, unlockFlag, flags }) => {
+        const Products = ({ phase, notifyEvidence, flags }) => {
             const categories = ["ALL", "APPLE", "GRAPES", "PROCESSED"];
             const [selectedCategory, setSelectedCategory] = useState("ALL");
             const [videoModalOpen, setVideoModalOpen] = useState(false);
@@ -1515,8 +1702,7 @@
                                                             e.stopPropagation();
                                                             setVideoModalOpen(true);
                                                             if (!flags.F02) {
-                                                                alert("【F02: タグが出現する訴えの動画】\nタグを辿ると、映像が残されていた。");
-                                                                unlockFlag('F02');
+                                                                notifyEvidence('F02', 'タグを辿ると、映像が残されていた。', { mode: "toast" });
                                                             }
                                                         }
                                                     }}
@@ -1568,7 +1754,7 @@
 
         // --- CONTINUES IN PART 3 ---
                 // 5. DIARY (List)
-        const Diary = ({ phase, unlockFlag, flags, setPage, setSelectedArticle }) => {
+        const Diary = ({ phase, notifyEvidence, flags, setPage, setSelectedArticle }) => {
             const [search, setSearch] = useState("");
             const [isAncient, setIsAncient] = useState(false);
 
@@ -1579,8 +1765,7 @@
                 if (phase >= 3 && q === "1826") {
                     setIsAncient(true);
                     if (!flags.F07) {
-                        alert("【F07: 古いブログ】\n検索結果に異変が生じました。\n1826年のデータが見つかりました。");
-                        unlockFlag('F07');
+                        notifyEvidence('F07', '検索結果に異変が生じました。\n1826年のデータが見つかりました。');
                     }
                 }
             };
@@ -1722,7 +1907,7 @@
         };
 
         // 5.6 RECIPE DETAIL (F04導線)
-        const RecipeDetail = ({ setPage, unlockFlag, flags }) => {
+        const RecipeDetail = ({ setPage, notifyEvidence, flags }) => {
             useEffect(() => {
                 window.scrollTo(0, 0);
             }, []);
@@ -1837,8 +2022,7 @@
                                     className="text-xs text-gray-300 hover:text-[#8A2E2E] cursor-pointer transition-colors font-sans tracking-widest"
                                     onClick={() => {
                                         if (!flags.F04) {
-                                            alert("【F04: アップルパイの秘密】\nレシピの奥に、別の説明が隠されていた。");
-                                            unlockFlag('F04');
+                                            notifyEvidence('F04', 'レシピの奥に、別の説明が隠されていた。');
                                         }
                                         setPage('grafting');
                                     }}
@@ -2151,7 +2335,7 @@
         };
 
         // 6. ACCESS (Table & Image)
-        const Access = ({ phase, unlockFlag, flags }) => {
+        const Access = ({ phase, notifyEvidence, flags }) => {
             const [modalImage, setModalImage] = useState(null);
 
             return (
@@ -2197,8 +2381,7 @@
                                             onClick={() => {
                                                 setModalImage(IMAGES.top_change_village);
                                                 if (!flags.F11) {
-                                                    alert("【F11: 謎の地図】\n地図のはずなのに、何かが映っている…。");
-                                                    unlockFlag('F11');
+                                                    notifyEvidence('F11', '地図のはずなのに、何かが映っている…。', { mode: "toast" });
                                                 }
                                             }}
                                         >
@@ -2232,7 +2415,7 @@
 
         // --- CONTINUES IN PART 4 ---
         // 7. RECRUIT (Timeline & Checkbox)  ※元仕様：チェック項目内の文字が変化
-        const Recruit = ({ phase, unlockFlag, flags }) => {
+        const Recruit = ({ phase, notifyEvidence, flags }) => {
           const [checks, setChecks] = useState({});
           const [horrorStates, setHorrorStates] = useState({});
           const [globalHorror, setGlobalHorror] = useState(false);
@@ -2266,8 +2449,7 @@
                 setHorrorStates(prev => ({ ...prev, [item.id]: false }));
         
                 if (!flags.F05) {
-                  alert("【F05: 募集要項の変化】\nチェック項目の文字が一瞬変化した。\n「ニゲラレナイ」「イケニエ」...\nこれは募集ではなく、選別だ。");
-                  unlockFlag('F05');
+                  notifyEvidence('F05', 'チェック項目の文字が一瞬変化した。\n「ニゲラレナイ」「イケニエ」...\nこれは募集ではなく、選別だ。');
                 }
               }, 600);
             }
@@ -2360,7 +2542,7 @@
           );
         };
         // 8. CONTACT (Form Hijack)
-        const Contact = ({ phase, unlockFlag, flags, setPage }) => {
+        const Contact = ({ phase, notifyEvidence, flags, setPage }) => {
             // 通常時のプレースホルダー
             const defaultPlaceholders = {
                 name: '山田 太郎',
@@ -2401,17 +2583,16 @@
             const handleSubmit = (e) => {
               e.preventDefault();
             
-              if (allSeen) {
+                if (allSeen) {
                 // F12回収（問い合わせ乗っ取り）
                 if (!flags.F12) {
-                  alert("【F12: 問い合わせの乗っ取り】\nフォームが完全に乗っ取られている。");
-                  unlockFlag('F12');
+                  notifyEvidence('F12', 'フォームが完全に乗っ取られている。', { mode: "silent" });
                 }
             
                 // 通報は管理人ページ（admin_notice）で行う
                 setModalState({
                   isOpen: true,
-                  message: "証拠に気づいたか？\n最後は『管理人からのお知らせ（関係者各位）』にある。",
+                  message: "【F12: 問い合わせの乗っ取り】\nフォームが完全に乗っ取られている。\n\n証拠に気づいたか？\n最後は『管理人からのお知らせ（関係者各位）』にある。",
                   isHorror: true,
                   goAdmin: true
                 });
@@ -2520,17 +2701,150 @@
             );
         };
 
+        const EndingPage = ({ endingResult, flags, onRestart, onShare, onKeepProgress }) => {
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, []);
+
+            if (!endingResult) {
+                return (
+                    <div className="min-h-screen pt-24 pb-20 bg-surface">
+                        <div className="max-w-2xl mx-auto px-6 text-center">
+                            <h2 className="text-2xl font-serif mb-6">ENDが見つかりません</h2>
+                            <p className="text-muted mb-8">通報を行うことでエンディングに到達します。</p>
+                            <Button onClick={onKeepProgress}>HOMEへ戻る</Button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen pt-24 pb-20 bg-surface">
+                    <div className="max-w-4xl mx-auto px-6">
+                        <div className="text-center mb-10">
+                            <p className="text-accent font-eng tracking-[0.4em] text-xs mb-3">ENDING</p>
+                            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-3">{endingResult.title}</h1>
+                            <p className="text-muted text-sm md:text-base">{endingResult.subtitle}</p>
+                        </div>
+
+                        <div className="rounded-2xl overflow-hidden shadow-xl mb-10">
+                            <img src={endingResult.image} alt={endingResult.title} className="w-full h-[320px] md:h-[420px] object-cover" />
+                        </div>
+
+                        <div className="space-y-6 text-sm md:text-base leading-loose font-serif mb-10">
+                            {endingResult.story.map((paragraph, index) => (
+                                <p key={index}>{paragraph}</p>
+                            ))}
+                        </div>
+
+                        <div className="bg-surface-2 border border-border rounded-2xl p-6 md:p-8 mb-10">
+                            <h2 className="text-lg font-serif font-bold mb-4">スコア</h2>
+                            <div className="grid md:grid-cols-2 gap-4 text-sm">
+                                <div className="flex items-center justify-between border-b border-border pb-2">
+                                    <span className="text-muted">証拠数</span>
+                                    <span className="font-bold">{endingResult.evidenceCount}/{EVIDENCE_FLAGS.length}</span>
+                                </div>
+                                <div className="flex items-center justify-between border-b border-border pb-2">
+                                    <span className="text-muted">重要証拠</span>
+                                    <span className="font-bold">{endingResult.keyCount}/{KEY_EVIDENCE_FLAGS.length}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mb-12">
+                            <h2 className="text-lg font-serif font-bold mb-4">達成フラグ一覧</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {FLAG_META_ORDER.map((id) => {
+                                    const isFound = !!flags[id];
+                                    return (
+                                        <div
+                                            key={id}
+                                            className={`px-4 py-3 rounded-lg border text-sm ${
+                                                isFound ? 'bg-white border-border text-text' : 'bg-surface-2 border-dashed border-border text-muted'
+                                            }`}
+                                        >
+                                            {isFound ? `${id}: ${FLAG_META[id]?.title ?? ''}` : `${id}: ???`}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row gap-4 justify-center">
+                            <Button className="px-8" onClick={onRestart}>
+                                最初に戻る
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                className="px-8"
+                                onClick={() => onShare(endingResult.share)}
+                            >
+                                Xでシェア
+                            </Button>
+                            <button
+                                className="text-sm text-muted hover:text-primary transition-colors"
+                                onClick={onKeepProgress}
+                            >
+                                証拠を保持してHOMEへ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // --- Main App ---
         const App = () => {
             const [currentPage, setPage] = useState('home');
             const [phase, setPhase] = useState(1);
             const [flags, setFlags] = useState({});
+            const [endingResult, setEndingResult] = useState(null);
+            const [seenEndings, setSeenEndings] = useState({});
+            const [settings, setSettings] = useState({ reduceMotion: false, muteAudio: false });
+            const [evidenceModal, setEvidenceModal] = useState({ isOpen: false, message: "", isHorror: false });
+            const [evidenceToast, setEvidenceToast] = useState({ isOpen: false, message: "", isHorror: false });
+            const toastTimerRef = useRef(null);
+            const [isLoaded, setIsLoaded] = useState(false);
             const [selectedStaff, setSelectedStaff] = useState(null);
             const [selectedArticle, setSelectedArticle] = useState(null);
 
             useEffect(() => {
                 window.scrollTo(0, 0);
             }, [currentPage]);
+
+            useEffect(() => {
+                const saved = (() => {
+                    try {
+                        const raw = localStorage.getItem(SAVE_KEY);
+                        if (!raw) return null;
+                        const parsed = JSON.parse(raw);
+                        if (!parsed || parsed.version !== 1) return null;
+                        return parsed;
+                    } catch (error) {
+                        return null;
+                    }
+                })();
+                if (saved) {
+                    setFlags(saved.flags || {});
+                    setSeenEndings(saved.seenEndings || {});
+                    setSettings(prev => ({ ...prev, ...(saved.settings || {}) }));
+                } else {
+                    const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                    if (prefersReduced) {
+                        setSettings(prev => ({ ...prev, reduceMotion: true }));
+                    }
+                }
+                setIsLoaded(true);
+            }, []);
+
+            useEffect(() => {
+                return () => {
+                    if (toastTimerRef.current) {
+                        clearTimeout(toastTimerRef.current);
+                        toastTimerRef.current = null;
+                    }
+                };
+            }, []);
 
             // Phase Logic（方針どおりの閾値）
             useEffect(() => {
@@ -2543,10 +2857,25 @@
             }, [phase]);
 
             useEffect(() => {
+                document.body.setAttribute('data-reduce-motion', settings.reduceMotion ? 'true' : 'false');
+            }, [settings.reduceMotion]);
+
+            useEffect(() => {
                 lucide.createIcons();
             }, [currentPage, phase]);
 
-            const unlockFlag = (flagId) => {
+            useEffect(() => {
+                if (!isLoaded) return;
+                const payload = {
+                    version: 1,
+                    flags,
+                    seenEndings,
+                    settings
+                };
+                localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+            }, [flags, seenEndings, settings, isLoaded]);
+
+            const unlockFlag = useCallback((flagId) => {
                 setFlags(prev => {
                     if (prev[flagId]) return prev;
                     // MAX_FLAGSを超えるような追加は許容しない（保険）
@@ -2554,25 +2883,92 @@
                     if (nextCount > MAX_FLAGS) return prev;
                     return ({ ...prev, [flagId]: true });
                 });
+            }, []);
+
+            const notifyEvidence = useCallback((flagId, detailText = "", options = {}) => {
+                const meta = FLAG_META[flagId];
+                if (!meta) return;
+
+                // 進行反映
+                unlockFlag(flagId);
+
+                // Phase3以降はホラーUI
+                const isHorror = phase >= 3;
+
+                const messageLines = [`【${flagId}: ${meta.title}】`];
+                if (detailText) messageLines.push(detailText);
+                const message = messageLines.join("\n");
+
+                const mode = options.mode || "modal";
+
+                if (mode === "silent") return;
+
+                if (mode === "toast") {
+                    if (toastTimerRef.current) {
+                        clearTimeout(toastTimerRef.current);
+                        toastTimerRef.current = null;
+                    }
+
+                    setEvidenceToast({ isOpen: true, message, isHorror });
+
+                    const duration = typeof options.duration === "number" ? options.duration : 2600;
+                    toastTimerRef.current = setTimeout(() => {
+                        setEvidenceToast(prev => ({ ...prev, isOpen: false }));
+                        toastTimerRef.current = null;
+                    }, duration);
+
+                    return;
+                }
+
+                setEvidenceModal({ isOpen: true, message, isHorror });
+            }, [unlockFlag, phase]);
+
+            const resetProgress = () => {
+                localStorage.removeItem(SAVE_KEY);
+                setFlags({});
+                setSeenEndings({});
+                setSettings({ reduceMotion: false, muteAudio: false });
+                setEndingResult(null);
+                setPage('home');
+            };
+
+            const handleReport = () => {
+                const ending = computeEnding(flags, phase);
+                setEndingResult(ending);
+                setSeenEndings(prev => ({ ...prev, [ending.endingId]: true }));
+                setPage('ending');
             };
 
             const renderPage = () => {
-                const props = { phase, unlockFlag, flags, setPage, setSelectedStaff, setSelectedArticle };
+                const props = { phase, unlockFlag, notifyEvidence, flags, setPage, setSelectedStaff, setSelectedArticle };
                 switch(currentPage) {
                     case 'home': return <Home {...props} />;
                     case 'about': return <About {...props} />;
-                    case 'staff_detail': return <StaffDetail staff={selectedStaff} setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
+                    case 'staff_detail': return <StaffDetail staff={selectedStaff} setPage={setPage} notifyEvidence={notifyEvidence} flags={flags} />;
                     case 'village': return <Village {...props} />;
                     case 'products': return <Products {...props} />;
                     case 'diary': return <Diary {...props} />;
                     case 'article_detail': return <ArticleDetail article={selectedArticle} setPage={setPage} />;
-                    case 'recipe': return <RecipeDetail setPage={setPage} unlockFlag={unlockFlag} flags={flags} />;
+                    case 'recipe': return <RecipeDetail setPage={setPage} notifyEvidence={notifyEvidence} flags={flags} />;
                     case 'grafting': return <GraftingDetail setPage={setPage} />;
                     case 'ancient_document': return <AncientDocument setPage={setPage} />;
                     case 'access': return <Access {...props} />;
-                    case 'admin_notice': return <AdminNotice {...props} />;
+                    case 'admin_notice': return <AdminNotice {...props} onReport={handleReport} />;
                     case 'recruit': return <Recruit {...props} />;
                     case 'contact': return <Contact {...props} />;
+                    case 'ending':
+                        return (
+                            <EndingPage
+                                endingResult={endingResult}
+                                flags={flags}
+                                onRestart={resetProgress}
+                                onShare={(shareData) => {
+                                    const intentUrl = buildXIntentUrl(shareData);
+                                    window.open(intentUrl, "_blank", "noopener,noreferrer");
+                                }}
+                                onKeepProgress={() => setPage('home')}
+                            />
+                        );
                     default: return <Home {...props} />;
                 }
             };
@@ -2584,24 +2980,38 @@
             const p4 = countFound(flags, PHASE4_FLAGS);
 
             return (
-                <div className="min-h-screen flex flex-col font-sans text-text">
-                    <Header setPage={setPage} currentPage={currentPage} phase={phase} />
-                    <main className="flex-grow">
-                        {renderPage()}
-                    </main>
-                    <Footer phase={phase} setPage={setPage} />
+                <>
+                    <div className="min-h-screen flex flex-col font-sans text-text">
+                        <Header setPage={setPage} currentPage={currentPage} phase={phase} />
+                        <main className="flex-grow">
+                            {renderPage()}
+                        </main>
+                        <Footer phase={phase} setPage={setPage} settings={settings} setSettings={setSettings} />
 
-                    {/* Debug UI：右下表示（要求仕様） */}
-                    <div className="fixed bottom-2 right-2 z-[200] text-[10px] bg-black/80 text-white px-3 py-2 rounded-lg shadow-lg">
-                        <div className="font-eng tracking-wider">Phase: <span className="font-bold">{phase}</span></div>
-                        <div className="mt-1 opacity-90">
-                            P1: {p1}/{PHASE1_FLAGS.length} ・ P2: {p2}/{PHASE2_FLAGS.length} ・ P3: {p3}/{PHASE3_FLAGS.length} ・ P4: {p4}/{PHASE4_FLAGS.length}
-                        </div>
-                        <div className="mt-1 opacity-70">
-                            Total Flags: {Object.keys(flags).length}/{MAX_FLAGS}
+                        {/* Debug UI：右下表示（要求仕様） */}
+                        <div className="fixed bottom-2 right-2 z-[200] text-[10px] bg-black/80 text-white px-3 py-2 rounded-lg shadow-lg">
+                            <div className="font-eng tracking-wider">Phase: <span className="font-bold">{phase}</span></div>
+                            <div className="mt-1 opacity-90">
+                                P1: {p1}/{PHASE1_FLAGS.length} ・ P2: {p2}/{PHASE2_FLAGS.length} ・ P3: {p3}/{PHASE3_FLAGS.length} ・ P4: {p4}/{PHASE4_FLAGS.length}
+                            </div>
+                            <div className="mt-1 opacity-70">
+                                Total Flags: {Object.keys(flags).length}/{MAX_FLAGS}
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <MessageModal
+                        isOpen={evidenceModal.isOpen}
+                        message={evidenceModal.message}
+                        isHorror={evidenceModal.isHorror}
+                        onClose={() => setEvidenceModal({ ...evidenceModal, isOpen: false })}
+                    />
+                    <EvidenceToast
+                        isOpen={evidenceToast.isOpen}
+                        message={evidenceToast.message}
+                        isHorror={evidenceToast.isHorror}
+                        onClose={() => setEvidenceToast(prev => ({ ...prev, isOpen: false }))}
+                    />
+                </>
             );
         };
 
