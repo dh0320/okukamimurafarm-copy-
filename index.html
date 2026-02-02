@@ -423,7 +423,7 @@
             }
         ];
 
-        const MAX_FLAGS = 14;
+        const MAX_FLAGS = 16;
         const SAVE_KEY = "okukamifushi_save_v1";
 
         const FLAG_META = {
@@ -440,12 +440,13 @@
             F11: { title: "謎の地図", description: "アクセスの異常" },
             F12: { title: "問い合わせの乗っ取り", description: "フォームが侵食" },
             F13: { title: "通報", description: "通報実行フラグ" },
-            F14: { title: "村のキャプチャの異変", description: "ホバー/タップ異変" }
+            F14: { title: "村のキャプチャの異変", description: "ホバー/タップ異変" },
+            F15: { title: "縦読みレビュー", description: "たすけて / 1826のヒント" }
         };
 
         const FLAG_META_ORDER = [
             'F01','F02','F03','F04','F05','F06','F07',
-            'F08','F09','F10','F11','F12','F13','F14'
+            'F08','F09','F10','F11','F12','F13','F14','F15'
         ];
 
         const EVIDENCE_FLAGS = ['F01','F02','F03','F04','F05','F06','F07','F08','F09','F10','F11','F12','F14'];
@@ -1665,10 +1666,15 @@
         };
 
 // 4. PRODUCTS（購入者レビュー追加版）
-const Products = ({ phase, notifyEvidence, flags, setPage }) => {
+const Products = ({ phase, notifyEvidence, flags, setPage, unlockFlag }) => {
   const categories = ["ALL", "APPLE", "GRAPES", "PROCESSED"];
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [reviewHintModal, setReviewHintModal] = useState({
+     isOpen: false,
+     message: "",
+     isHorror: false
+    });
 
   const products = [
     { 
@@ -1787,7 +1793,10 @@ const Products = ({ phase, notifyEvidence, flags, setPage }) => {
       date: "2026.01.06",
       rating: 4,
       title: "詰め合わせの満足度が高い",
-      body: "家族でいろいろ試せて楽しいです。梱包も丁寧で、果物が傷まず届きました。季節ごとにまた頼みたいです。",
+body: `たくさんの種類を家族で楽しめました。
+すべてしっかり綺麗に梱包されていました。
+けっきょく、1日でほとんど食べてしまいました。
+ていねいなお仕事で、大満足です。`,
       productName: "季節の詰め合わせ",
       productImg: IMAGES.ec_set
     },
@@ -1912,10 +1921,37 @@ const Products = ({ phase, notifyEvidence, flags, setPage }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {REVIEWS.map((r) => (
-              <div
-                key={r.id}
-                className="bg-surface p-6 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow"
-              >
+
+        <div
+          key={r.id}
+          role={r.id === "R05" ? "button" : undefined}
+          tabIndex={r.id === "R05" ? 0 : -1}
+          onClick={() => {
+            if (r.id !== "R05") return;
+        
+            // フラグを立てる（上限に引っかからないよう MAX_FLAGS を増やしておく）
+            if (!flags.F15) unlockFlag("F15");
+        
+            // ポップアップ表示（notifyEvidenceを使わず、文言をそのまま出す）
+            setReviewHintModal({
+              isOpen: true,
+              message: "村の秘密。200年前の江戸時代から続く…",
+              isHorror: false
+            });
+          }}
+          onKeyDown={(e) => {
+            if (r.id !== "R05") return;
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              e.currentTarget.click();
+            }
+          }}
+          className={`bg-surface p-6 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow ${
+            r.id === "R05" ? "cursor-pointer hover:border-primary" : ""
+          }`}
+        >
+
+
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
                     <p className="text-[11px] text-primary font-eng tracking-widest font-semibold mb-2">
@@ -1930,7 +1966,7 @@ const Products = ({ phase, notifyEvidence, flags, setPage }) => {
                 </div>
 
                 <h4 className="text-lg font-serif font-bold mb-2">{r.title}</h4>
-                <p className="text-sm text-muted leading-relaxed font-serif mb-5">
+                <p className="text-sm text-muted leading-relaxed font-serif mb-5 whitespace-pre-line">
                   {r.body}
                 </p>
 
@@ -1997,6 +2033,14 @@ const Products = ({ phase, notifyEvidence, flags, setPage }) => {
           </div>
         </div>
       )}
+      
+     <MessageModal
+      isOpen={reviewHintModal.isOpen}
+      message={reviewHintModal.message}
+      isHorror={reviewHintModal.isHorror}
+      onClose={() => setReviewHintModal(prev => ({ ...prev, isOpen: false }))}
+     />
+
     </div>
   );
 };
