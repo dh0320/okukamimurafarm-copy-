@@ -504,8 +504,8 @@
             'F08','F09','F10','F11','F12','F13','F14','F15','F16'
         ];
 
-        const EVIDENCE_FLAGS = ['F01','F02','F03','F04','F05','F06','F07','F08','F09','F10','F11','F12','F14'];
-        const KEY_EVIDENCE_FLAGS = ['F04','F06','F10','F12'];
+        const EVIDENCE_FLAGS = ['F01','F02','F03','F04','F05','F06','F07','F08','F09','F10','F11','F12','F14','F15','F16'];
+        const KEY_EVIDENCE_FLAGS = ['F02','F04','F06','F07','F10','F12'];
 
         const ENDING_CONTENT = {
             SILENCED: {
@@ -551,10 +551,10 @@
         };
 
         // --- Phase Rules (Production) ---
-        const PHASE1_FLAGS = ['F01', 'F04', 'F12'];                 // 2つ以上でPhase2
-        const PHASE2_FLAGS = ['F02', 'F03', 'F05', 'F11', 'F14'];   // 3つ以上でPhase3←変更
-        const PHASE3_FLAGS = ['F06', 'F07', 'F08', 'F09', 'F10'];   // 3つ以上でPhase4←変更
-        const PHASE4_FLAGS = ['F13'];                               // 表示用
+        const PHASE1_FLAGS = ['F01', 'F04', 'F15', 'F16'];          // 2つ以上でPhase2
+        const PHASE2_FLAGS = ['F02', 'F03', 'F11', 'F12'];          // 3つ以上でPhase3
+        const PHASE3_FLAGS = ['F05', 'F06', 'F07', 'F08', 'F14'];   // 3つ以上でPhase4
+        const PHASE4_FLAGS = ['F09', 'F10', 'F13'];                 // 表示用（デバッグ用）
 
         const countFound = (flags, ids) => ids.reduce((acc, id) => acc + (flags[id] ? 1 : 0), 0);
 
@@ -587,17 +587,15 @@
             const missingKeyEvidence = KEY_EVIDENCE_FLAGS.filter((id) => !flags[id]);
 
             let endingId = "NORMAL";
-            if (evidenceCount === EVIDENCE_FLAGS.length && keyCount === KEY_EVIDENCE_FLAGS.length) {
+            // 優先順：PERFECT → TRUE → Bad → NORMAL
+            if (evidenceCount === 15 && keyCount === 6) {
                 endingId = "PERFECT";
-            } else if (evidenceCount >= 10 && keyCount === KEY_EVIDENCE_FLAGS.length) {
+            } else if (evidenceCount >= 12 && keyCount >= 5) {
                 endingId = "TRUE";
-            } else if (phase === 3 && evidenceCount < 6) {
+            } else if (evidenceCount <= 10 || keyCount <= 2) {
+                // Bad（既存のSILENCEDコンテンツに割り当て）
                 endingId = "SILENCED";
-            } else if (keyCount <= 1) {
-                endingId = "SILENCED";
-            } else if (evidenceCount >= 6 && evidenceCount < 10) {
-                endingId = "NORMAL";
-            } else if (evidenceCount >= 10 && keyCount < KEY_EVIDENCE_FLAGS.length) {
+            } else {
                 endingId = "NORMAL";
             }
 
