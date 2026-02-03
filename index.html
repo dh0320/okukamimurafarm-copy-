@@ -637,32 +637,80 @@
             </div>
         );
 
-        // MessageModal
-        const MessageModal = ({ isOpen, message, onClose, isHorror }) => {
+        // MessageModal（notepad対応版）
+        const MessageModal = ({ isOpen, message, onClose, isHorror, variant = "default" }) => {
             if (!isOpen) return null;
+
+            const isNotepad = variant === "notepad";
+
+            const containerClass = isNotepad
+                ? "bg-[#fffdf3] text-text border border-[#e6dccf] font-mono text-left"
+                : (isHorror
+                    ? "bg-black text-red-600 border-4 border-red-900 font-handwriting text-center"
+                    : "bg-white text-text border border-gray-200 text-center"
+                );
+
+            // 罫線入り “メモ帳” 背景
+            const notepadStyle = isNotepad
+                ? {
+                    backgroundImage:
+                        "repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 25px, rgba(0,0,0,0.08) 26px)",
+                    backgroundSize: "100% 26px",
+                }
+                : undefined;
+
             return (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-                    <div 
-                        className={`p-8 rounded-lg shadow-2xl max-w-md w-full text-center relative animate-fade-up ${
-                            isHorror 
-                                ? 'bg-black text-red-600 border-4 border-red-900 font-handwriting' 
-                                : 'bg-white text-text border border-gray-200'
-                        }`} 
-                        onClick={e => e.stopPropagation()}
+                <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                    onClick={onClose}
+                >
+                    <div
+                        className={`p-8 rounded-lg shadow-2xl max-w-md w-full relative animate-fade-up ${containerClass}`}
+                        style={notepadStyle}
+                        onClick={(e) => e.stopPropagation()}
                     >
-                        <p className={`text-lg mb-8 leading-relaxed ${isHorror ? 'font-bold text-xl' : 'font-serif'}`}>
-                            {message.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
-                        </p>
-                        <button 
-                            onClick={onClose}
-                            className={`px-8 py-3 rounded-full transition-colors font-bold text-sm ${
-                                isHorror 
-                                    ? 'bg-red-900 text-black hover:bg-red-700' 
-                                    : 'bg-primary text-white hover:bg-primary-2'
-                            }`}
-                        >
-                            閉じる
-                        </button>
+                        {/* notepadだけ：赤いマージン線 + ヘッダー */}
+                        {isNotepad && (
+                            <>
+                                <div className="absolute left-7 top-0 bottom-0 w-[2px] bg-red-200/80 pointer-events-none" />
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="text-[11px] tracking-widest text-muted font-eng">MEMO</span>
+                                    <span className="text-[11px] tracking-widest text-muted font-eng">INTERNAL</span>
+                                </div>
+                            </>
+                        )}
+
+                        {/* 本文 */}
+                        {isNotepad ? (
+                            <pre className="text-sm leading-relaxed whitespace-pre-wrap">
+                                {String(message || "")}
+                            </pre>
+                        ) : (
+                            <p className={`text-lg mb-8 leading-relaxed ${isHorror ? "font-bold text-xl" : "font-serif"}`}>
+                                {String(message || "").split("\n").map((line, i) => (
+                                    <React.Fragment key={i}>
+                                        {line}
+                                        <br />
+                                    </React.Fragment>
+                                ))}
+                            </p>
+                        )}
+
+                        <div className={isNotepad ? "mt-6 text-center" : ""}>
+                            <button
+                                onClick={onClose}
+                                className={`px-8 py-3 rounded-full transition-colors font-bold text-sm ${
+                                    isNotepad
+                                        ? "bg-text text-white hover:bg-primary"
+                                        : (isHorror
+                                            ? "bg-red-900 text-black hover:bg-red-700"
+                                            : "bg-primary text-white hover:bg-primary-2"
+                                        )
+                                }`}
+                            >
+                                閉じる
+                            </button>
+                        </div>
                     </div>
                 </div>
             );
@@ -951,7 +999,12 @@
             const [stopVideoModalOpen, setStopVideoModalOpen] = useState(false);
 // --- Apple Rain（こだわりギミック） ---
 const [appleDrops, setAppleDrops] = useState([]);
-const [rosterModal, setRosterModal] = useState({ isOpen: false, message: "", isHorror: false });
+const [rosterModal, setRosterModal] = useState({
+  isOpen: false,
+  message: "",
+  isHorror: false,
+  variant: "default"
+});
 const rainTimerRef = useRef(null);
 const isRainingRef = useRef(false);
 
@@ -1017,6 +1070,7 @@ const openRosterFromOddApple = (e) => {
   setRosterModal({
     isOpen: true,
     isHorror: false,
+    variant: "notepad",
     message:
 `奥神伏ファーム｜従業員名簿（内部共有）
 最終更新：2026.01.19 03:33
@@ -1293,6 +1347,7 @@ const openRosterFromOddApple = (e) => {
   isOpen={rosterModal.isOpen}
   message={rosterModal.message}
   isHorror={rosterModal.isHorror}
+  variant={rosterModal.variant}
   onClose={() => setRosterModal(prev => ({ ...prev, isOpen: false }))}
  />
                 </>
