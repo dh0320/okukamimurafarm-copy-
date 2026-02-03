@@ -247,7 +247,61 @@
             color: #8A2E2E;
             background: rgba(138, 46, 46, 0.25);
         }
+        
+        /* --- HOME：こだわり用 Apple Rain --- */
+        @keyframes apple-fall {
+          0%   { transform: translate3d(0,-120px,0) rotate(0deg);   opacity: 0; }
+          10%  { opacity: 1; }
+          100% { transform: translate3d(0, calc(100vh + 140px), 0) rotate(360deg); opacity: 1; }
+        }
+        
+        .apple-rain-layer{
+          position: fixed;
+          inset: 0;
+          z-index: 95;
+          overflow: hidden;
+          pointer-events: none; /* 普通のページ操作を邪魔しない */
+        }
+        
+        .apple-drop{
+          position: absolute;
+          top: -140px;
+          animation-name: apple-fall;
+          animation-timing-function: linear;
+          animation-fill-mode: forwards;
+          will-change: transform;
+          user-select: none;
+          filter: drop-shadow(0 8px 10px rgba(0,0,0,0.18));
+        }
+        
+        .apple-drop.odd{
+          pointer-events: auto;  /* 色違いだけクリック可 */
+          cursor: pointer;
+          filter: drop-shadow(0 10px 14px rgba(0,0,0,0.26));
+        }
+        /* ===== Tap Hit Area Fix（🍏だけ当たり判定を広げる）===== */
+        
+        /* 通常りんごはクリック不可（誤タップ防止）
+           ※すでに .apple-rain-layer { pointer-events:none } でも効くので、
+           もし既存で .apple-drop が pointer-events を持っているなら上書きされます */
+        .apple-drop {
+          pointer-events: none;
+        }
+        
+        /* 🍏だけクリック可＆当たり判定を広げる（見た目は変えない） */
+        .apple-drop.odd{
+          pointer-events: auto;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;     /* ←ここが当たり判定。好みで 12〜28px */
+          line-height: 1;
+        }
+
     </style>
+    
+    
+    
 </head>
 <body>
     <div id="root"></div>
@@ -423,7 +477,7 @@
             }
         ];
 
-        const MAX_FLAGS = 16;
+        const MAX_FLAGS = 18;
         const SAVE_KEY = "okukamifushi_save_v1";
 
         const FLAG_META = {
@@ -441,12 +495,13 @@
             F12: { title: "問い合わせの乗っ取り", description: "フォームが侵食" },
             F13: { title: "通報", description: "通報実行フラグ" },
             F14: { title: "村のキャプチャの異変", description: "ホバー/タップ異変" },
-            F15: { title: "縦読みレビュー", description: "たすけて / 1826のヒント" }
+            F15: { title: "縦読みレビュー", description: "たすけて / 1826のヒント" },
+            F16: { title: "社員名簿の欠落", description: "色違いのりんごから名簿" }
         };
 
         const FLAG_META_ORDER = [
             'F01','F02','F03','F04','F05','F06','F07',
-            'F08','F09','F10','F11','F12','F13','F14','F15'
+            'F08','F09','F10','F11','F12','F13','F14','F15','F16'
         ];
 
         const EVIDENCE_FLAGS = ['F01','F02','F03','F04','F05','F06','F07','F08','F09','F10','F11','F12','F14'];
@@ -890,9 +945,90 @@
         // --- Pages ---
 
         // 1. HOME
-        const Home = ({ phase, notifyEvidence, flags, setPage }) => {
+        const Home = ({ phase, notifyEvidence, flags, setPage, unlockFlag }) => {
+
             const [currentSlide, setCurrentSlide] = useState(0);
             const [stopVideoModalOpen, setStopVideoModalOpen] = useState(false);
+// --- Apple Rain（こだわりギミック） ---
+const [appleDrops, setAppleDrops] = useState([]);
+const [rosterModal, setRosterModal] = useState({ isOpen: false, message: "", isHorror: false });
+const rainTimerRef = useRef(null);
+const isRainingRef = useRef(false);
+
+useEffect(() => {
+  return () => {
+    if (rainTimerRef.current) {
+      clearTimeout(rainTimerRef.current);
+      rainTimerRef.current = null;
+    }
+  };
+}, []);
+
+const startAppleRain = () => {
+  // 連打で重ならないように
+  if (isRainingRef.current) return;
+  isRainingRef.current = true;
+
+  const count = 18;
+  const oddIndex = Math.floor(Math.random() * count);
+  const now = Date.now();
+
+  const drops = Array.from({ length: count }).map((_, i) => {
+    const x = Math.random() * 100;               // 0-100vw
+    const size = 22 + Math.random() * 10 + (i === oddIndex ? 10 : 0);
+    const duration = 2200 + Math.random() * 1600;
+    const delay = Math.random() * 550;
+
+    return {
+      id: `${now}-${i}`,
+      x,
+      size,
+      duration,
+      delay,
+      odd: i === oddIndex
+    };
+  });
+
+  setAppleDrops(drops);
+
+  const maxTime = Math.max(...drops.map(d => d.duration + d.delay)) + 400;
+  rainTimerRef.current = setTimeout(() => {
+    setAppleDrops([]);
+    isRainingRef.current = false;
+    rainTimerRef.current = null;
+  }, maxTime);
+};
+
+const openRosterFromOddApple = (e) => {
+  e.stopPropagation();
+
+  // 雨は消す
+  setAppleDrops([]);
+  isRainingRef.current = false;
+  if (rainTimerRef.current) {
+    clearTimeout(rainTimerRef.current);
+    rainTimerRef.current = null;
+  }
+
+  // フラグ
+  if (!flags.F16) unlockFlag("F16");
+
+  // 名簿（“いない社員”を事務的に見せるのが効く）
+  setRosterModal({
+    isOpen: true,
+    isHorror: false,
+    message:
+`奥神伏ファーム｜従業員名簿（内部共有）
+最終更新：2026.01.19 03:33
+※外部共有禁止
+
+・神去 巌（園長）
+・神去 由利（加工・農園キッチン）
+・佐藤 健太（副園長・Web/広報）
+・グエン・マイ・リン（栽培）
+・ヴー・タイン・アン（栽培）……（更新停止）`
+  });
+};
 
             const slides = useMemo(() => {
                 let baseSlides = [
@@ -926,6 +1062,27 @@
                     <div 
                         className={`fixed inset-0 z-[60] bg-black pointer-events-none transition-opacity duration-1000 ${isHorrorSlide ? 'opacity-20' : 'opacity-0'}`}
                     ></div>
+                    {/* Apple Rain Layer */}
+                    {appleDrops.length > 0 && (
+                      <div className="apple-rain-layer">
+                        {appleDrops.map(d => (
+                          <div
+                            key={d.id}
+                            className={`apple-drop ${d.odd ? "odd" : ""}`}
+                            style={{
+                              left: `${d.x}%`,
+                              fontSize: `${d.size}px`,
+                              animationDuration: `${d.duration}ms`,
+                              animationDelay: `${d.delay}ms`,
+                            }}
+                            onClick={d.odd ? openRosterFromOddApple : undefined}
+                            title={d.odd ? "…" : undefined}
+                          >
+                            {d.odd ? "🍏" : "🍎"}
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     <div className="relative h-[75vh] min-h-[550px] w-full overflow-hidden bg-black">
                         {slides.map((img, index) => (
@@ -1042,7 +1199,7 @@
 
     <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
       {/* ① 土 */}
-      <div className="group">
+      <div className="group cursor-pointer" onClick={startAppleRain}>
         <div className="aspect-square rounded-2xl overflow-hidden bg-surface-2 shadow-sm mb-6">
           {/* 画像差し替えOK：土の寄り写真が理想 */}
           <img
@@ -1060,7 +1217,7 @@
       </div>
 
       {/* ② 木（接木） */}
-      <div className="group">
+      <div className="group cursor-pointer" onClick={startAppleRain}>
         <div className="aspect-square rounded-2xl overflow-hidden bg-surface-2 shadow-sm mb-6">
           {/* 画像差し替え推奨：接ぎ木の手元写真が最適 */}
           <img
@@ -1078,7 +1235,7 @@
       </div>
 
       {/* ③ 扱い */}
-      <div className="group">
+      <div className="group cursor-pointer" onClick={startAppleRain}>
         <div className="aspect-square rounded-2xl overflow-hidden bg-surface-2 shadow-sm mb-6">
           {/* 画像差し替えOK：選果・箱詰めの手元写真が理想 */}
           <img
@@ -1132,6 +1289,12 @@
                       </div>
                     )}
                     <AdSpace />
+                    <MessageModal
+  isOpen={rosterModal.isOpen}
+  message={rosterModal.message}
+  isHorror={rosterModal.isHorror}
+  onClose={() => setRosterModal(prev => ({ ...prev, isOpen: false }))}
+ />
                 </>
             );
         };
