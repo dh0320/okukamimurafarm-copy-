@@ -3501,6 +3501,12 @@ body: `たくさんの種類を家族で楽しめました。
                 setPage('home');
             };
 
+            const resetFlagsForDebug = () => {
+                setFlags({});
+                setEndingResult(null);
+                setPage('home');
+            };
+
             const handleReport = () => {
                 const ending = computeEnding(flags, phase);
                 setEndingResult(ending);
@@ -3569,6 +3575,13 @@ body: `たくさんの種類を家族で楽しめました。
                             <div className="mt-1 opacity-70">
                                 Total Flags: {Object.keys(flags).length}/{MAX_FLAGS}
                             </div>
+                            <button
+                                type="button"
+                                className="mt-2 w-full text-left text-[10px] px-2 py-1 rounded bg-white/15 hover:bg-white/25 transition-colors"
+                                onClick={resetFlagsForDebug}
+                            >
+                                フラグをリセット（デバッグ）
+                            </button>
                         </div>
                         )}
                     </div>
