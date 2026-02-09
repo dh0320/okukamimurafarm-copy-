@@ -3550,6 +3550,109 @@ Cookieによりブラウザを識別できる場合がありますが、Cookie�
             );
         };
 
+        const DebugPage = ({
+            flags,
+            phase,
+            setPage,
+            setFlags,
+            goToEndingWithPreset,
+            setFlagsByIds
+        }) => {
+            const pageButtons = [
+                { id: 'home', label: 'HOME' },
+                { id: 'about', label: 'ABOUT' },
+                { id: 'products', label: 'PRODUCTS' },
+                { id: 'diary', label: 'DIARY' },
+                { id: 'village', label: 'VILLAGE' },
+                { id: 'contact', label: 'CONTACT' },
+                { id: 'admin_notice', label: '通報ページ' }
+            ];
+
+            const phasePresets = {
+                1: [],
+                2: ['F01', 'F04'],
+                3: ['F01', 'F04', 'F02', 'F03', 'F11'],
+                4: ['F01', 'F04', 'F02', 'F03', 'F11', 'F05', 'F06', 'F07']
+            };
+
+            const endingPresets = {
+                SILENCED: ['F01', 'F03', 'F05', 'F08', 'F11', 'F14'],
+                NORMAL: ['F01', 'F02', 'F03', 'F04', 'F05', 'F06', 'F08', 'F11', 'F12', 'F14', 'F15'],
+                TRUE: ['F01', 'F02', 'F03', 'F04', 'F05', 'F06', 'F07', 'F08', 'F10', 'F11', 'F12', 'F14', 'F15'],
+                PERFECT: [...EVIDENCE_FLAGS, 'F13']
+            };
+
+            return (
+                <section className="max-w-container mx-auto px-6 py-16">
+                    <SectionTitle
+                        sub="DEBUG"
+                        title="デバッグコントロール"
+                        align="left"
+                    />
+
+                    <div className="space-y-8">
+                        <div className="bg-surface border border-border rounded-xl p-6">
+                            <h3 className="text-xl font-serif mb-3">現在の状態</h3>
+                            <p className="text-muted">Phase: <span className="font-bold text-text">{phase}</span> ／ 取得フラグ: <span className="font-bold text-text">{Object.keys(flags).length}</span></p>
+                        </div>
+
+                        <div className="bg-surface border border-border rounded-xl p-6">
+                            <h3 className="text-xl font-serif mb-4">フェーズを進める</h3>
+                            <div className="flex flex-wrap gap-3">
+                                {[1, 2, 3, 4].map((targetPhase) => (
+                                    <Button key={targetPhase} variant="secondary" onClick={() => setFlagsByIds(phasePresets[targetPhase])}>
+                                        Phase {targetPhase} にする
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="bg-surface border border-border rounded-xl p-6">
+                            <h3 className="text-xl font-serif mb-4">エンディング条件を即時設定</h3>
+                            <div className="flex flex-wrap gap-3">
+                                <Button variant="secondary" onClick={() => goToEndingWithPreset(endingPresets.SILENCED)}>SILENCED</Button>
+                                <Button variant="secondary" onClick={() => goToEndingWithPreset(endingPresets.NORMAL)}>NORMAL</Button>
+                                <Button variant="secondary" onClick={() => goToEndingWithPreset(endingPresets.TRUE)}>TRUE</Button>
+                                <Button variant="secondary" onClick={() => goToEndingWithPreset(endingPresets.PERFECT)}>PERFECT</Button>
+                            </div>
+                            <p className="text-sm text-muted mt-3">押すとフラグをプリセットし、そのままエンディング画面へ移動します。</p>
+                        </div>
+
+                        <div className="bg-surface border border-border rounded-xl p-6">
+                            <h3 className="text-xl font-serif mb-4">ギミック確認（個別フラグ）</h3>
+                            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2">
+                                {FLAG_META_ORDER.map((id) => (
+                                    <button
+                                        key={id}
+                                        className={`text-left px-3 py-2 rounded-md border transition-colors ${
+                                            flags[id]
+                                                ? 'bg-primary/10 border-primary/40 text-primary'
+                                                : 'bg-surface-2 border-border hover:bg-surface'
+                                        }`}
+                                        onClick={() => setFlags((prev) => ({ ...prev, [id]: !prev[id] }))}
+                                    >
+                                        <span className="font-eng font-semibold mr-2">{id}</span>
+                                        <span>{FLAG_META[id]?.title}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="bg-surface border border-border rounded-xl p-6">
+                            <h3 className="text-xl font-serif mb-4">ページジャンプ</h3>
+                            <div className="flex flex-wrap gap-3">
+                                {pageButtons.map((item) => (
+                                    <Button key={item.id} variant="secondary" onClick={() => setPage(item.id)}>
+                                        {item.label}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
         // --- Main App ---
         const App = () => {
             const [currentPage, setPage] = useState('home');
@@ -3568,7 +3671,9 @@ Cookieによりブラウザを識別できる場合がありますが、Cookie�
 
             useEffect(() => {
                 const handleDebugKey = (e) => {
-                    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                    const isCtrlOrMeta = e.ctrlKey || e.metaKey;
+                    const isDebugKey = e.code === 'KeyD' || String(e.key).toLowerCase() === 'd';
+                    if (isCtrlOrMeta && e.shiftKey && isDebugKey) {
                         e.preventDefault();
                         setShowDebug(prev => !prev);
                     }
@@ -3707,6 +3812,27 @@ Cookieによりブラウザを識別できる場合がありますが、Cookie�
                 setPage('home');
             };
 
+            const setFlagsByIds = (ids) => {
+                const next = {};
+                ids.forEach((id) => {
+                    next[id] = true;
+                });
+                setFlags(next);
+                setEndingResult(null);
+            };
+
+            const goToEndingWithPreset = (ids) => {
+                const next = {};
+                ids.forEach((id) => {
+                    next[id] = true;
+                });
+                const ending = computeEnding(next, calcPhase(next));
+                setFlags(next);
+                setEndingResult(ending);
+                setSeenEndings(prev => ({ ...prev, [ending.endingId]: true }));
+                setPage('ending');
+            };
+
             const handleReport = () => {
                 const ending = computeEnding(flags, phase);
                 setEndingResult(ending);
@@ -3748,6 +3874,17 @@ Cookieによりブラウザを識別できる場合がありますが、Cookie�
                                 onKeepProgress={() => setPage('home')}
                             />
                         );
+                    case 'debug':
+                        return (
+                            <DebugPage
+                                flags={flags}
+                                phase={phase}
+                                setPage={setPage}
+                                setFlags={setFlags}
+                                setFlagsByIds={setFlagsByIds}
+                                goToEndingWithPreset={goToEndingWithPreset}
+                            />
+                        );
                     default: return <Home {...props} />;
                 }
             };
@@ -3779,6 +3916,13 @@ Cookieによりブラウザを識別できる場合がありますが、Cookie�
                             <div className="mt-1 opacity-70">
                                 Total Flags: {Object.keys(flags).length}/{MAX_FLAGS}
                             </div>
+                            <button
+                                type="button"
+                                className="mt-2 w-full text-left text-[10px] px-2 py-1 rounded bg-white/15 hover:bg-white/25 transition-colors"
+                                onClick={() => setPage('debug')}
+                            >
+                                デバッグページを開く
+                            </button>
                             <button
                                 type="button"
                                 className="mt-2 w-full text-left text-[10px] px-2 py-1 rounded bg-white/15 hover:bg-white/25 transition-colors"
