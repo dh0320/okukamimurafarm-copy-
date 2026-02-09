@@ -573,7 +573,7 @@
         const PHASE1_FLAGS = ['F01', 'F04', 'F15', 'F16'];          // 2つ以上でPhase2
         const PHASE2_FLAGS = ['F02', 'F03', 'F11', 'F12'];          // 3つ以上でPhase3
         const PHASE3_FLAGS = ['F05', 'F06', 'F07', 'F08', 'F14'];   // 3つ以上でPhase4
-        const PHASE4_FLAGS = ['F09', 'F10', 'F13'];                 // 表示用（デバッグ用）
+        const PHASE4_FLAGS = ['F09', 'F10', 'F13'];                 // Phase4で主に収集するフラグ
 
         const countFound = (flags, ids) => ids.reduce((acc, id) => acc + (flags[id] ? 1 : 0), 0);
 
@@ -585,6 +585,7 @@
             // Phase1フラグ2つ以上でPhase2
             // Phase2フラグ3つ以上でPhase3
             // Phase3フラグ3つ以上でPhase4
+            // Phase4フラグは進行判定には使わず、Phase4内の収集対象として扱う
             if (p3 >= 3) return 4;
             if (p2 >= 3) return 3;
             if (p1 >= 2) return 2;
@@ -1481,8 +1482,8 @@ const openRosterFromOddApple = (e) => {
         const Village = ({ phase, notifyEvidence, flags }) => {
             const [lightboxOpen, setLightboxOpen] = useState(false);
 
-            // Phase2: キャプチャホバー異変（F14）解放
-            const isCaptureHoverEnabled = phase >= 2;
+            // Phase3: キャプチャホバー異変（F14）解放
+            const isCaptureHoverEnabled = phase >= 3;
             // Phase3: 御神木ホラー（F10）解放
             const isHorrorPhase = phase >= 3;
 
@@ -1491,7 +1492,7 @@ const openRosterFromOddApple = (e) => {
                     <div className="max-w-container mx-auto px-6">
                         <SectionTitle title="奥神伏村について" sub="OUR VILLAGE" />
 
-                        {/* キャプチャ：Phase1は通常固定 / Phase2以降でホバー異変 + F14 */}
+                        {/* キャプチャ：Phase1-2は通常固定 / Phase3以降でホバー異変 + F14 */}
                         {!isCaptureHoverEnabled && (
                             <div className="mb-20">
                                 <div className="relative w-full h-[60vh] rounded-2xl shadow-sm mb-8 overflow-hidden">
@@ -2979,8 +2980,8 @@ body: `たくさんの種類を家族で楽しめました。
             const isChecked = !checks[item.id];
             setChecks(prev => ({ ...prev, [item.id]: isChecked }));
         
-            // Phase2以降でのみホラー演出（F05）
-            if (phase >= 2 && isChecked && item.horror) {
+            // Phase3以降でのみホラー演出（F05）
+            if (phase >= 3 && isChecked && item.horror) {
               setHorrorStates(prev => ({ ...prev, [item.id]: true }));
               setGlobalHorror(true);
         
@@ -2997,8 +2998,8 @@ body: `たくさんの種類を家族で楽しめました。
         
           return (
             <div className="min-h-screen pt-24 pb-20 bg-surface-2 relative">
-              {/* ホラーオーバーレイ（Phase2以降の演出時のみ） */}
-              {phase >= 2 && globalHorror && (
+              {/* ホラーオーバーレイ（Phase3以降の演出時のみ） */}
+              {phase >= 3 && globalHorror && (
                 <>
                   <div className="horror-overlay"></div>
                   <div className="horror-vignette"></div>
