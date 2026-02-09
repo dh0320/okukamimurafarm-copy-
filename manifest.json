@@ -1,0 +1,21 @@
+{
+  "name": "奥神伏ファーム",
+  "short_name": "奥神伏ファーム",
+  "description": "長野県奥神伏村の有機農園。土と生きる、循環する未来。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAF7",
+  "theme_color": "#2F6B3E",
+  "icons": [
+    {
+      "src": "images/icondefault.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icondefault.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

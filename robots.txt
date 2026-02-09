@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://okukamifushifarm.pages.dev/sitemap.xml
