@@ -960,6 +960,12 @@
                                 <span onClick={() => setPage('access')} className="cursor-pointer hover:opacity-70">アクセス</span>
                                 <span onClick={() => setPage('recruit')} className="cursor-pointer hover:opacity-70">採用情報</span>
                             </div>
+                            <div className="flex flex-col gap-3 col-span-2 mt-4 pt-4 border-t border-white/20">
+                                <span onClick={() => setPage('privacy_policy')} className="cursor-pointer hover:opacity-70">プライバシーポリシー</span>
+                                <span onClick={() => setPage('terms_of_service')} className="cursor-pointer hover:opacity-70">利用規約</span>
+                                <span onClick={() => setPage('contact_info')} className="cursor-pointer hover:opacity-70">お問い合わせ</span>
+                                <span onClick={() => setPage('ad_disclosure')} className="cursor-pointer hover:opacity-70">広告配信に関する表記（Cookie/第三者配信）</span>
+                            </div>
                         </div>
                         <div className="md:col-span-1">
                             <Button variant="secondary" className="w-full border-white text-white hover:bg-white hover:text-primary mb-6" onClick={() => setPage('contact')}>
@@ -3241,6 +3247,200 @@ body: `たくさんの種類を家族で楽しめました。
             );
         };
 
+
+
+        const LegalPage = ({ title, subtitle, content }) => {
+            return (
+                <div className="min-h-screen pt-24 pb-20">
+                    <div className="max-w-4xl mx-auto px-6">
+                        <SectionTitle title={title} sub={subtitle} />
+                        <div className="bg-white border border-border rounded-2xl p-6 md:p-10 shadow-sm">
+                            <pre className="whitespace-pre-wrap font-sans text-sm md:text-base leading-loose text-text">{content}</pre>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const privacyPolicyText = `奥神伏ファーム プライバシーポリシー
+制定日：2026年2月9日
+最終改定日：2026年2月9日
+
+プロトプレイ（以下「運営者」）は、運営者が提供するウェブサイト「奥神伏ファーム」（以下「当サイト」）において取得するユーザー情報等の取扱いについて、以下のとおりプライバシーポリシー（以下「本ポリシー」）を定めます。
+
+1. 事業者情報
+・運営者名：プロトプレイ
+・連絡先（メール）：protoplaystudio@gmail.com
+・所在地：所在地については、請求があれば遅滞なく開示いたします。
+
+2. 取得する情報と取得方法
+当サイトでは、以下の情報を取得する場合があります。
+
+(1) お問い合わせ時にユーザーが入力・送信する情報
+・お名前
+・メールアドレス
+・住所（任意）
+・お問い合わせ内容
+・その他フォームに入力された情報
+
+(2) 当サイトの閲覧に伴い自動的に取得される情報
+・IPアドレス
+・閲覧日時、閲覧ページ、参照元URL
+・端末情報（ブラウザ種別、OS、画面サイズ等）
+・Cookie（クッキー）等の識別子
+・広告配信や計測に必要となる情報（後記「広告配信について」参照）
+
+3. 利用目的
+当サイトは、取得した情報を以下の目的で利用します。
+・お問い合わせへの対応、連絡、本人確認のため
+・当サイトの運営、維持、改善、品質向上のため
+・不正利用の防止、セキュリティ確保のため
+・広告配信および広告効果測定のため
+・上記目的に付随する目的のため
+
+4. 個人情報の管理
+当サイトは、取得した情報の漏えい、滅失、毀損等を防止するため、適切な安全管理措置を講じます。
+
+5. 第三者提供
+当サイトは、次の場合を除き、取得した個人情報を第三者に提供しません。
+・本人の同意がある場合
+・法令に基づく場合
+・人の生命、身体または財産の保護のために必要であり、本人の同意を得ることが困難な場合
+・業務委託に伴い、利用目的の達成に必要な範囲で委託先に提供する場合（次項）
+
+6. 業務委託
+当サイトは、利用目的の達成に必要な範囲で、個人情報の取扱いを外部事業者へ委託することがあります。この場合、委託先の選定を適切に行い、必要かつ適切な監督を実施します。
+
+7. Cookie等の利用
+当サイトは、利便性向上、広告配信、広告効果測定等の目的でCookie等を使用する場合があります。
+ユーザーは、ブラウザの設定によりCookieの無効化または削除が可能です。ただし、Cookieを無効化した場合、当サイトの一部機能が正しく動作しない場合があります。
+
+8. 広告配信について（Google AdSense）
+当サイトは、第三者配信の広告サービス（Google AdSense等）を利用する場合があります。
+
+(1) Cookieの使用
+Googleなどの第三者配信事業者は、ユーザーの興味に応じた広告を表示するためにCookie等を使用することがあります。
+これにより、当サイトや他サイトへのアクセス情報に基づいた広告が表示される場合があります。
+
+(2) パーソナライズド広告の無効化（オプトアウト）
+ユーザーは、広告設定等によりパーソナライズド広告を無効化できます。
+また、第三者配信事業者によるCookieの使用を無効化できる場合があります（対応状況は各事業者・ブラウザにより異なります）。
+
+※オプトアウト方法の参照先は、本ポリシー末尾の「参考リンク」をご確認ください。
+
+9. 開示・訂正・削除等の請求
+ユーザーご本人から、当サイトが保有する個人情報について、開示・訂正・削除・利用停止等の請求があった場合、本人確認の上、法令に従い合理的な範囲で対応します。
+
+10. 本ポリシーの変更
+当サイトは、法令変更や運用変更等に応じて本ポリシーを改定することがあります。改定後の内容は当サイト上で公表した時点から適用されます。
+
+11. お問い合わせ窓口
+本ポリシーに関するお問い合わせは、下記までご連絡ください。
+・メール：protoplaystudio@gmail.com
+
+参考リンク（ユーザー向け）
+・Google 広告設定（パーソナライズド広告の管理）
+・AboutAds（第三者広告のオプトアウト）
+・Googleの広告に関するポリシー（技術情報）
+※URLは当サイトの「広告配信に関する表記」ページに掲載します。`;
+
+        const termsOfServiceText = `奥神伏ファーム 利用規約
+制定日：2026年2月9日
+最終改定日：2026年2月9日
+
+この利用規約（以下「本規約」）は、プロトプレイ（以下「運営者」）が提供するウェブサイト「奥神伏ファーム」（以下「当サイト」）の利用条件を定めるものです。ユーザーは当サイトを利用することで、本規約に同意したものとみなします。
+
+1. 適用
+本規約は、当サイトの利用に関する一切に適用されます。
+
+2. 禁止事項
+ユーザーは、当サイトの利用にあたり、以下の行為をしてはなりません。
+・法令または公序良俗に反する行為
+・犯罪行為またはこれを助長する行為
+・運営者、他のユーザー、第三者の権利（著作権、商標権、プライバシー等）を侵害する行為
+・当サイトの運営を妨害する行為（過度なアクセス、脆弱性探索、リバースエンジニアリング等を含む）
+・虚偽の情報を送信する行為
+・その他、運営者が不適切と判断する行為
+
+3. 免責事項
+(1) 掲載内容について
+運営者は、当サイトに掲載する情報の正確性、完全性、有用性、安全性等の確保に努めますが、これらを保証するものではありません。
+
+(2) 損害について
+当サイトの利用または利用不能によりユーザーに生じた損害について、運営者は一切の責任を負いません。ただし、法令により免責が認められない場合を除きます。
+
+(3) 外部サービス・外部リンク
+当サイトから外部サイトや外部サービスへリンクしている場合でも、外部サイト等の内容や取扱いについて運営者は責任を負いません。
+
+4. サービス内容の変更・停止
+運営者は、ユーザーへの事前通知なく、当サイトの内容変更、提供の中断または停止を行うことがあります。
+
+5. 知的財産権
+当サイトに掲載される文章、画像、デザイン、プログラム等に関する著作権その他の知的財産権は、運営者または正当な権利者に帰属します。
+ユーザーは、私的利用の範囲を超えて、無断で転載、複製、改変、再配布等を行ってはなりません。
+
+6. 規約の変更
+運営者は、必要に応じて本規約を改定できるものとし、改定後の本規約は当サイト上で公表した時点から効力を生じます。
+
+7. 準拠法・管轄
+本規約の準拠法は日本法とします。
+当サイトに関連して運営者とユーザー間で紛争が生じた場合、大阪地方裁判所を第一審の専属的合意管轄裁判所とします。
+
+8. お問い合わせ
+本規約に関するお問い合わせは、下記までご連絡ください。
+・メール：protoplaystudio@gmail.com`;
+
+        const contactInfoText = `お問い合わせ
+
+当サイト（奥神伏ファーム）へのご連絡は、以下よりお願いいたします。
+内容により返信までお時間をいただく場合があります。
+
+1. お問い合わせフォーム
+当サイト内の「お問い合わせ」フォームよりご送信ください。
+※返信先としてメールアドレスの入力が必要です。
+
+2. メールでのお問い合わせ
+protoplaystudio@gmail.com
+
+3. ご案内
+・返信の目安：原則として数営業日以内を目途にご返信します。
+・お問い合わせ内容によっては、回答できない場合があります。
+
+4. 個人情報の取扱い
+お問い合わせに際して取得した情報は、回答・連絡の目的で利用し、当サイトのプライバシーポリシーに従い適切に取り扱います。`;
+
+        const adDisclosureText = `広告配信に関する表記（Cookie／第三者配信）
+制定日：2026年2月9日
+最終改定日：2026年2月9日
+
+当サイト（奥神伏ファーム）では、広告配信および広告効果測定のためにCookie等を使用する場合があります。本ページでは広告配信に関する情報を示します。
+
+1. 第三者配信の広告サービスについて
+当サイトは、第三者配信の広告サービス（Google AdSense等）を利用する場合があります。
+第三者配信事業者は、ユーザーの興味に応じた広告を表示するためにCookie等を使用することがあります。
+
+2. Cookieとは
+Cookieは、ウェブサイト閲覧時にブラウザに保存される小さなデータです。
+Cookieによりブラウザを識別できる場合がありますが、Cookie単体で氏名や住所など個人を直接特定する情報を含むものではありません。
+
+3. パーソナライズド広告の無効化（オプトアウト）
+ユーザーは、以下の方法により、パーソナライズド広告を無効化できます。
+・Googleの広告設定でパーソナライズド広告をオフにする
+・AboutAds等で第三者配信事業者によるCookieの利用を無効化する（対応している場合）
+
+4. ブラウザ設定によるCookieの無効化
+ユーザーは、ブラウザの設定によりCookieを削除・無効化できます。
+ただし、無効化した場合、当サイトの一部機能が正しく動作しない場合があります。
+
+5. お問い合わせ
+広告配信に関する表記についてのお問い合わせは下記までお願いします。
+・メール：protoplaystudio@gmail.com
+
+参考リンク（URL）
+・Google 広告設定：https://adssettings.google.com/
+・AboutAds（オプトアウト）：https://www.aboutads.info/
+・Googleの広告に関するポリシー（技術情報）：https://policies.google.com/technologies/ads?hl=ja`;
+
         const EndingPage = ({ endingResult, flags, onRestart, onShare, onKeepProgress }) => {
             useEffect(() => {
                 window.scrollTo(0, 0);
@@ -3531,6 +3731,10 @@ body: `たくさんの種類を家族で楽しめました。
                     case 'admin_notice': return <AdminNotice {...props} onReport={handleReport} />;
                     case 'recruit': return <Recruit {...props} />;
                     case 'contact': return <Contact {...props} />;
+                    case 'privacy_policy': return <LegalPage title="プライバシーポリシー" subtitle="PRIVACY POLICY" content={privacyPolicyText} />;
+                    case 'terms_of_service': return <LegalPage title="利用規約" subtitle="TERMS OF SERVICE" content={termsOfServiceText} />;
+                    case 'contact_info': return <LegalPage title="お問い合わせ" subtitle="CONTACT" content={contactInfoText} />;
+                    case 'ad_disclosure': return <LegalPage title="広告配信に関する表記（Cookie/第三者配信）" subtitle="AD DISCLOSURE" content={adDisclosureText} />;
                     case 'ending':
                         return (
                             <EndingPage
