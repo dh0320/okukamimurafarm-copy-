@@ -3671,7 +3671,9 @@ Cookieによりブラウザを識別できる場合がありますが、Cookie�
 
             useEffect(() => {
                 const handleDebugKey = (e) => {
-                    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                    const isCtrlOrMeta = e.ctrlKey || e.metaKey;
+                    const isDebugKey = e.code === 'KeyD' || String(e.key).toLowerCase() === 'd';
+                    if (isCtrlOrMeta && e.shiftKey && isDebugKey) {
                         e.preventDefault();
                         setShowDebug(prev => !prev);
                     }
