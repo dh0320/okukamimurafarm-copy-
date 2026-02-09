@@ -3103,11 +3103,9 @@ body: `たくさんの種類を家族で楽しめました。
             const [seenCount, setSeenCount] = useState({ name: false, email: false, address: false, message: false });
             const [modalState, setModalState] = useState({ isOpen: false, message: "", isHorror: false, goAdmin: false });
 
-            // Phase1の段階でもフォームは存在するが、乗っ取り演出は「Phase1内のF12探索」として運用
-            // ＝この実装では Phase1でも演出が起きる（ただし、ユーザーがフィールドに触れない限り起きない）
+            // フォーム乗っ取り演出（F12）はPhase2以降でのみ発動
             const triggerHorror = (field) => {
-                // 最低Phase1から発動（仕様どおり）
-                if (phase < 1) return;
+                if (phase < 2) return;
 
                 setPlaceholders(prev => ({ ...prev, [field]: horrorPlaceholders[field] }));
                 setSeenCount(prev => ({ ...prev, [field]: true }));
