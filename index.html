@@ -104,8 +104,9 @@
             --text: #D1D5DB;
             --muted: #9CA3AF;
             --border: #374151;
-            --primary: #8A2E2E; /* Green becomes Blood Red */
-            --primary-2: #601818;
+            --primary: #8C7A52; /* Eerie sepia */
+            --primary-2: #6F603F;
+            --accent: #CBBF94;
             filter: contrast(1.2) grayscale(0.8);
         }
 
@@ -121,14 +122,14 @@
             100% { clip-path: inset(58% 0 43% 0); transform: skew(0.6deg); }
         }
 
-        /* 赤黒いオーバーレイとノイズ */
+        /* 不気味な暗色オーバーレイとノイズ */
         .horror-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(20, 0, 0, 0.85);
+            background-color: rgba(8, 10, 6, 0.82);
             z-index: 9999;
             pointer-events: none;
             display: flex;
@@ -664,7 +665,7 @@
             const containerClass = isNotepad
                 ? "bg-[#fffdf3] text-text border border-[#e6dccf] font-mono text-left"
                 : (isHorror
-                    ? "bg-black text-red-600 border-4 border-red-900 font-handwriting text-center"
+                    ? "bg-black text-[#d9d2b6] border-4 border-[#7a6f4a] font-handwriting text-center"
                     : "bg-white text-text border border-gray-200 text-center"
                 );
 
@@ -721,7 +722,7 @@
                                     isNotepad
                                         ? "bg-text text-white hover:bg-primary"
                                         : (isHorror
-                                            ? "bg-red-900 text-black hover:bg-red-700"
+                                            ? "bg-[#5f5438] text-[#f5f1de] hover:bg-[#7a6f4a]"
                                             : "bg-primary text-white hover:bg-primary-2"
                                         )
                                 }`}
@@ -743,7 +744,7 @@
                     <div
                         className={`rounded-lg shadow-2xl border p-4 pr-10 relative ${
                             isHorror
-                                ? "bg-black text-red-600 border-red-900 font-handwriting"
+                                ? "bg-black text-[#d9d2b6] border-[#7a6f4a] font-handwriting"
                                 : "bg-white text-text border-border"
                         }`}
                     >
@@ -758,7 +759,7 @@
                         <button
                             onClick={onClose}
                             className={`absolute top-2 right-3 text-sm leading-none ${
-                                isHorror ? "text-red-300 hover:text-red-500" : "text-muted hover:text-text"
+                                isHorror ? "text-[#cbbf94] hover:text-[#f0e4bc]" : "text-muted hover:text-text"
                             }`}
                             aria-label="close"
                             title="閉じる"
@@ -790,7 +791,7 @@
                     <div
                         className={`p-8 rounded-lg shadow-2xl max-w-md w-full text-center relative animate-fade-up ${
                             isHorror
-                                ? "bg-black text-red-600 border-4 border-red-900 font-handwriting"
+                                ? "bg-black text-[#d9d2b6] border-4 border-[#7a6f4a] font-handwriting"
                                 : "bg-white text-text border border-gray-200"
                         }`}
                         onClick={(e) => e.stopPropagation()}
@@ -808,7 +809,7 @@
                             <button
                                 className={`px-6 py-3 rounded-full transition-colors font-bold text-sm ${
                                     isHorror
-                                        ? "bg-black text-red-300 border border-red-900 hover:bg-red-900 hover:text-black"
+                                        ? "bg-black text-[#cbbf94] border border-[#7a6f4a] hover:bg-[#7a6f4a] hover:text-[#f5f1de]"
                                         : "bg-gray-200 text-text hover:bg-gray-300"
                                 }`}
                                 onClick={onNo}
@@ -819,7 +820,7 @@
                             <button
                                 className={`px-6 py-3 rounded-full transition-colors font-bold text-sm ${
                                     isHorror
-                                        ? "bg-red-900 text-black hover:bg-red-700"
+                                        ? "bg-[#5f5438] text-[#f5f1de] hover:bg-[#7a6f4a]"
                                         : "bg-primary text-white hover:bg-primary-2"
                                 }`}
                                 onClick={onYes}
