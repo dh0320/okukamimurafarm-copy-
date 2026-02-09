@@ -298,6 +298,25 @@
           line-height: 1;
         }
 
+        /* Ending page fade-in animation */
+        @keyframes ending-fade-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ending-fade-in {
+            opacity: 0;
+            animation: ending-fade-up 0.8s ease-out forwards;
+        }
+
+        /* Page transition */
+        @keyframes page-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .page-fade-in {
+            animation: page-fade-in 0.35s ease-out;
+        }
+
     </style>
     
     
@@ -827,14 +846,9 @@
         };
 
         const AdSpace = ({ className = "" }) => (
-            <div className={`w-full max-w-container mx-auto px-6 my-16 animate-fade-up ${className}`}>
-                <div className="bg-gray-100 border border-gray-200 w-full min-h-[200px] md:min-h-[250px] flex flex-col items-center justify-center text-muted relative overflow-hidden">
-                    <div className="absolute top-2 right-2 text-[10px] border border-muted px-1">広告</div>
-                    <div className="text-center">
-                        <p className="font-bold text-gray-400 text-lg">広告掲載予定エリア</p>
-                        <p className="text-xs mt-2 text-gray-400">Google Adsense / Display Ads</p>
-                    </div>
-                    <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+            <div className={`w-full max-w-container mx-auto px-6 my-16 ${className}`}>
+                <div className="bg-surface-2 border border-border rounded-xl w-full min-h-[90px] md:min-h-[250px] flex items-center justify-center">
+                    <span className="text-[10px] text-muted/40 tracking-widest font-eng select-none">AD</span>
                 </div>
             </div>
         );
@@ -967,12 +981,16 @@
                                         onChange={() => setSettings(prev => ({ ...prev, muteAudio: !prev.muteAudio }))}
                                         className="accent-white"
                                     />
-                                    <span>音声をミュート（準備中）</span>
+                                    <span>音声をミュート</span>
                                 </label>
                             </div>
-                            <div className="flex gap-4 justify-center md:justify-start opacity-80">
-                                <span>Instagram</span>
-                                <span>Facebook</span>
+                            <div className="flex gap-4 justify-center md:justify-start mt-4">
+                                <a href="#" className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity" aria-label="Instagram">
+                                    <i data-lucide="instagram" className="w-4 h-4"></i>
+                                </a>
+                                <a href="#" className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity" aria-label="Facebook">
+                                    <i data-lucide="facebook" className="w-4 h-4"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -1189,7 +1207,7 @@ const openRosterFromOddApple = (e) => {
     <div>
       <div className="flex justify-between items-end mb-8 border-b border-border pb-4">
         <h3 className="text-2xl font-serif">News</h3>
-        <span className="text-sm font-eng text-muted cursor-pointer hover:text-primary">View All</span>
+        <span className="text-sm font-eng text-muted cursor-pointer hover:text-primary" onClick={() => setPage('diary')}>View All</span>
       </div>
       <ul className="space-y-6">
         {/* Phase2以降で表示（F03探索可能） */}
@@ -1434,10 +1452,10 @@ const openRosterFromOddApple = (e) => {
                                             className="px-10 py-4 rounded-full bg-gray-200 text-gray-500 font-bold tracking-widest cursor-not-allowed"
                                             disabled
                                         >
-                                            通報（Phase3で解放）
+                                            通報する
                                         </button>
-                                        <p className="text-xs text-muted mt-3">
-                                            Phase3に到達すると通報が可能になります。
+                                        <p className="text-xs text-muted mt-3 font-serif">
+                                            …まだ証拠が足りない。もっと調べる必要がある。
                                         </p>
                                     </div>
                                 )}
@@ -1607,7 +1625,7 @@ const openRosterFromOddApple = (e) => {
 
                     {/* Lightbox Modal */}
                     {lightboxOpen && (
-                        <div className="fixed inset-0 z-[100] lightbox-overlay flex items-center justify-center p-4" onClick={() => setLightboxOpen(false)}>
+                        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setLightboxOpen(false)}>
                             <div className="relative max-w-4xl w-full max-h-screen flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
                                 <img 
                                     src={isHorrorPhase ? IMAGES.tree_change : IMAGES.tree_default} 
@@ -1629,7 +1647,7 @@ const openRosterFromOddApple = (e) => {
                                         </button>
                                     </div>
                                 ) : (
-                                    <button className="absolute -top-10 right-0 text-white font-bold" onClick={() => setLightboxOpen(false)}>
+                                    <button className="absolute top-3 right-3 bg-black/50 hover:bg-black/70 text-white px-4 py-2 rounded text-sm transition-colors" onClick={() => setLightboxOpen(false)}>
                                         閉じる
                                     </button>
                                 )}
@@ -2335,7 +2353,7 @@ body: `たくさんの種類を家族で楽しめました。
                                             <span>(1)</span>
                                         </li>
                                         <li className="pt-1 text-[14px] opacity-80">
-                                            合計5件
+                                            合計4件
                                         </li>
                                     </ul>
                                 </div>
@@ -3114,7 +3132,7 @@ body: `たくさんの種類を家族で楽しめました。
                 // 通報は管理人ページ（admin_notice）で行う
                 setModalState({
                   isOpen: true,
-                  message: "【F12: 問い合わせの乗っ取り】\nフォームが完全に乗っ取られている。\n\n証拠に気づいたか？\n最後は『管理人からのお知らせ（関係者各位）』にある。",
+                  message: "フォームが完全に乗っ取られている。\n\n証拠に気づいたか？\n最後は『管理人からのお知らせ（関係者各位）』にある。",
                   isHorror: true,
                   goAdmin: true
                 });
@@ -3201,9 +3219,9 @@ body: `たくさんの種類を家族で楽しめました。
                                 
                                 <h4 className="font-bold font-serif mb-4">よくあるご質問</h4>
                                 <ul className="text-sm text-muted space-y-3">
-                                    <li className="hover:text-primary cursor-pointer">・ 予約のキャンセルについて</li>
-                                    <li className="hover:text-primary cursor-pointer">・ ギフトラッピングについて</li>
-                                    <li className="hover:text-primary cursor-pointer">・ アレルギー対応について</li>
+                                    <li>・ 予約のキャンセルについて</li>
+                                    <li>・ ギフトラッピングについて</li>
+                                    <li>・ アレルギー対応について</li>
                                 </ul>
                             </div>
                         </div>
@@ -3240,52 +3258,69 @@ body: `たくさんの種類を家族で楽しめました。
                 );
             }
 
+            const ENDING_THEMES = {
+                SILENCED: 'bg-black text-gray-400',
+                NORMAL: 'bg-[#1a1a2e] text-gray-300',
+                TRUE: 'bg-gradient-to-b from-[#0f2027] to-[#203a43] text-gray-200',
+                PERFECT: 'bg-gradient-to-b from-[#0f0f0f] to-[#1a0000] text-gray-100',
+            };
+            const ENDING_SCORE_THEMES = {
+                SILENCED: 'bg-white/5 border-white/10',
+                NORMAL: 'bg-white/5 border-white/10',
+                TRUE: 'bg-white/5 border-white/15',
+                PERFECT: 'bg-white/5 border-red-900/30',
+            };
+
+            const themeClass = ENDING_THEMES[endingResult.endingId] || 'bg-surface';
+            const scoreThemeClass = ENDING_SCORE_THEMES[endingResult.endingId] || 'bg-surface-2 border-border';
+
             return (
-                <div className="min-h-screen pt-24 pb-20 bg-surface">
-                    <div className="max-w-4xl mx-auto px-6">
-                        <div className="text-center mb-10">
-                            <p className="text-accent font-eng tracking-[0.4em] text-xs mb-3">ENDING</p>
-                            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-3">{endingResult.title}</h1>
-                            <p className="text-muted text-sm md:text-base">{endingResult.subtitle}</p>
+                <div className={`min-h-screen pb-20 ${themeClass}`}>
+                    {/* Hero with overlay */}
+                    <div className="relative w-full h-[420px] md:h-[520px] overflow-hidden">
+                        <img src={endingResult.image} alt={endingResult.title} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-center">
+                            <p className="text-red-400/80 font-eng tracking-[0.4em] text-xs mb-3 uppercase">Ending</p>
+                            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-3 text-white drop-shadow-lg">{endingResult.title}</h1>
+                            <p className="text-white/70 text-sm md:text-base">{endingResult.subtitle}</p>
                         </div>
+                    </div>
 
-                        <div className="rounded-2xl overflow-hidden shadow-xl mb-10">
-                            <img src={endingResult.image} alt={endingResult.title} className="w-full h-[320px] md:h-[420px] object-cover" />
-                        </div>
-
+                    <div className="max-w-4xl mx-auto px-6 pt-12">
                         <div className="space-y-6 text-sm md:text-base leading-loose font-serif mb-10">
                             {endingResult.story.map((paragraph, index) => (
-                                <p key={index}>{paragraph}</p>
+                                <p key={index} className="ending-fade-in" style={{ animationDelay: `${index * 0.3}s` }}>{paragraph}</p>
                             ))}
                         </div>
 
-                        <div className="bg-surface-2 border border-border rounded-2xl p-6 md:p-8 mb-10">
+                        <div className={`rounded-2xl p-6 md:p-8 mb-10 border ${scoreThemeClass}`}>
                             <h2 className="text-lg font-serif font-bold mb-4">スコア</h2>
                             <div className="grid md:grid-cols-2 gap-4 text-sm">
-                                <div className="flex items-center justify-between border-b border-border pb-2">
-                                    <span className="text-muted">証拠数</span>
+                                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                                    <span className="opacity-70">証拠数</span>
                                     <span className="font-bold">{endingResult.evidenceCount}/{EVIDENCE_FLAGS.length}</span>
                                 </div>
-                                <div className="flex items-center justify-between border-b border-border pb-2">
-                                    <span className="text-muted">重要証拠</span>
+                                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                                    <span className="opacity-70">重要証拠</span>
                                     <span className="font-bold">{endingResult.keyCount}/{KEY_EVIDENCE_FLAGS.length}</span>
                                 </div>
                             </div>
                         </div>
 
                         <div className="mb-12">
-                            <h2 className="text-lg font-serif font-bold mb-4">達成フラグ一覧</h2>
+                            <h2 className="text-lg font-serif font-bold mb-4">証拠一覧</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                {FLAG_META_ORDER.map((id) => {
+                                {FLAG_META_ORDER.map((id, idx) => {
                                     const isFound = !!flags[id];
                                     return (
                                         <div
                                             key={id}
                                             className={`px-4 py-3 rounded-lg border text-sm ${
-                                                isFound ? 'bg-white border-border text-text' : 'bg-surface-2 border-dashed border-border text-muted'
+                                                isFound ? 'bg-white/10 border-white/15' : 'bg-white/5 border-dashed border-white/10 opacity-50'
                                             }`}
                                         >
-                                            {isFound ? `${id}: ${FLAG_META[id]?.title ?? ''}` : `${id}: ???`}
+                                            {isFound ? `${idx + 1}. ${FLAG_META[id]?.title ?? ''}` : `${idx + 1}. 未発見の証拠`}
                                         </div>
                                     );
                                 })}
@@ -3298,13 +3333,13 @@ body: `たくさんの種類を家族で楽しめました。
                             </Button>
                             <Button
                                 variant="secondary"
-                                className="px-8"
+                                className="px-8 border-white/30 text-white/80 hover:bg-white/10 hover:text-white"
                                 onClick={() => onShare(endingResult.share)}
                             >
                                 Xでシェア
                             </Button>
                             <button
-                                className="text-sm text-muted hover:text-primary transition-colors"
+                                className="text-sm opacity-60 hover:opacity-100 transition-opacity"
                                 onClick={onKeepProgress}
                             >
                                 証拠を保持してHOMEへ
@@ -3329,6 +3364,18 @@ body: `たくさんの種類を家族で楽しめました。
             const [isLoaded, setIsLoaded] = useState(false);
             const [selectedStaff, setSelectedStaff] = useState(null);
             const [selectedArticle, setSelectedArticle] = useState(null);
+            const [showDebug, setShowDebug] = useState(false);
+
+            useEffect(() => {
+                const handleDebugKey = (e) => {
+                    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                        e.preventDefault();
+                        setShowDebug(prev => !prev);
+                    }
+                };
+                window.addEventListener('keydown', handleDebugKey);
+                return () => window.removeEventListener('keydown', handleDebugKey);
+            }, []);
 
             useEffect(() => {
                 window.scrollTo(0, 0);
@@ -3417,7 +3464,7 @@ body: `たくさんの種類を家族で楽しめました。
                 // Phase3以降はホラーUI
                 const isHorror = phase >= 3;
 
-                const messageLines = [`【${flagId}: ${meta.title}】`];
+                const messageLines = [`【${meta.title}】`];
                 if (detailText) messageLines.push(detailText);
                 const message = messageLines.join("\n");
 
@@ -3506,11 +3553,14 @@ body: `たくさんの種類を家族で楽しめました。
                     <div className="min-h-screen flex flex-col font-sans text-text">
                         <Header setPage={setPage} currentPage={currentPage} phase={phase} />
                         <main className="flex-grow">
-                            {renderPage()}
+                            <div className="page-fade-in" key={currentPage}>
+                                {renderPage()}
+                            </div>
                         </main>
                         <Footer phase={phase} setPage={setPage} settings={settings} setSettings={setSettings} />
 
-                        {/* Debug UI：右下表示（要求仕様） */}
+                        {/* Debug UI：Ctrl+Shift+D で表示切替 */}
+                        {showDebug && (
                         <div className="fixed bottom-2 right-2 z-[200] text-[10px] bg-black/80 text-white px-3 py-2 rounded-lg shadow-lg">
                             <div className="font-eng tracking-wider">Phase: <span className="font-bold">{phase}</span></div>
                             <div className="mt-1 opacity-90">
@@ -3520,6 +3570,7 @@ body: `たくさんの種類を家族で楽しめました。
                                 Total Flags: {Object.keys(flags).length}/{MAX_FLAGS}
                             </div>
                         </div>
+                        )}
                     </div>
                     <MessageModal
                         isOpen={evidenceModal.isOpen}
