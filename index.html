@@ -4,14 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>奥神伏ファーム | 土と生きる、循環する未来。</title>
-    
-    <!-- React & ReactDOM -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    
+    <meta name="description" content="長野県奥神伏村の有機農園。農薬不使用のりんご・ぶどう・自家製ジャムをお届けします。土と生きる、循環する未来。">
+    <meta name="keywords" content="奥神伏ファーム, 有機農園, 長野県, りんご, ぶどう, 無農薬, オーガニック">
+    <meta name="author" content="奥神伏ファーム">
+    <link rel="canonical" href="https://okukamifushifarm.pages.dev/">
+
+    <!-- Open Graph / SNS共有 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="奥神伏ファーム | 土と生きる、循環する未来。">
+    <meta property="og:description" content="長野県奥神伏村の有機農園。農薬不使用のりんご・ぶどう・自家製ジャムをお届けします。">
+    <meta property="og:url" content="https://okukamifushifarm.pages.dev/">
+    <meta property="og:image" content="https://raw.githubusercontent.com/dh0320/okukamimurafarm/f273d82bcc2d0c08371bb0e42d3169c3d36e4b9b/images/topfarm.png">
+    <meta property="og:site_name" content="奥神伏ファーム">
+    <meta property="og:locale" content="ja_JP">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="奥神伏ファーム | 土と生きる、循環する未来。">
+    <meta name="twitter:description" content="長野県奥神伏村の有機農園。農薬不使用のりんご・ぶどう・自家製ジャムをお届けします。">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/dh0320/okukamimurafarm/f273d82bcc2d0c08371bb0e42d3169c3d36e4b9b/images/topfarm.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/icondefault.png">
+    <link rel="apple-touch-icon" href="images/icondefault.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2F6B3E">
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+
+    <!-- Google Analytics (GA4) - MEASUREMENT_IDを自身のIDに置換してください -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-68G59FSK6B"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-68G59FSK6B');
+    </script>
+
+    <!-- Google AdSense - PUBLISHER_IDを自身のIDに置換してください -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5996393131507547" crossorigin="anonymous"></script>
+
+    <!-- React & ReactDOM (Production) -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
     <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -847,13 +890,59 @@
             );
         };
 
-        const AdSpace = ({ className = "" }) => (
-            <div className={`w-full max-w-container mx-auto px-6 my-16 ${className}`}>
-                <div className="bg-surface-2 border border-border rounded-xl w-full min-h-[90px] md:min-h-[250px] flex items-center justify-center">
-                    <span className="text-[10px] text-muted/40 tracking-widest font-eng select-none">AD</span>
+        const ADSENSE_CONFIG = {
+            client: "ca-pub-5996393131507547",
+            slot: "3700035144",
+        };
+
+        const AdSpace = ({ className = "", format = "auto" }) => {
+            const adRef = useRef(null);
+            const [consent, setConsent] = useState(false);
+
+            useEffect(() => {
+                const checkConsent = () => {
+                    try {
+                        return localStorage.getItem("cookie_consent") === "accepted";
+                    } catch { return false; }
+                };
+                setConsent(checkConsent());
+                const handleConsent = () => setConsent(checkConsent());
+                window.addEventListener("cookie-consent-changed", handleConsent);
+                return () => window.removeEventListener("cookie-consent-changed", handleConsent);
+            }, []);
+
+            useEffect(() => {
+                if (!consent || !adRef.current) return;
+                if (adRef.current.dataset.adLoaded) return;
+                try {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                    adRef.current.dataset.adLoaded = "true";
+                } catch (e) { /* AdSense not loaded yet */ }
+            }, [consent]);
+
+            if (!consent) {
+                return (
+                    <div className={`w-full max-w-container mx-auto px-6 my-16 ${className}`}>
+                        <div className="bg-surface-2 border border-border rounded-xl w-full min-h-[90px] md:min-h-[250px] flex items-center justify-center">
+                            <span className="text-[10px] text-muted/40 tracking-widest font-eng select-none">AD</span>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className={`w-full max-w-container mx-auto px-6 my-16 ${className}`}>
+                    <ins className="adsbygoogle"
+                        ref={adRef}
+                        style={{ display: "block", minHeight: "90px" }}
+                        data-ad-client={ADSENSE_CONFIG.client}
+                        data-ad-slot={ADSENSE_CONFIG.slot}
+                        data-ad-format={format}
+                        data-full-width-responsive="true">
+                    </ins>
                 </div>
-            </div>
-        );
+            );
+        };
 
         // --- Layout Components ---
 
@@ -934,6 +1023,55 @@
                         <Button onClick={() => { setPage('contact'); setIsMenuOpen(false); }} className="mt-4">お問い合わせ</Button>
                     </div>
                 </>
+            );
+        };
+
+        // --- Cookie同意バナー ---
+        const CookieConsent = ({ setPage }) => {
+            const [visible, setVisible] = useState(false);
+
+            useEffect(() => {
+                try {
+                    const consent = localStorage.getItem("cookie_consent");
+                    if (!consent) setVisible(true);
+                } catch { setVisible(true); }
+            }, []);
+
+            const handleAccept = () => {
+                try { localStorage.setItem("cookie_consent", "accepted"); } catch {}
+                setVisible(false);
+                window.dispatchEvent(new Event("cookie-consent-changed"));
+            };
+
+            const handleDecline = () => {
+                try { localStorage.setItem("cookie_consent", "declined"); } catch {}
+                setVisible(false);
+                window.dispatchEvent(new Event("cookie-consent-changed"));
+            };
+
+            if (!visible) return null;
+
+            return (
+                <div className="fixed bottom-0 left-0 right-0 z-[9000] bg-surface border-t border-border shadow-2xl p-4 md:p-6">
+                    <div className="max-w-container mx-auto flex flex-col md:flex-row items-start md:items-center gap-4">
+                        <div className="flex-1 text-sm text-muted leading-relaxed">
+                            <p className="font-sans">
+                                当サイトでは、広告配信およびアクセス解析のためにCookieを使用しています。
+                                「同意する」をクリックすると、Cookieの使用に同意いただいたことになります。
+                                詳しくは<span onClick={() => setPage('ad_disclosure')} className="underline cursor-pointer text-primary hover:opacity-70 mx-1">広告配信に関する表記</span>および
+                                <span onClick={() => setPage('privacy_policy')} className="underline cursor-pointer text-primary hover:opacity-70 mx-1">プライバシーポリシー</span>をご覧ください。
+                            </p>
+                        </div>
+                        <div className="flex gap-3 shrink-0">
+                            <button onClick={handleDecline} className="px-5 py-2 text-sm border border-border rounded-lg text-muted hover:bg-surface-2 transition-colors">
+                                拒否する
+                            </button>
+                            <button onClick={handleAccept} className="px-5 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-2 transition-colors">
+                                同意する
+                            </button>
+                        </div>
+                    </div>
+                </div>
             );
         };
 
@@ -3945,6 +4083,7 @@ Cookieによりブラウザを識別できる場合がありますが、Cookie�
                         isHorror={evidenceToast.isHorror}
                         onClose={() => setEvidenceToast(prev => ({ ...prev, isOpen: false }))}
                     />
+                    <CookieConsent setPage={setPage} />
                 </>
             );
         };
