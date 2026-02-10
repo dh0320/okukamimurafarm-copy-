@@ -453,65 +453,6 @@ const Button = ({
     className: `${baseClass} ${variants[variant]} ${className}`
   }, children);
 };
-const ADSENSE_CONFIG = {
-  client: "ca-pub-5996393131507547",
-  slot: "3700035144"
-};
-const AdSpace = ({
-  className = "",
-  format = "auto",
-  phase = 1
-}) => {
-  const adRef = useRef(null);
-  const [consent, setConsent] = useState(false);
-  useEffect(() => {
-    const checkConsent = () => {
-      try {
-        return localStorage.getItem("cookie_consent") === "accepted";
-      } catch {
-        return false;
-      }
-    };
-    setConsent(checkConsent());
-    const handleConsent = () => setConsent(checkConsent());
-    window.addEventListener("cookie-consent-changed", handleConsent);
-    return () => window.removeEventListener("cookie-consent-changed", handleConsent);
-  }, []);
-  useEffect(() => {
-    if (!consent || !adRef.current) return;
-    if (adRef.current.dataset.adLoaded) return;
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-      adRef.current.dataset.adLoaded = "true";
-    } catch (e) {/* AdSense not loaded yet */}
-  }, [consent]);
-
-  // Phase4以降はAdSenseポリシー保護のため広告を非表示
-  if (phase >= 4) return null;
-  if (!consent) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: `w-full max-w-container mx-auto px-6 my-16 ${className}`
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "bg-surface-2 border border-border rounded-xl w-full min-h-[90px] md:min-h-[250px] flex items-center justify-center"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "text-[10px] text-muted/40 tracking-widest font-eng select-none"
-    }, "AD")));
-  }
-  return /*#__PURE__*/React.createElement("div", {
-    className: `w-full max-w-container mx-auto px-6 my-16 ${className}`
-  }, /*#__PURE__*/React.createElement("ins", {
-    className: "adsbygoogle",
-    ref: adRef,
-    style: {
-      display: "block",
-      minHeight: "90px"
-    },
-    "data-ad-client": ADSENSE_CONFIG.client,
-    "data-ad-slot": ADSENSE_CONFIG.slot,
-    "data-ad-format": format,
-    "data-full-width-responsive": "true"
-  }));
-};
 
 // --- Layout Components ---
 
@@ -1044,9 +985,7 @@ const Home = ({
   }, "Your browser does not support the video tag."), /*#__PURE__*/React.createElement("button", {
     className: "absolute top-3 right-3 text-white font-bold bg-black/40 hover:bg-black/70 px-3 py-1 rounded transition-colors",
     onClick: () => setStopVideoModalOpen(false)
-  }, "\u9589\u3058\u308B"))), /*#__PURE__*/React.createElement(AdSpace, {
-    phase: phase
-  }), /*#__PURE__*/React.createElement(MessageModal, {
+  }, "\u9589\u3058\u308B"))), /*#__PURE__*/React.createElement(MessageModal, {
     isOpen: rosterModal.isOpen,
     message: rosterModal.message,
     isHorror: rosterModal.isHorror,
@@ -1208,10 +1147,7 @@ const Village = ({
     src: IMAGES.village_snow,
     alt: "Winter Village",
     className: "w-full h-80 object-cover rounded-xl shadow-md hover:scale-[1.02] transition-transform duration-500"
-  }))), /*#__PURE__*/React.createElement(AdSpace, {
-    className: "mb-24",
-    phase: phase
-  }), /*#__PURE__*/React.createElement("div", {
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "bg-surface-2 rounded-2xl p-8 md:p-16 flex flex-col md:flex-row gap-12 items-center"
   }, /*#__PURE__*/React.createElement("div", {
     className: "md:w-1/2"
@@ -1751,9 +1687,7 @@ const Products = ({
     onClick: () => setPage('contact')
   }, "\u30EC\u30D3\u30E5\u30FC\u30FB\u3054\u611F\u60F3\u3092\u9001\u308B"), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-muted mt-3 font-serif"
-  }, "\u203B\u63B2\u8F09\u3057\u3066\u3044\u308B\u30EC\u30D3\u30E5\u30FC\u306F\u4E00\u90E8\u629C\u7C8B\u3067\u3059\u3002"))), /*#__PURE__*/React.createElement(AdSpace, {
-    phase: phase
-  })), videoModalOpen && /*#__PURE__*/React.createElement("div", {
+  }, "\u203B\u63B2\u8F09\u3057\u3066\u3044\u308B\u30EC\u30D3\u30E5\u30FC\u306F\u4E00\u90E8\u629C\u7C8B\u3067\u3059\u3002")))), videoModalOpen && /*#__PURE__*/React.createElement("div", {
     className: "fixed inset-0 z-[100] bg-black/90 flex items-start justify-center p-4 overflow-y-auto",
     style: {
       paddingTop: 'calc(var(--header-height) + 16px)'
@@ -1855,10 +1789,7 @@ const Diary = ({
     className: "flex justify-between"
   }, /*#__PURE__*/React.createElement("span", null, "\u3054\u6328\u62F6"), /*#__PURE__*/React.createElement("span", null, "(1)")), /*#__PURE__*/React.createElement("li", {
     className: "pt-1 text-[14px] opacity-80"
-  }, "\u5408\u8A085\u4EF6"))), !isAncient && /*#__PURE__*/React.createElement(AdSpace, {
-    className: "mt-12 hidden md:block",
-    phase: phase
-  })), /*#__PURE__*/React.createElement("div", {
+  }, "\u5408\u8A085\u4EF6")))), /*#__PURE__*/React.createElement("div", {
     className: "md:w-3/4 space-y-12"
   }, displayArticles.map(article => /*#__PURE__*/React.createElement("article", {
     key: article.id,
@@ -1882,9 +1813,7 @@ const Diary = ({
     className: `text-sm leading-relaxed mb-4 ${isAncient ? 'text-[#888]' : 'text-muted'}`
   }, article.desc), /*#__PURE__*/React.createElement("span", {
     className: `${isAncient ? 'text-[#8A2E2E]' : 'text-primary'} text-sm font-medium hover:underline`
-  }, "\u7D9A\u304D\u3092\u8AAD\u3080 \u2192"))))), !isAncient && /*#__PURE__*/React.createElement(AdSpace, {
-    phase: phase
-  })))));
+  }, "\u7D9A\u304D\u3092\u8AAD\u3080 \u2192")))))))));
 };
 
 // 5.5 ARTICLE DETAIL
@@ -1934,11 +1863,7 @@ const ArticleDetail = ({
   }, "\u25BC \u8A73\u3057\u304F\u306F\u3053\u3061\u3089"), /*#__PURE__*/React.createElement("span", {
     className: "text-accent underline cursor-pointer text-lg hover:text-red-700 transition-colors font-serif",
     onClick: () => setPage('recipe')
-  }, "\u25B6 \u30A2\u30C3\u30D7\u30EB\u30D1\u30A4\u306E\u30EC\u30B7\u30D4\u3092\u516C\u958B\uFF01"))), /*#__PURE__*/React.createElement("div", {
-    className: "mt-20 border-t border-border pt-12"
-  }, /*#__PURE__*/React.createElement(AdSpace, {
-    phase: phase
-  }))));
+  }, "\u25B6 \u30A2\u30C3\u30D7\u30EB\u30D1\u30A4\u306E\u30EC\u30B7\u30D4\u3092\u516C\u958B\uFF01")))));
 };
 
 // 5.6 RECIPE DETAIL (F04導線)

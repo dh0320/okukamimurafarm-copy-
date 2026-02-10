@@ -534,62 +534,6 @@
             );
         };
 
-        const ADSENSE_CONFIG = {
-            client: "ca-pub-5996393131507547",
-            slot: "3700035144",
-        };
-
-        const AdSpace = ({ className = "", format = "auto", phase = 1 }) => {
-            const adRef = useRef(null);
-            const [consent, setConsent] = useState(false);
-
-            useEffect(() => {
-                const checkConsent = () => {
-                    try {
-                        return localStorage.getItem("cookie_consent") === "accepted";
-                    } catch { return false; }
-                };
-                setConsent(checkConsent());
-                const handleConsent = () => setConsent(checkConsent());
-                window.addEventListener("cookie-consent-changed", handleConsent);
-                return () => window.removeEventListener("cookie-consent-changed", handleConsent);
-            }, []);
-
-            useEffect(() => {
-                if (!consent || !adRef.current) return;
-                if (adRef.current.dataset.adLoaded) return;
-                try {
-                    (window.adsbygoogle = window.adsbygoogle || []).push({});
-                    adRef.current.dataset.adLoaded = "true";
-                } catch (e) { /* AdSense not loaded yet */ }
-            }, [consent]);
-
-            // Phase4以降はAdSenseポリシー保護のため広告を非表示
-            if (phase >= 4) return null;
-
-            if (!consent) {
-                return (
-                    <div className={`w-full max-w-container mx-auto px-6 my-16 ${className}`}>
-                        <div className="bg-surface-2 border border-border rounded-xl w-full min-h-[90px] md:min-h-[250px] flex items-center justify-center">
-                            <span className="text-[10px] text-muted/40 tracking-widest font-eng select-none">AD</span>
-                        </div>
-                    </div>
-                );
-            }
-
-            return (
-                <div className={`w-full max-w-container mx-auto px-6 my-16 ${className}`}>
-                    <ins className="adsbygoogle"
-                        ref={adRef}
-                        style={{ display: "block", minHeight: "90px" }}
-                        data-ad-client={ADSENSE_CONFIG.client}
-                        data-ad-slot={ADSENSE_CONFIG.slot}
-                        data-ad-format={format}
-                        data-full-width-responsive="true">
-                    </ins>
-                </div>
-            );
-        };
 
         // --- Layout Components ---
 
@@ -1132,7 +1076,6 @@ const openRosterFromOddApple = (e) => {
                         </div>
                       </div>
                     )}
-                    <AdSpace phase={phase} />
                     <MessageModal
   isOpen={rosterModal.isOpen}
   message={rosterModal.message}
@@ -1351,8 +1294,6 @@ const openRosterFromOddApple = (e) => {
                                 <img src={IMAGES.village_snow} alt="Winter Village" className="w-full h-80 object-cover rounded-xl shadow-md hover:scale-[1.02] transition-transform duration-500" />
                             </div>
                         </div>
-
-                        <AdSpace className="mb-24" phase={phase} />
 
                         {/* F10: Symbol Tree（Phase4以降でホラー化） */}
                         <div className="bg-surface-2 rounded-2xl p-8 md:p-16 flex flex-col md:flex-row gap-12 items-center">
@@ -2009,7 +1950,6 @@ body: `たくさんの種類を家族で楽しめました。
         </section>
         {/* ▲▲▲ 追加ここまで ▲▲▲ */}
 
-        <AdSpace phase={phase} />
       </div>
 
       {videoModalOpen && (
@@ -2132,7 +2072,6 @@ body: `たくさんの種類を家族で楽しめました。
                                     </ul>
                                 </div>
                                 
-                                {!isAncient && <AdSpace className="mt-12 hidden md:block" phase={phase} />}
                             </div>
 
                             <div className="md:w-3/4 space-y-12">
@@ -2156,7 +2095,6 @@ body: `たくさんの種類を家族で楽しめました。
                                     </article>
                                 ))}
                                 
-                                {!isAncient && <AdSpace phase={phase} />}
                             </div>
                         </div>
                     </div>
@@ -2212,9 +2150,6 @@ body: `たくさんの種類を家族で楽しめました。
                             )}
                         </article>
 
-                        <div className="mt-20 border-t border-border pt-12">
-                            <AdSpace phase={phase} />
-                        </div>
                     </div>
                 </div>
             );
