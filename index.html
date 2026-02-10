@@ -3941,7 +3941,8 @@ Cookieによりブラウザを識別できる場合がありますが、Cookie�
                     return;
                 }
 
-                setEvidenceModal({ isOpen: true, message, isHorror });
+                // 証拠ポップアップ（MessageModal）を無効化
+                // setEvidenceModal({ isOpen: true, message, isHorror });
             }, [unlockFlag, phase]);
 
             const resetProgress = () => {
