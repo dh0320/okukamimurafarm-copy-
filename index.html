@@ -434,11 +434,11 @@
             // Grafting
             grafting: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/52ef76040ef84ddb52fdf5827a52315f4c4d9ec7/images/tsugiki.png",
 
-            // Ending (temporary reuse)
-            ending_silenced: `${BASE_URL}/images/staffvictim2.png`,
-            ending_normal: `${BASE_URL}/images/villagenight.png`,
-            ending_true: `${BASE_URL}/images/treechange.png`,
-            ending_perfect: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/cce9c3db56a9593996fa1381a826289236d747a2/images/staffmanagerchange.png",
+            // Ending
+            ending_normal: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/normalend.png",
+            ending_silenced: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/silencedend.png",
+            ending_perfect: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/perfectend.png",
+            ending_true: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/trueend.png",
             
             // topkodawari
             kodawari_soil: "https://raw.githubusercontent.com/dh0320/okukamimurafarm/main/images/kodawarisoil.png",
@@ -567,21 +567,29 @@
         const ENDING_CONTENT = {
             SILENCED: {
                 title: "SILENCED END",
-                subtitle: "通報は届かなかった。声は闇に沈む。",
+                subtitle: "通報は届かなかった。声は闇に消えた。",
                 story: [
-                    "通報を押した瞬間、画面は静かに暗転した。",
-                    "数日後、農園は通常営業を続けている。彼らの名はどこにも残らず、証拠も記録も消えていた。",
-                    "村を出ようとした足跡は、深い土の中に吸い込まれていった。"
+                    "あなたは確かに通報を行った。証拠も、記録も、警告も送ったはずだった。",
+                    "だが、何も変わらなかった。数日後の奥神伏ファームは、何事もなかったかのように通常営業を再開している。",
+                    "園長とその妻の姿だけは変わらない。それ以外のスタッフは、まるで名簿ごと塗り替えられたように入れ替わっていた。",
+                    "農園の掲示や案内文も、妙に整いすぎている。違和感だけを残して、肝心な痕跡はどこにもない。",
+                    "問い合わせても返事は来ない。来たとしても、定型文のように冷たく、こちらの言葉が届いていない感覚だけが残る。",
+                    "夜になると、ページの片隅に一瞬だけ“赤い点”が灯り、次の瞬間には何もなかったことになる。",
+                    "あなたが通報を終えてブラウザを閉じた夜、あの泥道に続いていたはずの“足跡”の痕跡は、翌朝には跡形もなく消えていた。"
                 ],
                 image: IMAGES.ending_silenced
             },
             NORMAL: {
                 title: "NORMAL END",
-                subtitle: "警察は動いた。だが核心は逃げた。",
+                subtitle: "警察は動いた。だが園長たちは消えてしまった。",
                 story: [
-                    "通報は受理され、現地への捜査が始まった。",
-                    "いくつかの痕跡は押収されたが、主導した人物は姿を消していた。",
-                    "報告書の多くは黒塗りのまま公開され、事件は未解決として継続する。"
+                    "通報は正式に受理され、警察は奥神伏ファームへの捜査を開始した。",
+                    "農園は一時封鎖され、倉庫や作業場からはいくつかの証拠品が押収された。",
+                    "だが、捜査の中心にいたはずの園長夫妻と数名の関係者は、捜索が始まる前に姿を消していた。",
+                    "公開された報告書の多くは黒塗りのまま残され、事件は“未解決のまま継続”として処理される。",
+                    "救出された副園長の佐藤と実習生たちは保護されたが、物音ひとつに肩を震わせ、誰かの視線を恐れる日々が続く。",
+                    "彼らは口を開こうとすると、言葉の手前で止まる。まるで“話してはいけない”合図がまだ残っているかのように。",
+                    "そして今日も、どこかで真っ赤なリンゴは生産され続け、市場に紛れ、何事もなかったように誰かの食卓へ届いている。"
                 ],
                 image: IMAGES.ending_normal
             },
@@ -589,19 +597,27 @@
                 title: "TRUE END",
                 subtitle: "真相が暴かれた。救出は間に合った。",
                 story: [
-                    "十分な証拠が集まり、警察は一斉捜索を開始した。",
-                    "奥神伏の儀式は中断され、失踪者の所在が判明した。",
-                    "農園の闇は暴かれ、村の空気はようやく動き出した。"
+                    "あなたが集めた証拠は決定打となり、警察は大規模な一斉捜索を開始した。",
+                    "奥神伏ファームで密かに行われていた儀式は中断され、主要な関係者は拘束された。",
+                    "閉ざされた区画から行方不明者たちが発見され、無事に救出された。",
+                    "副園長の佐藤と実習生たちは保護され、長く続いた恐怖から少しずつ呼吸を取り戻していく。",
+                    "震えながらも、彼らは自分の名前を言えるようになる。「ここにいる」と言えるようになる。",
+                    "一方で、村は静まり返ったままだ。誰も多くを語らず、目を合わせることすら避ける者もいる。",
+                    "それでも、少なくとも“あの夜”は止まった。あなたの手で、救いは間に合った。"
                 ],
                 image: IMAGES.ending_true
             },
             PERFECT: {
                 title: "PERFECT END",
-                subtitle: "すべての記録が解放された。",
+                subtitle: "すべての真実が解放された。",
                 story: [
-                    "あらゆる証拠が揃い、隠された記録が公開された。",
-                    "村の歴史、儀式の全貌、そして犠牲の数が白日のもとに晒される。",
-                    "あなたの記録は、生き残った者たちの唯一の希望になった。"
+                    "あなたはすべての証拠を集めきり、隠されていた記録の在処を突き止めた。",
+                    "村の歴史、儀式の全貌、そして積み重ねられてきた犠牲の数が、余白のない形で白日のもとに晒される。",
+                    "事件は個人の犯罪ではなく、村ぐるみで温存されてきた構造として認識され、逃げ道は塞がれた。",
+                    "公表された資料は社会に衝撃を与え、関係者の責任は明確になり、再発の芽を潰すための動きが一気に進む。",
+                    "あなたの得た記録は、生き残った人々の希望となり、“次は起きない”という確かな根拠になった。",
+                    "真っ赤なリンゴはもう、黙って流通しない。誰もがその色の意味を知り、見過ごさない。",
+                    "そしてあなたは、真実を解放した者として静かにページを閉じる。物語は終わった——終わらせた。"
                 ],
                 image: IMAGES.ending_perfect
             }
