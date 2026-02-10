@@ -3590,29 +3590,59 @@ Cookieによりブラウザを識別できる場合がありますが、Cookie�
             const ENDING_THEMES = {
                 SILENCED: 'bg-black text-gray-400',
                 NORMAL: 'bg-[#1a1a2e] text-gray-300',
-                TRUE: 'bg-gradient-to-b from-[#0f2027] to-[#203a43] text-gray-200',
-                PERFECT: 'bg-gradient-to-b from-[#0f0f0f] to-[#1a0000] text-gray-100',
+                TRUE: 'bg-gradient-to-b from-[#f5fbe9] via-[#eef9ff] to-[#e6f7ea] text-[#24321f]',
+                PERFECT: 'bg-gradient-to-b from-[#fff8dc] via-[#fff3e0] to-[#ffe9cf] text-[#3b2f1f]',
             };
             const ENDING_SCORE_THEMES = {
                 SILENCED: 'bg-white/5 border-white/10',
                 NORMAL: 'bg-white/5 border-white/10',
-                TRUE: 'bg-white/5 border-white/15',
-                PERFECT: 'bg-white/5 border-red-900/30',
+                TRUE: 'bg-white/70 border-emerald-200/80 shadow-sm',
+                PERFECT: 'bg-white/75 border-amber-200/90 shadow-sm',
+            };
+            const ENDING_HERO_OVERLAYS = {
+                SILENCED: 'absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent',
+                NORMAL: 'absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent',
+                TRUE: 'absolute inset-0 bg-gradient-to-t from-emerald-950/30 via-sky-900/10 to-emerald-200/5',
+                PERFECT: 'absolute inset-0 bg-gradient-to-t from-amber-950/35 via-orange-900/10 to-amber-100/10',
+            };
+            const ENDING_TEXT_THEMES = {
+                SILENCED: {
+                    label: 'text-red-400/80',
+                    title: 'text-white drop-shadow-lg',
+                    subtitle: 'text-white/70'
+                },
+                NORMAL: {
+                    label: 'text-red-400/80',
+                    title: 'text-white drop-shadow-lg',
+                    subtitle: 'text-white/70'
+                },
+                TRUE: {
+                    label: 'text-emerald-700/90',
+                    title: 'text-emerald-950 drop-shadow-[0_2px_6px_rgba(255,255,255,0.65)]',
+                    subtitle: 'text-emerald-900/85'
+                },
+                PERFECT: {
+                    label: 'text-amber-700/95',
+                    title: 'text-amber-950 drop-shadow-[0_2px_6px_rgba(255,255,255,0.65)]',
+                    subtitle: 'text-amber-900/85'
+                },
             };
 
             const themeClass = ENDING_THEMES[endingResult.endingId] || 'bg-surface';
             const scoreThemeClass = ENDING_SCORE_THEMES[endingResult.endingId] || 'bg-surface-2 border-border';
+            const heroOverlayClass = ENDING_HERO_OVERLAYS[endingResult.endingId] || ENDING_HERO_OVERLAYS.NORMAL;
+            const textTheme = ENDING_TEXT_THEMES[endingResult.endingId] || ENDING_TEXT_THEMES.NORMAL;
 
             return (
                 <div className={`min-h-screen pb-20 ${themeClass}`}>
                     {/* Hero with overlay */}
                     <div className="relative w-full h-[420px] md:h-[520px] overflow-hidden">
                         <img src={endingResult.image} alt={endingResult.title} className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                        <div className={heroOverlayClass}></div>
                         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-center">
-                            <p className="text-red-400/80 font-eng tracking-[0.4em] text-xs mb-3 uppercase">Ending</p>
-                            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-3 text-white drop-shadow-lg">{endingResult.title}</h1>
-                            <p className="text-white/70 text-sm md:text-base">{endingResult.subtitle}</p>
+                            <p className={`${textTheme.label} font-eng tracking-[0.4em] text-xs mb-3 uppercase`}>Ending</p>
+                            <h1 className={`text-4xl md:text-5xl font-serif font-bold mb-3 ${textTheme.title}`}>{endingResult.title}</h1>
+                            <p className={`${textTheme.subtitle} text-sm md:text-base`}>{endingResult.subtitle}</p>
                         </div>
                     </div>
 
