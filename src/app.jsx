@@ -564,8 +564,8 @@
                 } catch (e) { /* AdSense not loaded yet */ }
             }, [consent]);
 
-            // Phase2以降はAdSenseポリシー保護のため広告を非表示
-            if (phase >= 2) return null;
+            // Phase4以降はAdSenseポリシー保護のため広告を非表示
+            if (phase >= 4) return null;
 
             if (!consent) {
                 return (
