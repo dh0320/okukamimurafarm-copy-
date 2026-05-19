@@ -1,0 +1,19 @@
+/* TEAM */
+    園長: 神埼 政義
+    副園長: ヴー・タイン・アン  /* 現在は掲載と更新を行っておりません */
+    研修生: 名前は伏せられている
+
+/* SITE */
+    Last update: 1826-?? / 2024-??
+    Standards: HTML5, CSS3, JS
+    Components: React, TailwindCSS
+    Doctype: HTML5
+
+/* NOTE */
+    たすけて
+    こ こ か ら で ら れ な い
+    けっして ひ と り で みないでください
+
+    奥神伏村 36.2845, 138.1921
+    開発者ツールを開け。 console を見よ。
+    window.__okukami.help()

@@ -3012,6 +3012,37 @@ const App = () => {
     window.scrollTo(0, 0);
   }, [currentPage]);
   useEffect(() => {
+    if (typeof window === 'undefined' || window.__okukami_greeted) return;
+    window.__okukami_greeted = true;
+    const style1 = 'color:#6b8e23;font-size:14px;font-weight:bold;';
+    const style2 = 'color:#8b0000;font-size:11px;font-style:italic;';
+    const style3 = 'color:#555;font-size:10px;';
+    try {
+      console.log('%c奥神伏ファームへようこそ。', style1);
+      console.log('%c…誰か見てる？ ここに何かを残しておく。', style2);
+      console.log('%c-..- ... --- ... / .---- ---.. ..--- -....', style3);
+      console.log('%c[hint] try: window.__okukami.help()', style3);
+    } catch (_) {}
+    try {
+      Object.defineProperty(window, '__okukami', {
+        value: Object.freeze({
+          help() {
+            console.log('%c証拠の断片はサイトの随所に隠れている。', style1);
+            console.log('%c・テキストを選択してみよ', style3);
+            console.log('%c・画像に触れてみよ', style3);
+            console.log('%c・「日記」で 1826 を検索せよ', style3);
+            console.log('%c・縦に読むことを忘れるな', style3);
+            return '…そして、決して一人で見ないこと。';
+          },
+          whisper: 'この村は狂ってる。出られない。助けてくれ。',
+          coord: atob('MzYuMjg0NSwgMTM4LjE5MjE=')
+        }),
+        writable: false,
+        configurable: false
+      });
+    } catch (_) {}
+  }, []);
+  useEffect(() => {
     const saved = (() => {
       try {
         const raw = localStorage.getItem(SAVE_KEY);
